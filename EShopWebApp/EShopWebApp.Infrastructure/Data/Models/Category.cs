@@ -9,6 +9,8 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         [MaxLength(NameMaxLength)]
-        public required string Name { get; set; } 
+        public required string Name { get; set; }
+
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

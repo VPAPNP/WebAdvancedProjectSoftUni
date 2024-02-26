@@ -9,11 +9,19 @@
             public const int QuantityMinValue = 0;
             public const int QuantityMaxValue = Int32.MaxValue;
             public const decimal PriceMaxValue = Decimal.MaxValue;
+            public const int ImageMaxLength = 2048;
         }
 
         public static class Category
         {
             public const int NameMaxLength = 100;
         }
+
+        public static class Image
+        {
+            public const int ImageMaxLength = 2048;
+        }
+
+        
     }
 }

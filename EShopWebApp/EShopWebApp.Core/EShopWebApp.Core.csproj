@@ -10,4 +10,8 @@
     <ProjectReference Include="..\EShopWebApp.Infrastructure\EShopWebApp.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
 </Project>

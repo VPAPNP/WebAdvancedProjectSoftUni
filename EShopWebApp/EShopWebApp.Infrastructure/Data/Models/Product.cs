@@ -26,7 +26,9 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [Required]
         public decimal Price { get; set; }
         [Required]
-        public required string ImageUrl { get; set; }
+        public required Guid ImageId { get; set; }
+        [ForeignKey(nameof(ImageId))]
+        public Image Image { get; set; } = null!;
         [Required]
         public required Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
