@@ -14,14 +14,45 @@
 
         public static class Category
         {
-            public const int NameMaxLength = 100;
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
         }
 
         public static class Image
         {
             public const int ImageMaxLength = 2048;
         }
+        public static class ProductCategories
+        {
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
+        }
 
-        
+        public static class Order
+        {
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
+        }
+
+        public static class User
+        {
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
+        }
+
+        public static class Address
+        {
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
+        }
+
+        public static class Brand
+        {
+            public const int NameMinLength = 3;
+            public const int NameMaxLength = 50;
+
+        }
+
+
     }
 }

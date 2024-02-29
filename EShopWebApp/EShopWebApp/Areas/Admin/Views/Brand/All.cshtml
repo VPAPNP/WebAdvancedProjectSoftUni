@@ -1,0 +1,31 @@
+﻿@model ICollection<BrandViewModel>
+@{
+    ViewData["Title"] = "All";
+}
+<h2 class="text-center">@ViewBag.Title</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var brand in Model)
+        {
+            <tr>
+                <th scope="row">@brand.Id</th>
+                <td>@brand.Name</td>
+                <td>
+
+                    <a class="btn btn-primary alert-danger" asp-controller="Brand" asp-action="Delete" asp-route-id="@brand.Id">Edit</a>
+                    <a class="btn btn-warning" asp-controller="Brand" asp-action="Delete" asp-route-id="@brand.Id">Delete</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

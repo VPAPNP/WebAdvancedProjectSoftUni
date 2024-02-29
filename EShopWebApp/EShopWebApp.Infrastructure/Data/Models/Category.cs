@@ -3,14 +3,25 @@ using Microsoft.EntityFrameworkCore;
 using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Category;
 namespace EShopWebApp.Infrastructure.Data.Models
 {
-    [Comment("Category table")]
+    [Comment("This is a category table")]
     public class Category
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public Category()
+        {
+            Id = Guid.NewGuid();
+        }
+        [Comment("This is a category id")]
+        [Key]
+        public Guid Id { get; set; }
+        [Comment("This is a category name")]
         [Required]
         [MaxLength(NameMaxLength)]
-        public required string Name { get; set; }
+        public string Name { get; set; } = null!;
+        public bool IsDeleted { get; set; }
 
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<ProductCategory> ProductsCategories { get; set; } = new HashSet<ProductCategory>();
+
+       
     }
 }

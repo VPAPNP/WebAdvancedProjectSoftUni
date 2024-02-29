@@ -14,9 +14,21 @@ namespace EShopWebApp.Infrastructure.Data
         }
         public DbSet<Product> Products { get; set; } 
 
-        public DbSet<Image> Image { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+
+        public DbSet<Brand> Brands { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+
+        public DbSet<ProductBrand> ProductBrands { get; set; }
+
+        public DbSet<ProductPhoto> ProductsPhotos { get; set; }
+
+        
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -1,0 +1,16 @@
+﻿@model AllProductViewForSearch
+
+    
+        <div class="card m-2 d-grid hover-zoom" style="width: 20rem;">
+    <img alt="@Model.Name" class="card-img-top " src="data:image;base64,@System.Convert.ToBase64String(Model.Image)">
+            <div class="card-block text-center">
+                <h4 class="card-title">@Model.Name</h4>
+                <p class="card-text">@Model.Price $</p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary">Add to cart</a>
+                <a  class="btn btn-warning add-to-cart" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price">Add</a>
+            </div>
+        </div>
+
+

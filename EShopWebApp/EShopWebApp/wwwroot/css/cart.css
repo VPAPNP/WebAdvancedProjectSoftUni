@@ -1,0 +1,30 @@
+﻿body {
+}
+button.delete-item.btn.btn-danger {
+    background-color: dimgrey;
+}
+button.delete-item.btn.btn-danger:hover {
+    background-color: red;
+}
+
+
+@media (max-width: 470px) {
+    .modal.fade {
+        display:contents;
+    }
+       
+}
+.zoom {
+    transition: transform .4s ; /* Animation */
+    
+}
+
+.hover-zoom:hover {
+    transform: scale(1.05); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+.hover-zoom {
+    transition: transform .4s; /* Animation */
+}
+    
+
+

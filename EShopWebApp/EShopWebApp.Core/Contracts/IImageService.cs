@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EShopWebApp.Core.ViewModels.ImageViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace EShopWebApp.Core.Contracts
 {
     public interface IImageService
     {
-        Task <string> UploadImageAsync(IEnumerable<IFormFile> imageFile, string fileName);
+        ImageViewModel CreateImage(IFormFile imageFile, string fileName);
 
         Task DownloadImageAsync(Guid Id);
+
+        Task<ImageViewModel> GetImageById(Guid Id);
     }
 }

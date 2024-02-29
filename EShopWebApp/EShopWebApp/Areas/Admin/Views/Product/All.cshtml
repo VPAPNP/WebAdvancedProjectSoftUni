@@ -1,0 +1,43 @@
+﻿@model ICollection<ProductAllViewModel>
+@{
+    ViewData["Title"] = "All";
+}
+<h2 class="text-center">@ViewBag.Title</h2>
+
+
+ <table class="table">
+    <thead>
+    <tr>
+       
+        <th scope="col">Name</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Description</th>
+        <th scope="col">Price</th>
+        <th scope="col">Discount Price</th>
+        <th scope="col">Category</th>
+        <th scope="col">Actions</th>
+        
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var product in Model)
+    {
+        <tr>
+            
+            <td>@product.Name</td>
+            <td>@product.StockQuantity</td>
+            <td>@product.Description</td>
+            <td>@product.Price</td>
+            <td>@product.DiscountPrice</td>
+            <td>@product.Category.Name</td>
+            
+            <td>
+
+                <a class="btn btn-primary alert-danger" asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                <a class="btn btn-warning" asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@product.Id">Delete</a>
+
+            </td>
+        </tr>
+    }
+    </tbody>
+</table> 

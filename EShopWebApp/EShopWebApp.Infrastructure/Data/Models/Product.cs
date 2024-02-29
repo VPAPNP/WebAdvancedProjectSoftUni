@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Product;
 namespace EShopWebApp.Infrastructure.Data.Models
@@ -26,15 +28,33 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [Required]
         public decimal Price { get; set; }
         [Required]
-        public required Guid ImageId { get; set; }
-        [ForeignKey(nameof(ImageId))]
-        public Image Image { get; set; } = null!;
+        public  Guid PhotoId { get; set; }
+        [ForeignKey(nameof(PhotoId))]
+        public Photo Photo { get; set; } = null!;
         [Required]
         public required Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; } = null!;
+        public bool IsDeleted { get; set; }
+        [Required]
+        public DateTime CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public DateTime? DeletedOn { get; set; }
+        public Guid BrandId { get; set; }
+        [ForeignKey(nameof(BrandId))]
+        public Brand Brand { get; set; } = null!;
 
-        
+        public ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+        public ICollection<ProductBrand> ProductBrands { get; set; } = new List<ProductBrand>();
+        public ICollection<ProductPhoto> ProductsPhotos { get; set; } = new List<ProductPhoto>();
+
+       
+
+
+
+
+
+
 
 
 

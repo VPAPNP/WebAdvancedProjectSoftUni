@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShopWebApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240226185907_ChangeImageMaxLength")]
-    partial class ChangeImageMaxLength
+    [Migration("20240229194012_ChangeRelationOfPhotoProduct")]
+    partial class ChangeRelationOfPhotoProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,23 +91,79 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Brand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Brand id");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("Brand name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands", t =>
+                        {
+                            t.HasComment("Brands of products");
+                        });
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("This is a category id");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("This is a category name");
 
                     b.HasKey("Id");
 
                     b.ToTable("Categories", t =>
                         {
-                            t.HasComment("Category table");
+                            t.HasComment("This is a category table");
                         });
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Photo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<byte[]>("Picture")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
@@ -116,23 +172,40 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("PhotoId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -143,12 +216,61 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("PhotoId");
 
                     b.ToTable("Products", t =>
                         {
                             t.HasComment("Product table");
                         });
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductBrand", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductId", "BrandId");
+
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("ProductBrands");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductCategory", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ProductCategories");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductPhoto", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PhotoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductId", "PhotoId");
+
+                    b.HasIndex("PhotoId");
+
+                    b.ToTable("ProductsPhotos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -288,13 +410,86 @@ namespace EShopWebApp.Infrastructure.Migrations
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
                 {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Photo", "Photo")
+                        .WithMany()
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
                     b.Navigation("Category");
+
+                    b.Navigation("Photo");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductBrand", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Brand", "Brand")
+                        .WithMany("ProductsBrands")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductBrands")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductCategory", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Category", "Category")
+                        .WithMany("ProductsCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductCategories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductPhoto", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Photo", "Photo")
+                        .WithMany()
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductsPhotos")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -348,9 +543,23 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Brand", b =>
+                {
+                    b.Navigation("ProductsBrands");
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Category", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("ProductsCategories");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
+                {
+                    b.Navigation("ProductBrands");
+
+                    b.Navigation("ProductCategories");
+
+                    b.Navigation("ProductsPhotos");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,20 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Brand;
+
+namespace EShopWebApp.Infrastructure.Data.Models
+{
+    [Comment("Brands of products")]
+    public class Brand
+    {
+        [Comment("Brand id")]
+        [Key]
+        public Guid Id { get; set; }
+        [Comment("Brand name")]
+        [Required]
+        [MaxLength(NameMaxLength)]
+        public string Name { get; set; } = null!;
+        public bool IsDeleted { get; set; }
+        public ICollection<ProductBrand> ProductsBrands { get; set; } = new HashSet<ProductBrand>();
+    }
+}

@@ -1,25 +1,25 @@
-using EShopWebApp.Models;
+using EShopWebApp.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using EShopWebApp.Core.Contracts;
-
+using static EShopWebApp.Core.DataConstants.GeneralApplicationConstants.Identity;
 namespace EShopWebApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IImageService _imageService;
 
-
-        public HomeController(ILogger<HomeController> logger,IImageService imageService)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _imageService = imageService;
-
         }
 
         public IActionResult Index()
         {
+            if (User.IsInRole(AdministratorRoleName))
+            {
+              return RedirectToAction("Index", "Home", new { area = AdminAreaName });
+            }
+
             return View();
         }
 
@@ -32,19 +32,6 @@ namespace EShopWebApp.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-        
-
-        [HttpPost]
-        public async Task<IActionResult> UploadFile(IEnumerable<IFormFile> file)
-        {
-            string fileName = file?.FirstOrDefault()?.FileName;
-            
-           await _imageService.UploadImageAsync(file,fileName);
-
-
-
-            return Ok();
         }
     }
 }

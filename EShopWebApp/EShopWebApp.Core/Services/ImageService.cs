@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Core;
 using EShopWebApp.Core.Contracts;
+using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace EShopWebApp.Core.Services
 {
@@ -21,38 +23,44 @@ namespace EShopWebApp.Core.Services
 
         }
 
-        public Task<string> UploadImageAsync(IEnumerable<IFormFile> imageFile, string fileName)
+        public ImageViewModel CreateImage(IFormFile imageFile, string fileName)
         {
-            foreach (var file in imageFile)
-            {
+            
+            
                 MemoryStream ms = new MemoryStream();
-                file.CopyTo(ms);
-                Image img = new Image()
-                {
-                    Name = file.FileName,
-                    Picture = ms.ToArray()
+                imageFile.CopyTo(ms);
+                ImageViewModel img = new ImageViewModel()
+                            {
+                                Name = imageFile.FileName,
+                                Picture = ms.ToArray()
 
 
-                };
+                            };
+                            
                 
                 ms.Close();
                 ms.Dispose();
 
-                db.Image.Add(img);
-                db.SaveChanges();
-            }
 
-            return Task.FromResult("Image uploaded successfully");
+            return img;
         }
 
         public Task DownloadImageAsync(Guid Id)
         {
-            var image = db.Image.FirstOrDefault(x => x.Id == Id);
+            throw new NotImplementedException();
+        }
 
-            MemoryStream ms = new MemoryStream(image.Picture);
+        public async Task<ImageViewModel> GetImageById(Guid Id)
+        {
+            var image = await db.Photos.FindAsync(Id);
 
-            var picture =
-            
+
+            ImageViewModel imageViewModel = new ImageViewModel()
+            {
+                Name = image.Name,
+                Picture = image.Picture
+            };
+            return imageViewModel;
         }
     }
 }
