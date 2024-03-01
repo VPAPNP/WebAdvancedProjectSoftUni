@@ -9,11 +9,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EShopWebApp.Infrastructure.Data.Configurations
 {
-    public class ProductBrandConfigurations : IEntityTypeConfiguration<ProductBrand>
+    public class OrderConfigurations : IEntityTypeConfiguration<Order>
     {
-        public void Configure(EntityTypeBuilder<ProductBrand> builder)
+        public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.HasKey(pb => new {pb.ProductId, pb.BrandId});
+            builder.Property(ta=>ta.TotalAmount)
+                .HasPrecision(18, 2);
         }
     }
 }

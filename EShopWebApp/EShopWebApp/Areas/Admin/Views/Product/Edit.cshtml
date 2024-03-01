@@ -11,7 +11,7 @@
 <hr />
 
 <div class="row">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="Edit">
         <div class="form-group">
             <div class="mb-3">
                 <label asp-for="Name"></label>
@@ -38,13 +38,7 @@
                         <span asp-validation-for="Price" class="small text-danger"></span>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="mb-3">
-                        <label asp-for="DiscountPrice"></label>
-                        <input asp-for="DiscountPrice" class="form-control" placeholder="Write your price here...">
-                        <span asp-validation-for="DiscountPrice" class="small text-danger"></span>
-                    </div>
-                </div>
+               
                 <div class="form-group">
                     <div class="mb-3">
                         <label asp-for="CategoryId"></label>
@@ -73,12 +67,8 @@
                 </div>
                 <div class="form-group">
                     <div class="mb-3">
-                        
-                            <label for="formFile" class="form-label">Default file input example</label>
+                            <label for="formFile" class="form-label">Select Photo</label>
                             <input class="form-control" type="file" name="file" id="formFile">
-                            <button type="submit">Upload</button>
-                        
-                        
                     </div>
                 </div>
                

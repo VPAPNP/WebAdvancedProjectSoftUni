@@ -14,9 +14,9 @@ namespace EShopWebApp.Core.Services
     public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IImageService _imageService;
+        private readonly Contracts.IPhotoService _imageService;
 
-        public ProductService(ApplicationDbContext context,IImageService imageService)
+        public ProductService(ApplicationDbContext context, Contracts.IPhotoService imageService)
         {
             _context = context;
             _imageService = imageService;
@@ -88,17 +88,31 @@ namespace EShopWebApp.Core.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task EditAsync(Guid id,ProductEditViewModel editProductModel)
+        public async Task EditAsync(IFormFile file,Guid id,ProductEditViewModel editProductModel)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.PhotoId);
+            var newPhoto = _imageService.CreateImage(file, file.FileName);
+            if (file != null)
+            {
+                if (photo.Name != newPhoto.Name)
+                {
+                    photo!.Name = newPhoto.Name;
+                    photo.Picture = newPhoto.Picture;
+                }
+                
+               
+            }
             
             product!.Name = editProductModel.Name;
             product.Description = editProductModel.Description;
             product.Price = editProductModel.Price;
-            product.PhotoId = editProductModel.ImageId;
+            product.PhotoId = photo.Id;
+            product.Quantity = editProductModel.StockQuantity;
             product.CategoryId = Guid.Parse(editProductModel.CategoryId);
             product.BrandId = Guid.Parse(editProductModel.BrandId);
             product.ModifiedOn = DateTime.UtcNow;
+            product.Photo = photo;
 
 
             await _context.SaveChangesAsync();
@@ -162,15 +176,16 @@ namespace EShopWebApp.Core.Services
                     }
                 }).ToListAsync();
                 
-           int totalProducts = await productsQuery.CountAsync();
+            int totalProducts = await productsQuery.CountAsync();
             int totalPages = (int)Math.Ceiling((double)totalProducts / productsQueryModel.PageSize);
-            var allProductsFiltredAndPagedServiceModel = new AllProductsFilteredAndPagedServiceModel
+            var allProductsFilteredAndPagedServiceModel = new AllProductsFilteredAndPagedServiceModel
             {
                TotalProducts = totalProducts,
                Products = productAllView
+               
             };
 
-            return allProductsFiltredAndPagedServiceModel;
+            return allProductsFilteredAndPagedServiceModel;
 
 
         }

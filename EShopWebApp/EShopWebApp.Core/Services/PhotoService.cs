@@ -13,23 +13,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EShopWebApp.Core.Services
 {
-    public class ImageService : IImageService
+    public class PhotoService : IPhotoService
     {
         private readonly ApplicationDbContext db;
 
-        public ImageService(ApplicationDbContext db)
+        public PhotoService(ApplicationDbContext db)
         {
             this.db = db;
 
         }
 
-        public ImageViewModel CreateImage(IFormFile imageFile, string fileName)
+        public PhotoViewModel CreateImage(IFormFile imageFile, string fileName)
         {
             
             
                 MemoryStream ms = new MemoryStream();
                 imageFile.CopyTo(ms);
-                ImageViewModel img = new ImageViewModel()
+                PhotoViewModel img = new PhotoViewModel()
                             {
                                 Name = imageFile.FileName,
                                 Picture = ms.ToArray()
@@ -45,22 +45,37 @@ namespace EShopWebApp.Core.Services
             return img;
         }
 
-        public Task DownloadImageAsync(Guid Id)
+        public Task DownloadPhotoAsync(Guid Id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ImageViewModel> GetImageById(Guid Id)
+        public async Task<PhotoViewModel> GetPhotoById(Guid Id)
         {
-            var image = await db.Photos.FindAsync(Id);
+            var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == Id);
 
-
-            ImageViewModel imageViewModel = new ImageViewModel()
+            var photoViewModel = new PhotoViewModel()
             {
-                Name = image.Name,
-                Picture = image.Picture
+                Name = photo.Name,
+                Picture = photo.Picture
             };
-            return imageViewModel;
+
+            return photoViewModel;
+
+
+        }
+
+        public async Task<PhotoViewModel> GetPhotoByName(string name)
+        {
+            var photo = await db.Photos.FirstOrDefaultAsync(p => p.Name == name);
+
+            var photoViewModel = new PhotoViewModel()
+            {
+                Name = photo.Name,
+                Picture = photo.Picture
+            };
+
+            return photoViewModel;
         }
     }
 }

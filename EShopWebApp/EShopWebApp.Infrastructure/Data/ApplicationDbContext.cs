@@ -20,11 +20,19 @@ namespace EShopWebApp.Infrastructure.Data
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
-        public DbSet<ProductBrand> ProductBrands { get; set; }
+        public DbSet<WishList> WishLists { get; set; }
 
-        public DbSet<ProductPhoto> ProductsPhotos { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+        public DbSet<PaymentInfo> PaymentInfos { get; set; }
+
+        public DbSet<ShippingInfo> ShippingInfos { get; set; }
+
+
 
         
 

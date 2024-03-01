@@ -14,7 +14,7 @@ namespace EShopWebApp.Core.Contracts
         Task CreateAsync(IFormFile file,ProductCreateViewModel productCreateViewModel);
         Task DeleteAsync(Guid id);
 
-        Task EditAsync(Guid id,ProductEditViewModel productEditViewModel);
+        Task EditAsync(IFormFile file,Guid id,ProductEditViewModel productEditViewModel);
 
         Task<AllProductsFilteredAndPagedServiceModel> GetAllFilteredAndPagedAsync(AllProductsQueryModel productsQueryModel);
 

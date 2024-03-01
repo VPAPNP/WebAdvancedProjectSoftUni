@@ -168,7 +168,7 @@ function displayCart() {
         
         output += "<tr>"
             + "<td><input asp-for='Model.ProductId' type = 'hidden' name = productId"  + (counter) + "  value = '" + (cartArray[i].id) + "' /></td>"
-            + "<td><img src='data: image; base64, @System.Convert.ToBase64String(" + (cartArray[i].image) + ")' width='100' height='100'>  </td>"
+            + "<td><img src='@System.Convert.ToBase64String(" + (cartArray[i].image) + ")' width='100' height='100'>  </td>"
             + "<td><div  class='input-group'><button  class='minus-item input-group-addon btn btn-primary' data-name=" + cartArray[i].name + ">-</button>"
             + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
             + "<button class='plus-item btn btn-primary input-group-addon' data-name=" + cartArray[i].name + ">+</button></div></td>"

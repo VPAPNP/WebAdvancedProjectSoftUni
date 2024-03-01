@@ -43,12 +43,11 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Guid BrandId { get; set; }
         [ForeignKey(nameof(BrandId))]
         public Brand Brand { get; set; } = null!;
+        
 
-        public ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
-        public ICollection<ProductBrand> ProductBrands { get; set; } = new List<ProductBrand>();
-        public ICollection<ProductPhoto> ProductsPhotos { get; set; } = new List<ProductPhoto>();
 
-       
+
+
 
 
 

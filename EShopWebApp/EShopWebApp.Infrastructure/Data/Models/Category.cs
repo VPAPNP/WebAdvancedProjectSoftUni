@@ -20,7 +20,7 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public string Name { get; set; } = null!;
         public bool IsDeleted { get; set; }
 
-        public ICollection<ProductCategory> ProductsCategories { get; set; } = new HashSet<ProductCategory>();
+       
 
        
     }

@@ -19,7 +19,7 @@ builder.Services.AddTransient<DatabaseInitializer>();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddApplicationServices(typeof(IImageService));
+builder.Services.AddApplicationServices(typeof(IPhotoService));
 builder.Services.AddControllersWithViews()
     .AddMvcOptions(options =>
     {

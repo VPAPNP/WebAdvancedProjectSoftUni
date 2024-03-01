@@ -9,12 +9,12 @@ namespace EShopWebApp.Infrastructure.Data.Models
     {
         [Comment("Brand id")]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Comment("Brand name")]
         [Required]
         [MaxLength(NameMaxLength)]
         public string Name { get; set; } = null!;
         public bool IsDeleted { get; set; }
-        public ICollection<ProductBrand> ProductsBrands { get; set; } = new HashSet<ProductBrand>();
+        
     }
 }

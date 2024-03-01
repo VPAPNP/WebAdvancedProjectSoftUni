@@ -22,17 +22,9 @@
         {
             public const int ImageMaxLength = 2048;
         }
-        public static class ProductCategories
-        {
-            public const int NameMinLength = 3;
-            public const int NameMaxLength = 50;
-        }
+        
 
-        public static class Order
-        {
-            public const int NameMinLength = 3;
-            public const int NameMaxLength = 50;
-        }
+        
 
         public static class User
         {
@@ -40,11 +32,7 @@
             public const int NameMaxLength = 50;
         }
 
-        public static class Address
-        {
-            public const int NameMinLength = 3;
-            public const int NameMaxLength = 50;
-        }
+        
 
         public static class Brand
         {
@@ -53,6 +41,32 @@
 
         }
 
+        public static class PaymentInfo
+        {
+            public  const int CardNumberMinLength = 16;
+            public  const int CardNumberMaxLength = 16;
+
+
+        }
+
+        public static class ShippingInfo
+        {
+           
+            public const int AddressMaxLength = 50;
+            
+            public const int CityMaxLength = 50;
+           
+            public const int RecipientNameMaxLength = 50;
+        }
+
+        public static class ApplicationUser
+        {
+            public const int FirstNameMaxLength = 50;
+            public const int LastNameMaxLength = 50;
+            public const int MiddleNameMaxLength = 50;
+            public const int AddressMaxLength = 500;
+            
+        }
 
     }
 }

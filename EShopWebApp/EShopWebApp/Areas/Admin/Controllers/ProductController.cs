@@ -1,7 +1,5 @@
 ﻿using EShopWebApp.Core.Contracts;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
-using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +11,9 @@ namespace EShopWebApp.Areas.Admin.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
-        private readonly IImageService _imageService;
+        private readonly IPhotoService _imageService;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, IBrandService brandService, IImageService imageService)
+        public ProductController(IProductService productService, ICategoryService categoryService, IBrandService brandService, IPhotoService imageService)
         {
             _productService = productService;
             _categoryService = categoryService;
@@ -65,7 +63,6 @@ namespace EShopWebApp.Areas.Admin.Controllers
                     Name = productView.Name,
                     Description = productView.Description,
                     Price = productView.Price,
-                   
                     StockQuantity = productView.StockQuantity,
                     BrandId = productView.BrandId,
                     CreatedOn = productView.CreatedOn,
@@ -99,25 +96,27 @@ namespace EShopWebApp.Areas.Admin.Controllers
             var product = await _productService.GetByIdAsync(Guid.Parse(id));
             var categories = await _categoryService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
-          
+            var photo = await _imageService.GetPhotoById(product.PhotoId);
             var productEditForm = new ProductEditFormViewModel
             {
 
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                
+                StockQuantity = product.Quantity,
                 BrandId = product.BrandId.ToString()!,
                 CreatedOn = product.CreatedOn,
                 CategoryId = product.CategoryId.ToString()!,
                 Categories = categories,
-                Brands = brands
+                Brands = brands,
+               
+
             };
             return View(productEditForm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(string id, ProductEditViewModel editProductModel)
+        public async Task<IActionResult> Edit(IFormFile file ,string id, ProductEditViewModel editProductModel)
         {
             if (!ModelState.IsValid)
             {
@@ -137,7 +136,7 @@ namespace EShopWebApp.Areas.Admin.Controllers
                 };
                 return View(productEditForm);
             }
-            await _productService.EditAsync(Guid.Parse(id), editProductModel);
+            await _productService.EditAsync(file,Guid.Parse(id), editProductModel);
             return RedirectToAction("All", "Product");
         }
     }
