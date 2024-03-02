@@ -14,7 +14,7 @@
         //ProductSearch Constants
         public static class Product
         {
-            public const int ProductsPerPage = 1;
+            public const int ProductsPerPage = 3;
             public const int DefaultPageNumber = 1;
 
         }

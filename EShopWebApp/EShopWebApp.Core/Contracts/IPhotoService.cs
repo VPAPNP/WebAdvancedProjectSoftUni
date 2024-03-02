@@ -13,5 +13,7 @@ namespace EShopWebApp.Core.Contracts
         Task<PhotoViewModel> GetPhotoById(Guid Id);
 
         Task<PhotoViewModel> GetPhotoByName(string name);
+
+        Task DeletePhotoAsync(Guid id);
     }
 }

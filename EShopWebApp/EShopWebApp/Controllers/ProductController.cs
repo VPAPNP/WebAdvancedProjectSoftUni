@@ -27,7 +27,7 @@ namespace EShopWebApp.Controllers
             AllProductsFilteredAndPagedServiceModel serviceModel = await _productService.GetAllFilteredAndPagedAsync(queryModel);
             
             queryModel.Products = serviceModel.Products;
-            queryModel.TotalProducts = serviceModel.Products.Count();
+            queryModel.TotalProducts = serviceModel.TotalProducts;
             queryModel.Categories = await _categoryService.GetAllNamesAsync();
             queryModel.Brands = await _brandService.GetAllNamesAsync();
 

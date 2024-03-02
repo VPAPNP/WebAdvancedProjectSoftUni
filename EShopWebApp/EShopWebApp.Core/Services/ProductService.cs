@@ -84,6 +84,8 @@ namespace EShopWebApp.Core.Services
         public async Task DeleteAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
+            var photoId = product.PhotoId;
+            await _imageService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
@@ -164,7 +166,6 @@ namespace EShopWebApp.Core.Services
                     Id = p.Id,
                     Name = p.Name,
                     Price = p.Price,
-                   
                     Description = p.Description,
                     Image = p.Photo.Picture,
                     

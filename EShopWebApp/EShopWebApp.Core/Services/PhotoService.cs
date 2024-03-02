@@ -77,5 +77,12 @@ namespace EShopWebApp.Core.Services
 
             return photoViewModel;
         }
+
+        public async Task DeletePhotoAsync(Guid id)
+        {
+            var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == id);
+            db.Photos.Remove(photo!);
+            await db.SaveChangesAsync();
+        }
     }
 }

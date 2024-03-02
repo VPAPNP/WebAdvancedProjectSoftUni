@@ -126,7 +126,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", t =>
+                    b.ToTable("Brands", null, t =>
                         {
                             t.HasComment("Brands of products");
                         });
@@ -152,7 +152,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", t =>
+                    b.ToTable("Categories", null, t =>
                         {
                             t.HasComment("This is a category table");
                         });
@@ -178,7 +178,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", t =>
+                    b.ToTable("Orders", null, t =>
                         {
                             t.HasComment("Order table");
                         });
@@ -205,7 +205,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", t =>
+                    b.ToTable("OrderItems", null, t =>
                         {
                             t.HasComment("OrderItem table");
                         });
@@ -233,7 +233,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("PaymentInfos", t =>
+                    b.ToTable("PaymentInfos", null, t =>
                         {
                             t.HasComment("PaymentInfo table");
                         });
@@ -259,7 +259,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Photos", t =>
+                    b.ToTable("Photos", null, t =>
                         {
                             t.HasComment("Photo table");
                         });
@@ -331,7 +331,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("WishListId");
 
-                    b.ToTable("Products", t =>
+                    b.ToTable("Products", null, t =>
                         {
                             t.HasComment("Product table");
                         });
@@ -366,7 +366,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("ShippingInfos", t =>
+                    b.ToTable("ShippingInfos", null, t =>
                         {
                             t.HasComment("This is a ShippingInfo table");
                         });
@@ -398,7 +398,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("ShoppingCarts", t =>
+                    b.ToTable("ShoppingCarts", null, t =>
                         {
                             t.HasComment("ShoppingCart table");
                         });
@@ -418,7 +418,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("WishLists", t =>
+                    b.ToTable("WishLists", null, t =>
                         {
                             t.HasComment("WishList table");
                         });
