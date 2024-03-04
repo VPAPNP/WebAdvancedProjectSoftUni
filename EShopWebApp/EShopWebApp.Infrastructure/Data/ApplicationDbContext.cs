@@ -32,6 +32,8 @@ namespace EShopWebApp.Infrastructure.Data
 
         public DbSet<ShippingInfo> ShippingInfos { get; set; }
 
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+
 
 
         

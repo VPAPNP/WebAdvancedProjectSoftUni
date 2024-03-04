@@ -18,7 +18,7 @@ namespace EShopWebApp.Infrastructure.Data.Models
 
         public DateTime CreatedOn { get; set; }
 
-        public ICollection<Product> Products { get; set; } = new HashSet<Product>();
+        public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new HashSet<ShoppingCartItem>();
         
     }
 }

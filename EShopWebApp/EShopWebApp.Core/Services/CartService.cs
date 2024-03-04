@@ -89,7 +89,7 @@ namespace EShopWebApp.Core.Services
             return new CartViewModel();
         }
 
-        public  Task<IEnumerable<T>> GetCartProductsAsync<T>(Guid userId)
+        public  Task<IEnumerable<ProductViewModel>> GetCartProductsAsync(Guid userId)
         {
            throw new NotImplementedException();
             

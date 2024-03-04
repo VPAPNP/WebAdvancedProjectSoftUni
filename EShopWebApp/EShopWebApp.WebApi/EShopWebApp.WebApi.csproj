@@ -4,11 +4,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    
+    <UserSecretsId>f218ca21-9bd7-4033-a93e-a121a10020a8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EShopWebApp.Core\EShopWebApp.Core.csproj" />
+    <ProjectReference Include="..\EShopWebApp.Infrastructure\EShopWebApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

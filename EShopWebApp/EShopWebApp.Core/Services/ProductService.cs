@@ -38,6 +38,7 @@ namespace EShopWebApp.Core.Services
                     Name = p.Category.Name
                 }
             }).ToListAsync();
+            Console.WriteLine();
                return products;
         }
 
