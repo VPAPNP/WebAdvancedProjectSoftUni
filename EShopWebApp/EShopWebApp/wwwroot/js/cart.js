@@ -36,7 +36,7 @@ var shoppingCart = (function () {
     var obj = {};
 
     // Add to cart
-    obj.addItemToCart = function (name, price,id, count) {
+    obj.addItemToCart = function (id,name, price, count) {
         for (var item in cart) {
             if (cart[item].name === name) {
                 cart[item].count++;
@@ -44,7 +44,7 @@ var shoppingCart = (function () {
                 return;
             }
         }
-        var item = new Item(name, price,id,count);
+        var item = new Item(id,name, price,count);
         cart.push(item);
         saveCart();
     }
@@ -144,22 +144,41 @@ var shoppingCart = (function () {
 $('.add-to-cart').on('click',(function (event) {
     event.preventDefault();
     event.stopPropagation();
-    
+    var id = $(this).data('id');
+    var name = $(this).data('name');
+    var price = $(this).data('price');
+   
+    shoppingCart.addItemToCart(id, name, price, 1);
+    console.log(cart)
+    displayCart();
     
     var endpoint = 'https://localhost:7092/api/CartApi';
-    var id = $(this).data('id'); 
-    var url = `${endpoint}?id=${id}`;
+    //var id = $(this).data('id'); 
+    //var url = `${endpoint}?id=${id}`;
    
-    $.get(url, function (data) {
-       var id = data.id;
-        var name = data.name;
-        var price = data.price;
-        shoppingCart.addItemToCart(id,name, price, 1);
-        displayCart();
-    });
+    //$.get(url, function (data) {
+       
+    //});
     
     
    
+}));
+$('.order-now').on('click', (function (event) {
+
+    console.log(cart);
+    for (var item in cart) {
+        $.ajax({
+            type: "POST",
+            
+            url: "https://localhost:7092/api/CartApi",
+            contentType: "application/json"
+        }).done(function (res) {
+            console.log('res', res);
+            // Do something with the result :)
+        });
+    }
+   
+
 }));
 
 // Clear items
@@ -206,8 +225,13 @@ $('.show-cart').on('click', '.minus-item', function (event) {
 })
 // +1
 $('.show-cart').on('click', '.plus-item', function (event) {
+    var id = $(this).data('id')
     var name = $(this).data('name')
-    shoppingCart.addItemToCart(name);
+    var price = $(this).data('price')
+    var count = $(this).data('count')
+
+
+    shoppingCart.addItemToCart(id,name,price,count);
     displayCart();
 })
 
@@ -218,5 +242,7 @@ $('.show-cart').on('change', '.item-count', function (event) {
     shoppingCart.setCountForItem(name, count);
     displayCart();
 });
+
+
 
 displayCart();

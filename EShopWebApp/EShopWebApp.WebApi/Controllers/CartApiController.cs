@@ -41,5 +41,15 @@ namespace EShopWebApp.WebApi.Controllers
            
            
         }
+        [HttpPost]
+        public IActionResult YourAction([FromBody] ProductViewApiModel item)
+        {
+            // Process the received JSON object
+            // Access model properties here
+
+            // Return appropriate response
+            return Ok(); // or any other IHttpActionResult depending on your logic
+        }
     }
 }
+

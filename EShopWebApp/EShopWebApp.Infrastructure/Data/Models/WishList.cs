@@ -13,7 +13,7 @@ namespace EShopWebApp.Infrastructure.Data.Models
 
         // Navigation property
         [ForeignKey(nameof(UserId))]
-        public ApplicationUser Customer { get; set; }
-        public ICollection<Product> Products { get; set; }
+        public ApplicationUser Customer { get; set; } = null!;
+        public ICollection<Product> Products { get; set; } = null!;
     }
 }

@@ -8,8 +8,8 @@
                 <p class="card-text">@Model.Price $</p>
             </div>
             <div class="card-footer text-center">
-                <a href="#" data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary">Add to cart</a>
-                <a  class="btn btn-warning add-to-cart" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price">Add</a>
+        <a id="1s1" data-id="@Model.Id"   data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary" asp-area="" asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id">Add to cart</a>
+               
             </div>
         </div>
 

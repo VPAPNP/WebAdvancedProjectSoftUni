@@ -1,6 +1,5 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
-using EShopWebApp.Infrastructure;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,8 @@ namespace EShopWebApp.Core.Services
         {
             
             var cart = await _context.ShoppingCarts
-
+                .Include(sci=>sci.ShoppingCartItems)
+                .ThenInclude(p=>p.Product)
                 .FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
 
             if (cart == null)
@@ -31,62 +31,82 @@ namespace EShopWebApp.Core.Services
                 };
                 _context.ShoppingCarts.Add(cart);
             }
-            var product = await _context.Products.FindAsync(productId);
-
-            return new CartViewModel();
-
-            
-            
-            
-
+            if (cart.ShoppingCartItems.Any(p=>p.Product.Id == productId))
+            {
+                cart.ShoppingCartItems.FirstOrDefault(p => p.Product.Id == productId).Quantity += 1;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                await _context.ShoppingCartItems.AddAsync(new ShoppingCartItem
+                {
+                    ProductId = productId,
+                    CartId = cart.Id,
+                    Quantity = 1
+                });
+               
+                await _context.SaveChangesAsync();
+                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
+            }
            
 
-           
-
-            
-
-            await _context.SaveChangesAsync();
-
-           
-            
-            
+            return new CartViewModel
+            {
+                Id = cart.Id,
+                UserId = cart.UserId,
+                ShoppingCartItems = cart.ShoppingCartItems.Select(sci => new ShoppingCartItemViewModel
+                {
+                    Id = sci.Id,
+                    ProductId = sci.ProductId,
+                    CartId = sci.CartId,
+                    Quantity = sci.Quantity,
+                    Product = new ProductViewModel
+                    {
+                        Id = sci.Product!.Id,
+                        Name = sci.Product.Name,
+                        Description = sci.Product.Description,
+                        Price = sci.Product.Price,
+                    }
+                }).ToList()
+            };
             
         }
 
         public async Task<CartViewModel> GetCartAsync(string userId)
         {
-            var cart = await _context.ShoppingCarts
+            var cart = await _context.ShoppingCarts.Include(sci=>sci.ShoppingCartItems)
+                .ThenInclude(p=>p.Product)
 
                 .FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
 
-            //if (cart == null)
-            //{
-            //    return new CartViewModel();
-            //}
+            if (cart == null)
+            {
+                return new CartViewModel();
+            }
 
-            //return new CartViewModel
-            //{
-            //    Id = cart.Id,
-            //    UserId = cart.UserId,
-            //    ShoppingCartItems = cart.ShoppingCartItems.Select(sci => new ShoppingCartItemViewModel
-            //    {
-            //        Id = sci.Id,
-            //        ProductId = sci.ProductId,
-            //        CartId = sci.CartId,
-            //        Quantity = sci.Quantity,
-            //        Product = new ProductViewModel
-            //        {
-            //            Id = sci.Product.Id,
-            //            Name = sci.Product.Name,
-            //            Description = sci.Product.Description,
-            //            Price = sci.Product.Price,
-            //            ImageUrl = sci.Product.ImageUrl
-            //        }
-            //    }).ToList()
+            return new CartViewModel
+            {
+                Id = cart.Id,
+                UserId = cart.UserId,
+                ShoppingCartItems = cart.ShoppingCartItems.Select(sci => new ShoppingCartItemViewModel
+                {
+                    Id = sci.Id,
+                    ProductId = sci.ProductId,
+                    CartId = sci.CartId,
+                    Quantity = sci.Quantity,
+                    Product = new ProductViewModel
+                    {
+                        Id = sci.Product!.Id,
+                        Name = sci.Product.Name,
+                        Description = sci.Product.Description,
+                        Price = sci.Product.Price,
+                       
+                    }
+                }).ToList()
 
-            //};
+            };
 
-            return new CartViewModel();
+            
         }
 
         public  Task<IEnumerable<ProductViewModel>> GetCartProductsAsync(Guid userId)
@@ -103,33 +123,37 @@ namespace EShopWebApp.Core.Services
 
         public async Task RemoveProduct(Guid productId, string userId)
         {
-            //var cart = await _context.Carts
-            //    .Include(c => c.ShoppingCartItems)
-            //    .FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
+            var cart = await _context.ShoppingCarts
+                .Include(c => c.ShoppingCartItems)
+                .FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
 
-            //if (cart == null)
-            //{
-            //    return;
-            //}
+            if (cart == null)
+            {
+                return;
+            }
 
-            //var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.Id == productId);
+            var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.Id == productId);
 
-            //if (cartItem == null)
-            //{
-            //    return;
-            //}
+            if (cartItem == null)
+            {
+                return;
+            }
 
-            //if (cartItem.Quantity >= 1)
-            //{
-            //    cartItem.Quantity--;
-            //}
-            //else
-            //{
-            //    _context.ShoppingCartItems.Remove(cartItem);
-            //}
+            if (cartItem.Quantity >= 1)
+            {
+                cartItem.Quantity--;
+                if (cartItem.Quantity == 0)
+                {
+                    _context.ShoppingCartItems.Remove(cartItem);
+                }
+            }
+            else
+            {
+                _context.ShoppingCartItems.Remove(cartItem);
+            }
 
-            //await _context.SaveChangesAsync();
-            
+            await _context.SaveChangesAsync();
+
 
         }
 

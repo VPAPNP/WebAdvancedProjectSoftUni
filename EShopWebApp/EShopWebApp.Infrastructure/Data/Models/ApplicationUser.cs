@@ -8,15 +8,15 @@ namespace EShopWebApp.Infrastructure.Data.Models
     public class ApplicationUser : IdentityUser<Guid>
     {
         [MaxLength(FirstNameMaxLength)]
-        public required string FirstName { get; set; }
+        public required string FirstName { get; set; } = string.Empty;
         [MaxLength(MiddleNameMaxLength)]
-        public string? MiddleName { get; set; }
+        public string? MiddleName { get; set; } = string.Empty;
         [MaxLength(LastNameMaxLength)]
-        public required string LastName { get; set; }
+        public required string LastName { get; set; }   = string.Empty;
         [MaxLength(AddressMaxLength)]
         public string? Address { get; set; }
         public ICollection<Order> Orders { get; set; } = null!;
-        public ShoppingCart ShoppingCart { get; set; } = new ();
-        public WishList WishList { get; set; } =new();
+        public ShoppingCart ShoppingCart { get; set; } 
+        public WishList WishList { get; set; } 
     }
 }

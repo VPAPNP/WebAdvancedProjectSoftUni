@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Azure.Core;
-using EShopWebApp.Core.Contracts;
+﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Infrastructure.Data;
-using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,7 +49,7 @@ namespace EShopWebApp.Core.Services
 
             var photoViewModel = new PhotoViewModel()
             {
-                Name = photo.Name,
+                Name = photo!.Name,
                 Picture = photo.Picture
             };
 
@@ -71,7 +64,7 @@ namespace EShopWebApp.Core.Services
 
             var photoViewModel = new PhotoViewModel()
             {
-                Name = photo.Name,
+                Name = photo!.Name,
                 Picture = photo.Picture
             };
 

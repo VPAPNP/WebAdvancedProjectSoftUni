@@ -85,7 +85,7 @@ namespace EShopWebApp.Core.Services
         public async Task DeleteAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photoId = product.PhotoId;
+            var photoId = product!.PhotoId;
             await _imageService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
             await _context.SaveChangesAsync();
@@ -94,23 +94,14 @@ namespace EShopWebApp.Core.Services
         public async Task EditAsync(IFormFile file,Guid id,ProductEditViewModel editProductModel)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.PhotoId);
-            var newPhoto = _imageService.CreateImage(file, file.FileName);
-            if (file != null)
-            {
-                if (photo.Name != newPhoto.Name)
-                {
-                    photo!.Name = newPhoto.Name;
-                    photo.Picture = newPhoto.Picture;
-                }
-                
-               
-            }
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.PhotoId);
+            
+            
             
             product!.Name = editProductModel.Name;
             product.Description = editProductModel.Description;
             product.Price = editProductModel.Price;
-            product.PhotoId = photo.Id;
+            product.PhotoId = photo!.Id;
             product.Quantity = editProductModel.StockQuantity;
             product.CategoryId = Guid.Parse(editProductModel.CategoryId);
             product.BrandId = Guid.Parse(editProductModel.BrandId);

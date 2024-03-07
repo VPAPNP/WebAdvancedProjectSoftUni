@@ -15,10 +15,10 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Guid UserId { get; set; }
         // Navigation properties
         [ForeignKey(nameof(UserId))]
-        public ApplicationUser Customer { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
-        public PaymentInfo PaymentInfo { get; set; }
-        public ShippingInfo ShippingInfo { get; set; }
+        public ApplicationUser Customer { get; set; } = null!;
+        public ICollection<OrderItem> OrderItems { get; set; }  = null!;
+        public PaymentInfo PaymentInfo { get; set; } = null!;
+        public ShippingInfo ShippingInfo { get; set; } =null!;
         
     }
 }
