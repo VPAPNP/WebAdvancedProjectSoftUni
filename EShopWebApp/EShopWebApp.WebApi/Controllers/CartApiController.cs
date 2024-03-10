@@ -52,7 +52,7 @@ namespace EShopWebApp.WebApi.Controllers
         public async Task<IActionResult> YourAction(ICollection<ProductViewApiModel> items)
         {
             
-            await _cartService.AddProductsListToGuestCart(items);
+            
 
             // Return appropriate response
             return Ok(items); // or any other IHttpActionResult depending on your logic

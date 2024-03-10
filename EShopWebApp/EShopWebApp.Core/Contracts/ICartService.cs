@@ -1,5 +1,4 @@
 ﻿using EShopWebApp.Core.ViewModels.CartViewModels;
-using EShopWebApp.Core.ViewModels.ProductViewModels;
 
 namespace EShopWebApp.Core.Contracts
 {
@@ -15,10 +14,8 @@ namespace EShopWebApp.Core.Contracts
         Task<CartViewModel> GetCartAsync(string userId);
         Task<CartViewModel> GetGuestCartAsync(string sessionId);
         Task<IEnumerable<ProductViewModel>> GetGuestCartProductsAsync(Guid sessionId);
-
         Task RemoveProduct(Guid productId, string userId);
         Task RemoveGuestProduct(Guid productId);
-
         Task<string> CreateShoppingCartSession();
         Task<List<ShoppingCartItemViewModel>> GetCartItems();
 
