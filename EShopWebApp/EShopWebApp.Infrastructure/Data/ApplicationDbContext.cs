@@ -34,6 +34,8 @@ namespace EShopWebApp.Infrastructure.Data
 
         public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
+        public DbSet<ShoppingCartSession> ShoppingCartSessions { get; set; }
+
 
 
         

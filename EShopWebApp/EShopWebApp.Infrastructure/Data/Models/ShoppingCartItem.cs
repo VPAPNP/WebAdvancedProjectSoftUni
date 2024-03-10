@@ -9,7 +9,8 @@ namespace EShopWebApp.Infrastructure.Data.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        
+        public Guid SessionId { get; set; }
+        public Guid? UserId { get; set; }
         public Guid CartId { get; set; }
         [ForeignKey(nameof(CartId))]
         public  ShoppingCart Cart { get; set; } = null!;

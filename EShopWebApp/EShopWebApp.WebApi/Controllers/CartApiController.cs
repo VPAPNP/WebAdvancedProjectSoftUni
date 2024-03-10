@@ -13,11 +13,18 @@ namespace EShopWebApp.WebApi.Controllers
     {
         
         private readonly IProductService _productService;
+        private readonly ICartService _cartService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CartApiController(IProductService productService)
+        public CartApiController(IProductService productService,
+            ICartService cartService,
+            IHttpContextAccessor httpContextAccessor
+            )
         {
            
             _productService = productService;
+            _cartService = cartService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -41,14 +48,22 @@ namespace EShopWebApp.WebApi.Controllers
            
            
         }
-        [HttpPost]
-        public IActionResult YourAction([FromBody] ProductViewApiModel item)
+        [HttpPut]
+        public async Task<IActionResult> YourAction(ICollection<ProductViewApiModel> items)
         {
-            // Process the received JSON object
-            // Access model properties here
+            
+            await _cartService.AddProductsListToGuestCart(items);
 
             // Return appropriate response
-            return Ok(); // or any other IHttpActionResult depending on your logic
+            return Ok(items); // or any other IHttpActionResult depending on your logic
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(ProductViewApiModel product)
+        {
+
+
+            await _cartService.AddProductToGuestCartAsync(Guid.Parse(product.Id));
+            return Ok("Ok");
         }
     }
 }

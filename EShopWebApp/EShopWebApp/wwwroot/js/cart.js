@@ -18,14 +18,14 @@ var shoppingCart = (function () {
 
     // Save cart
     function saveCart() {
-        sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
     }
 
     // Load cart
     function loadCart() {
-        cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
+        cart = JSON.parse(localStorage.getItem('shoppingCart'));
     }
-    if (sessionStorage.getItem("shoppingCart") != null) {
+    if (localStorage.getItem("shoppingCart") != null) {
         loadCart();
     }
 
@@ -147,39 +147,96 @@ $('.add-to-cart').on('click',(function (event) {
     var id = $(this).data('id');
     var name = $(this).data('name');
     var price = $(this).data('price');
+    
    
     shoppingCart.addItemToCart(id, name, price, 1);
-    console.log(cart)
+    
     displayCart();
-    
-    var endpoint = 'https://localhost:7092/api/CartApi';
-    //var id = $(this).data('id'); 
-    //var url = `${endpoint}?id=${id}`;
    
-    //$.get(url, function (data) {
-       
-    //});
+    var product = {
+        id: id,
+        name: name,
+        price: price,
+        quantity: 1
+    };
     
+    var response = fetch('https://localhost:7092/api/CartApi', {
+method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(product)
+    })
+    console.log(response);
     
    
 }));
 $('.order-now').on('click', (function (event) {
 
-    console.log(cart);
-    for (var item in cart) {
-        $.ajax({
-            type: "POST",
-            
-            url: "https://localhost:7092/api/CartApi",
-            contentType: "application/json"
-        }).done(function (res) {
-            console.log('res', res);
-            // Do something with the result :)
+    //console.log(cart);
+    //for (var item in cart) {
+    //    $.ajax({
+    //        type: "POST",
+
+    //        url: "https://localhost:7092/api/CartApi",
+    //        contentType: "application/json"
+    //    }).done(function (res) {
+    //        console.log('res', res);
+    //        // Do something with the result :)
+    //    });
+    //}
+    async function getCart() {
+
+        var tempCart = shoppingCart.listCart();
+
+        
+        cartList = [];
+        for (var item in tempCart) {
+            var currentCart = {
+                id: tempCart[item].id,
+                name: tempCart[item].name,
+                price: tempCart[item].price,
+                quantity: tempCart[item].count
+            };
+            cartList.push(currentCart);
+        }
+        
+
+        const rawResponse = await fetch('https://localhost:7092/api/CartApi', {
+
+
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cartList)
+        })
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+
+        }
+        return response.json(); // Parse the JSON response
+        })
+        .then(data => {
+            console.log(data); // Log the response data
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
         });
+
+        
+        
     }
+
+    console.log(getCart());
    
 
 }));
+
+
+
 
 // Clear items
 $('.clear-cart').on('click',(function () {
