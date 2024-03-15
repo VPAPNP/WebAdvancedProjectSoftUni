@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using EShopWebApp.Infrastructure.Data.Models;
+using System.Security.Claims;
+using EShopWebApp.Core.Contracts;
 
 namespace EShopWebApp.Areas.Identity.Pages.Account
 {
@@ -15,11 +17,15 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ICartService _cartService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, ICartService cartService, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _cartService = cartService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -108,6 +114,21 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    if (sessionId != null)
+                    {
+                        var productsFromGuestCart = await _cartService.GetGuestCartProductsAsync(Guid.Parse(sessionId));
+
+                        foreach (var product in productsFromGuestCart)
+                        {
+                            await _cartService.AddProductToCartAsync(product.Id, userId.ToString());
+                            await _cartService.RemoveGuestProduct(product.Id);
+                        }
+
+
+
+                    }
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

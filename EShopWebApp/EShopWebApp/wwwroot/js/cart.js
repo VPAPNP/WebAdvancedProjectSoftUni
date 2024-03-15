@@ -15,17 +15,19 @@ var shoppingCart = (function () {
         this.price = price;
         this.count = count;
     }
+    
 
+    
     // Save cart
     function saveCart() {
-        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
     }
 
     // Load cart
     function loadCart() {
-        cart = JSON.parse(localStorage.getItem('shoppingCart'));
+        cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
     }
-    if (localStorage.getItem("shoppingCart") != null) {
+    if (sessionStorage.getItem("shoppingCart") != null) {
         loadCart();
     }
 
@@ -90,10 +92,8 @@ var shoppingCart = (function () {
 
     // Count cart 
     obj.totalCount = function () {
-        var totalCount = 0;
-        for (var item in cart) {
-            totalCount += cart[item].count;
-        }
+        var totalCount = fetch('api/cart/totalcount')
+        
         return totalCount;
     }
 
@@ -141,7 +141,7 @@ var shoppingCart = (function () {
 // Triggers / Events
 // ***************************************** 
 // Add item
-$('.add-to-cart').on('click',(function (event) {
+$('.add-to-cart').on('click',( async function (event) {
     event.preventDefault();
     event.stopPropagation();
     var id = $(this).data('id');
@@ -160,82 +160,8 @@ $('.add-to-cart').on('click',(function (event) {
         quantity: 1
     };
     
-    var response = fetch('https://localhost:7092/api/CartApi', {
-method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(product)
-    })
-    console.log(response);
-    
    
 }));
-$('.order-now').on('click', (function (event) {
-
-    //console.log(cart);
-    //for (var item in cart) {
-    //    $.ajax({
-    //        type: "POST",
-
-    //        url: "https://localhost:7092/api/CartApi",
-    //        contentType: "application/json"
-    //    }).done(function (res) {
-    //        console.log('res', res);
-    //        // Do something with the result :)
-    //    });
-    //}
-    async function getCart() {
-
-        var tempCart = shoppingCart.listCart();
-
-        
-        cartList = [];
-        for (var item in tempCart) {
-            var currentCart = {
-                id: tempCart[item].id,
-                name: tempCart[item].name,
-                price: tempCart[item].price,
-                quantity: tempCart[item].count
-            };
-            cartList.push(currentCart);
-        }
-        
-
-        const rawResponse = await fetch('https://localhost:7092/api/CartApi', {
-
-
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cartList)
-        })
-        .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-
-        }
-        return response.json(); // Parse the JSON response
-        })
-        .then(data => {
-            console.log(data); // Log the response data
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-
-        
-        
-    }
-
-    console.log(getCart());
-   
-
-}));
-
-
 
 
 // Clear items

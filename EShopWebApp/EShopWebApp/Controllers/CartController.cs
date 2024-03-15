@@ -68,27 +68,10 @@ namespace EShopWebApp.Controllers
             {
                 cartView = await _cartService.AddProductToGuestCartAsync(id);
 
-
-
             }
             else
             {
-                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (sessionId != null)
-                {
-                    var productsFromGuestCart = await _cartService.GetGuestCartProductsAsync(Guid.Parse(sessionId));
-                    
-                    foreach (var product in productsFromGuestCart)
-                    {
-                        await _cartService.AddProductToCartAsync(product.Id, userId.ToString());
-                        await _cartService.RemoveGuestProduct(product.Id);
-                    }
-
-
-                    
-                }
-                
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 cartView = await _cartService.AddProductToCartAsync(id, userId!);
             }
             

@@ -17,7 +17,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddTransient<DatabaseInitializer>();
 builder.Services.AddHttpContextAccessor();
 
-
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -36,6 +35,12 @@ using (var scope = app.Services.CreateScope())
     var databaseInitializer = services.GetRequiredService<DatabaseInitializer>();
 
     await databaseInitializer.InitializeRolesAsync();
+    await databaseInitializer.InitializeUsersAsync();
+    await databaseInitializer.InitializeCategoriesAsync();
+    await databaseInitializer.InitializeBrandsAsync();
+    await databaseInitializer.InitializePhotosAsync();
+    await databaseInitializer.InitializeProductsAsync();
+
 
 
 }

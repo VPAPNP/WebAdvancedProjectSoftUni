@@ -29,42 +29,18 @@ namespace EShopWebApp.WebApi.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(200, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(200, Type = typeof(int))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get()
         {
 
-            try
-            {
-                var product = await _productService.GetByIdAsync(Guid.Parse(id));
-                return this.Ok(product);
-            }
-            catch (Exception )
-            {
-                return this.BadRequest();
-            }
+            return Ok();
 
            
            
            
         }
-        [HttpPut]
-        public async Task<IActionResult> YourAction(ICollection<ProductViewApiModel> items)
-        {
-            
-            
-
-            // Return appropriate response
-            return Ok(items); // or any other IHttpActionResult depending on your logic
-        }
-        [HttpPost]
-        public async Task<IActionResult> AddToCart(ProductViewApiModel product)
-        {
-
-
-            await _cartService.AddProductToGuestCartAsync(Guid.Parse(product.Id));
-            return Ok("Ok");
-        }
+       
     }
 }
 
