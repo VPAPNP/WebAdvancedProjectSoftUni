@@ -1,0 +1,45 @@
+﻿
+
+        <form method="post">
+		<div class="modal" id="cart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content card">
+					<div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><img src="~/cart-icon.png" alt="My Happy SVG"/> Cart</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<table class="show-cart table">
+						</table>
+						<div>Total price: $<span class="total-cart"></span></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					@if (User.Identity.IsAuthenticated)
+					{
+                          <a type="button" class="btn btn-primary order-now">Order now</a>
+                    }
+                    else
+                    {
+                        <a type="button" class=" btn btn-primary" href="/Identity/Account/Login">Login</a>
+					}
+					
+                           
+                            
+                       
+					</div>
+				</div>
+			</div>
+		</div>
+        </form>
+        
+
+        
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+       
+
+
+

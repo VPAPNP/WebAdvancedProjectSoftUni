@@ -5,6 +5,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -69,6 +70,7 @@
     scroll-behavior: smooth;
   }
 }
+
 
 body {
   margin: 0;
@@ -334,6 +336,7 @@ button {
 button:focus:not(:focus-visible) {
   outline: 0;
 }
+
 
 input,
 button,
@@ -11216,6 +11219,7 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+  
 }
 
 /*# sourceMappingURL=bootstrap.css.map */

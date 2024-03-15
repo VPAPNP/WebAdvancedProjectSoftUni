@@ -1,7 +1,7 @@
-using EShopWebApp.Models;
+using EShopWebApp.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-
+using static EShopWebApp.Core.DataConstants.GeneralApplicationConstants.Identity;
 namespace EShopWebApp.Controllers
 {
     public class HomeController : Controller
@@ -15,6 +15,11 @@ namespace EShopWebApp.Controllers
 
         public IActionResult Index()
         {
+            if (User.IsInRole(AdministratorRoleName))
+            {
+              return RedirectToAction("Index", "Home", new { area = AdminAreaName });
+            }
+
             return View();
         }
 
