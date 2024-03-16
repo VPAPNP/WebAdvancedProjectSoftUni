@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EShopWebApp.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class CartApiController : ControllerBase
     {
