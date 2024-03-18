@@ -1,6 +1,6 @@
 ﻿namespace EShopWebApp.Core.ViewModels.CartViewModels
 {
-    public class ProductViewModel
+    public class CartProductViewModel
     {
         public Guid Id { get; set; } = new Guid();
         public string Name { get; set; } = string.Empty;

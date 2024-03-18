@@ -75,7 +75,7 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
@@ -134,7 +134,7 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
@@ -167,7 +167,7 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
@@ -204,7 +204,7 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
@@ -219,10 +219,10 @@ namespace EShopWebApp.Core.Services
 
         }
 
-        public async  Task<IEnumerable<ProductViewModel>> GetGuestCartProductsAsync(Guid sessionId)
+        public async  Task<IEnumerable<CartProductViewModel>> GetGuestCartProductsAsync(Guid sessionId)
         {
            var prducts = await _context.ShoppingCartItems.Include(p=>p.Product).Where(c => c.SessionId == sessionId)
-                .Select(sci => new ProductViewModel
+                .Select(sci => new CartProductViewModel
                 {
                     Id = sci.Product!.Id,
                     Name = sci.Product.Name,
@@ -373,7 +373,7 @@ namespace EShopWebApp.Core.Services
 						ProductId = sci.ProductId,
 						CartId = sci.CartId,
 						Quantity = sci.Quantity,
-						Product = new ProductViewModel
+						Product = new CartProductViewModel
                         {
 							Id = sci.Product!.Id,
 							Name = sci.Product.Name,

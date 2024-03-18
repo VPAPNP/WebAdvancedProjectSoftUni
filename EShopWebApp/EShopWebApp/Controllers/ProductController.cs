@@ -33,7 +33,11 @@ namespace EShopWebApp.Controllers
 
             return View(queryModel);
         }
-
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var product = await _productService.GetByIdAsync(id);
+            return View(product);
+        }
         
 
         

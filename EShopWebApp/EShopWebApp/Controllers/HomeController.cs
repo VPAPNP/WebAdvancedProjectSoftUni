@@ -1,3 +1,4 @@
+using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,20 +8,24 @@ namespace EShopWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,
+            IProductService productService)
         {
             _logger = logger;
+            _productService = productService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (User.IsInRole(AdministratorRoleName))
             {
               return RedirectToAction("Index", "Home", new { area = AdminAreaName });
             }
 
-            return View();
+            var model = await _productService.GetLastThreeAddedAsync();
+            return View(model);
         }
 
         public IActionResult Privacy()

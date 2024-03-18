@@ -14,9 +14,9 @@ namespace EShopWebApp.Core.Services
     public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
-        private readonly Contracts.IPhotoService _imageService;
+        private readonly IPhotoService _imageService;
 
-        public ProductService(ApplicationDbContext context, Contracts.IPhotoService imageService)
+        public ProductService(ApplicationDbContext context,IPhotoService imageService)
         {
             _context = context;
             _imageService = imageService;
@@ -42,10 +42,36 @@ namespace EShopWebApp.Core.Services
                return products;
         }
 
-        public async Task<Product> GetByIdAsync(Guid id)
+        public async Task<ProductAllViewModel> GetByIdAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            return product!;
+            product.Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == product.BrandId);
+            product.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+            product.Photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.PhotoId);
+
+
+            var productAllViewModel = new ProductAllViewModel
+            {
+                Id = product!.Id.ToString(),
+                Name = product.Name,
+                Price = product.Price,
+                StockQuantity = product.Quantity,
+                Description = product.Description,
+                Image = product.Photo.Picture,
+                Category = new CategoryViewModel()
+                {
+                    Id = product.Category.Id.ToString(),
+                    Name = product.Category.Name
+                },
+                PhotoId = product.PhotoId.ToString(),
+                CategoryId = product.CategoryId.ToString(),
+                BrandId = product.BrandId.ToString(),
+               
+                
+                
+                
+            };
+            return productAllViewModel;
             
         }
 
@@ -96,6 +122,19 @@ namespace EShopWebApp.Core.Services
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.PhotoId);
             
+            if (file.FileName != photo.Name)
+            {
+               var newPhoto = _imageService.CreateImage(file, file.FileName);
+                photo = new Photo
+                {
+                    Name = newPhoto.Name,
+                    Picture = newPhoto.Picture
+
+                };
+                await _context.Photos.AddAsync(photo);
+                await _context.SaveChangesAsync();
+                product.Photo = photo;
+            }
             
             
             product!.Name = editProductModel.Name;
@@ -106,7 +145,7 @@ namespace EShopWebApp.Core.Services
             product.CategoryId = Guid.Parse(editProductModel.CategoryId);
             product.BrandId = Guid.Parse(editProductModel.BrandId);
             product.ModifiedOn = DateTime.UtcNow;
-            product.Photo = photo;
+             
 
 
             await _context.SaveChangesAsync();
@@ -181,6 +220,27 @@ namespace EShopWebApp.Core.Services
             return allProductsFilteredAndPagedServiceModel;
 
 
+        }
+
+        public async Task<ICollection<ProductAllViewModel>> GetLastThreeAddedAsync()
+        {
+            var products =  await _context.Products.Include(c=>c.Category).Where(p=>p.IsDeleted == false).OrderByDescending(p=>p.CreatedOn).Take(3).Select(p=> new ProductAllViewModel
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                Price = p.Price,
+                StockQuantity = p.Quantity,
+                Description = p.Description,
+                Image = p.Photo.Picture,
+              
+                Category = new CategoryViewModel()
+                {
+                    Id = p.Category.Id.ToString(),
+                    Name = p.Category.Name
+                }
+            }).ToListAsync();
+
+            return products;
         }
     }
 }

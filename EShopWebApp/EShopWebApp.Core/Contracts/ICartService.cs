@@ -13,7 +13,7 @@ namespace EShopWebApp.Core.Contracts
         Task<int> GetCartProductsCountAsync(Guid userId);
         Task<CartViewModel> GetCartAsync(string userId);
         Task<CartViewModel> GetGuestCartAsync(string sessionId);
-        Task<IEnumerable<ProductViewModel>> GetGuestCartProductsAsync(Guid sessionId);
+        Task<IEnumerable<CartProductViewModel>> GetGuestCartProductsAsync(Guid sessionId);
         Task RemoveProduct(Guid productId, string userId);
         Task RemoveGuestProduct(Guid productId);
         Task<string> CreateShoppingCartSession();

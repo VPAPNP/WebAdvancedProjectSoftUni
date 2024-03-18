@@ -19,9 +19,9 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
 
         public decimal Price { get; set; }
 
-        public Guid ImageId { get; set; }
+        public Guid PhotoId { get; set; }
 
-        public string ImageName { get; set; } = null!;
+        public string PhotoName { get; set; } = null!;
 
         
 
