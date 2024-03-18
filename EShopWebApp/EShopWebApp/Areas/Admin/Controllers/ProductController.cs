@@ -119,13 +119,8 @@ namespace EShopWebApp.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(IFormFile file ,string id, ProductEditViewModel editProductModel)
         {
-            //var image = await _imageService.GetPhotoByName(editProductModel.PhotoName);
-
-            //if (image == null) 
-            //{
-            //    image = _imageService.CreateImage(file, file.FileName);
-            //}
             
+            ModelState.Remove("file");
 
             if (!ModelState.IsValid)
             {

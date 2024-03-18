@@ -6,7 +6,6 @@ namespace EShopWebApp.Core.ViewModels.BrandViewModels
     public class BrandViewModel
     {
         public required string Id { get; set; }
-        [Comment("This is a brand name")]
         [Required]
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]

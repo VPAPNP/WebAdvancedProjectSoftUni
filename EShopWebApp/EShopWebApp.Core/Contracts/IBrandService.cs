@@ -1,4 +1,5 @@
 ﻿using EShopWebApp.Core.ViewModels.BrandViewModels;
+using EShopWebApp.Core.ViewModels.CategoryViewModels;
 
 namespace EShopWebApp.Core.Contracts
 {
@@ -17,6 +18,6 @@ namespace EShopWebApp.Core.Contracts
         Task<bool> ExistsByNameAsync(string name);
 
         Task<List<string>> GetAllNamesAsync();
-
+        Task EditAsync(BrandViewModel brandEditViewModel);
     }
 }

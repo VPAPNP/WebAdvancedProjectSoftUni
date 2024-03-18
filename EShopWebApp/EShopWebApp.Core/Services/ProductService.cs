@@ -121,20 +121,27 @@ namespace EShopWebApp.Core.Services
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.PhotoId);
-            
-            if (file.FileName != photo.Name)
+            if (product != null) 
             {
-               var newPhoto = _imageService.CreateImage(file, file.FileName);
-                photo = new Photo
+                if (file != null)
                 {
-                    Name = newPhoto.Name,
-                    Picture = newPhoto.Picture
+                    if (file.FileName != photo!.Name)
+                    {
+                        var newPhoto = _imageService.CreateImage(file, file.FileName);
+                        photo = new Photo
+                        {
+                            Name = newPhoto.Name,
+                            Picture = newPhoto.Picture
 
-                };
-                await _context.Photos.AddAsync(photo);
-                await _context.SaveChangesAsync();
-                product.Photo = photo;
+                        };
+                        await _context.Photos.AddAsync(photo);
+                        await _context.SaveChangesAsync();
+                        product.Photo = photo;
+                    }
+                }
             }
+            
+            
             
             
             product!.Name = editProductModel.Name;

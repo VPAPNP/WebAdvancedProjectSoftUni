@@ -88,5 +88,12 @@ namespace EShopWebApp.Core.Services
             return brands;
            
         }
+
+        public async Task EditAsync(BrandViewModel brandEditViewModel)
+        {
+           var brand = await _dbContext.Brands.FirstAsync(c => c.Id == Guid.Parse(brandEditViewModel.Id));
+            brand.Name = brandEditViewModel.Name;
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

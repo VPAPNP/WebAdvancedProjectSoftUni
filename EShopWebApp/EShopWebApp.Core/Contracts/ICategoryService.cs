@@ -17,5 +17,7 @@ namespace EShopWebApp.Core.Contracts
         Task<bool> ExistsByNameAsync(string name);
 
         Task <List<string>> GetAllNamesAsync();
+
+        Task EditAsync(CategoryViewModel categoryEditViewModel);
     }
 }
