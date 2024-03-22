@@ -1,16 +1,23 @@
 ﻿@model AllProductViewForSearch
 
+
+<div class="card m-2 d-grid hover-zoom" style="width: 20rem" ; onclick="redirectToDetails('@Model.Id')">
     
-        <div class="card m-2 d-grid hover-zoom" style="width: 20rem;">
-    <img alt="@Model.Name" class="card-img-top " src="data:image;base64,@System.Convert.ToBase64String(Model.Image)">
+        <img alt="@Model.Name" class="card-img-top" src="data:image;base64,@System.Convert.ToBase64String(Model.Image)">
+   
+           
             <div class="card-block text-center">
                 <h4 class="card-title">@Model.Name</h4>
                 <p class="card-text">@Model.Price $</p>
             </div>
             <div class="card-footer text-center">
-        <a id="1s1"data-id="@Model.Id" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary" asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id">Add to cart</a>
+              <a id="1s1"  class="btn btn-primary" asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id">Add to cart</a>
                
             </div>
         </div>
-
+<script>
+    function redirectToDetails(productId) {
+        window.location.href = '@Url.Action("Details", "Product")?id=' + productId;
+    }
+</script>
 

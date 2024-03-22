@@ -33,7 +33,7 @@ namespace EShopWebApp.Core.Services
                sessionId =  await CreateShoppingCartSession();
             }
 
-            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
+            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
              
             if (cart == null)
             {
@@ -61,7 +61,7 @@ namespace EShopWebApp.Core.Services
                 });
                
                 await _context.SaveChangesAsync();
-                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
+                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
             }
            
 
@@ -81,6 +81,7 @@ namespace EShopWebApp.Core.Services
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                     }
                 }).ToList()
             };
@@ -140,6 +141,7 @@ namespace EShopWebApp.Core.Services
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                     }
                 }).ToList()
             };
@@ -173,6 +175,7 @@ namespace EShopWebApp.Core.Services
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                        
                     }
                 }).ToList()
@@ -185,7 +188,7 @@ namespace EShopWebApp.Core.Services
         {
             string curSessionId = sessionId;
             var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems)
-                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto)
 
                 .FirstOrDefaultAsync(c => c.SessionId == Guid.Parse(sessionId));
 
@@ -210,6 +213,7 @@ namespace EShopWebApp.Core.Services
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
 
                     }
                 }).ToList()

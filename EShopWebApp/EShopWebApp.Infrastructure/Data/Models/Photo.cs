@@ -13,6 +13,9 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [MaxLength(ImageMaxLength)]
         public required string Name { get; set; } 
         public byte[] Picture { get; set; } = null!;
+        public Guid? ProductId { get; set; }
+        [ForeignKey(nameof(ProductId))]
+        public Product Product { get; set; } = null!;
         public bool IsDeleted { get; set; }
 
        

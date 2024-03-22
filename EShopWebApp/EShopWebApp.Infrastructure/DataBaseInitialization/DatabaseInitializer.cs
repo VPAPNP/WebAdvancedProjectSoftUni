@@ -157,15 +157,15 @@ namespace EShopWebApp.Infrastructure.DataBaseInitialization
 
             var products = new[]
             {
-                new Product { Name = "Product 1", Price = 10.99m, Description = "Description of Product 1",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId= photoId1 },
-                new Product { Name = "Product 2", Price = 20.49m, Description = "Description of Product 2",CategoryId = unknownCategoryId ,BrandId = globalBrandId,PhotoId = photoId1},
-                new Product { Name = "Product 3", Price = 30.99m, Description = "Description of Product 3",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 4", Price = 40.49m, Description = "Description of Product 4",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 5", Price = 50.99m, Description = "Description of Product 5",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 6", Price = 60.49m, Description = "Description of Product 6",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 7", Price = 70.99m, Description = "Description of Product 7",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 8", Price = 80.49m, Description = "Description of Product 8",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 },
-                new Product { Name = "Product 9", Price = 90.99m, Description = "Description of Product 9",CategoryId = unknownCategoryId,BrandId = globalBrandId,PhotoId = photoId1 }
+                new Product { Name = "Product 1", Price = 10.99m, Description = "Description of Product 1",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId= photoId1 },
+                new Product { Name = "Product 2", Price = 20.49m, Description = "Description of Product 2",CategoryId = unknownCategoryId ,BrandId = globalBrandId,FrontPhotoId = photoId1},
+                new Product { Name = "Product 3", Price = 30.99m, Description = "Description of Product 3",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 4", Price = 40.49m, Description = "Description of Product 4",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 5", Price = 50.99m, Description = "Description of Product 5",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 6", Price = 60.49m, Description = "Description of Product 6",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 7", Price = 70.99m, Description = "Description of Product 7",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 8", Price = 80.49m, Description = "Description of Product 8",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 },
+                new Product { Name = "Product 9", Price = 90.99m, Description = "Description of Product 9",CategoryId = unknownCategoryId,BrandId = globalBrandId,FrontPhotoId = photoId1 }
                 // Add more products as needed
             };
 

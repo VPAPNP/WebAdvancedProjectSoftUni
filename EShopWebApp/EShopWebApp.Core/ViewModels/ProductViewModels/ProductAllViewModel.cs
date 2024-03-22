@@ -13,6 +13,7 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         public int StockQuantity { get; set; }
         public decimal? DiscountPrice { get; set; }
         public CategoryViewModel Category { get; set; } = null!;
+        public BrandViewModel Brand { get; set; } = null!;
         public string BrandId { get; set; } = null!;
         public string CategoryId { get; set; } = null!;
         public DateTime CreatedOn { get; set; }

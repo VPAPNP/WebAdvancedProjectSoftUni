@@ -4,6 +4,7 @@ using EShopWebApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShopWebApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322150217_AddedChangesToPHotoAndProductTables")]
+    partial class AddedChangesToPHotoAndProductTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,16 +258,16 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
 
+                    b.Property<Guid?>("PhotoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("Picture")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("PhotoId");
 
                     b.ToTable("Photos", t =>
                         {
@@ -399,8 +402,6 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SessionId");
 
                     b.HasIndex("UserId")
                         .IsUnique()
@@ -665,7 +666,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                 {
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
                         .WithMany("ProductPhotos")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("PhotoId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Product");
@@ -715,15 +716,9 @@ namespace EShopWebApp.Infrastructure.Migrations
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", b =>
                 {
-                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.ShoppingCartSession", "Session")
-                        .WithMany()
-                        .HasForeignKey("SessionId");
-
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.ApplicationUser", "User")
                         .WithOne("ShoppingCart")
                         .HasForeignKey("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", "UserId");
-
-                    b.Navigation("Session");
 
                     b.Navigation("User");
                 });

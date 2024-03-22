@@ -1,5 +1,6 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.Services.ServiceModels;
+using EShopWebApp.Core.ViewModels.BrandViewModels;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
 using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
@@ -30,7 +31,7 @@ namespace EShopWebApp.Core.Services
                 Price = p.Price,
                 StockQuantity = p.Quantity,
                 Description = p.Description,
-                Image = p.Photo.Picture,
+                Image = p.FrontPhoto.Picture,
               
                 Category = new CategoryViewModel()
                 {
@@ -47,7 +48,7 @@ namespace EShopWebApp.Core.Services
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
             product.Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == product.BrandId);
             product.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
-            product.Photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.PhotoId);
+            product.FrontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
 
 
             var productAllViewModel = new ProductAllViewModel
@@ -57,13 +58,18 @@ namespace EShopWebApp.Core.Services
                 Price = product.Price,
                 StockQuantity = product.Quantity,
                 Description = product.Description,
-                Image = product.Photo.Picture,
+                Image = product.FrontPhoto.Picture,
                 Category = new CategoryViewModel()
                 {
                     Id = product.Category.Id.ToString(),
                     Name = product.Category.Name
                 },
-                PhotoId = product.PhotoId.ToString(),
+                Brand = new BrandViewModel()
+                {
+                    Id = product.Brand.Id.ToString(),
+                    Name = product.Brand.Name
+                },
+                PhotoId = product.FrontPhotoId.ToString(),
                 CategoryId = product.CategoryId.ToString(),
                 BrandId = product.BrandId.ToString(),
                
@@ -95,7 +101,7 @@ namespace EShopWebApp.Core.Services
                 Description = productCreateViewModel.Description,
                 Price = productCreateViewModel.Price,
                 Quantity = productCreateViewModel.StockQuantity,
-                PhotoId = id,
+                FrontPhotoId = id,
                 CategoryId = Guid.Parse(productCreateViewModel.CategoryId),
                 BrandId = Guid.Parse(productCreateViewModel.BrandId)
                 
@@ -111,7 +117,7 @@ namespace EShopWebApp.Core.Services
         public async Task DeleteAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photoId = product!.PhotoId;
+            var photoId = product!.FrontPhotoId;
             await _imageService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
             await _context.SaveChangesAsync();
@@ -120,7 +126,7 @@ namespace EShopWebApp.Core.Services
         public async Task EditAsync(IFormFile file,Guid id,ProductEditViewModel editProductModel)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.PhotoId);
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.FrontPhotoId);
             if (product != null) 
             {
                 if (file != null)
@@ -136,7 +142,7 @@ namespace EShopWebApp.Core.Services
                         };
                         await _context.Photos.AddAsync(photo);
                         await _context.SaveChangesAsync();
-                        product.Photo = photo;
+                        product.FrontPhoto = photo;
                     }
                 }
             }
@@ -147,7 +153,7 @@ namespace EShopWebApp.Core.Services
             product!.Name = editProductModel.Name;
             product.Description = editProductModel.Description;
             product.Price = editProductModel.Price;
-            product.PhotoId = photo!.Id;
+            product.FrontPhotoId = photo!.Id;
             product.Quantity = editProductModel.StockQuantity;
             product.CategoryId = Guid.Parse(editProductModel.CategoryId);
             product.BrandId = Guid.Parse(editProductModel.BrandId);
@@ -205,7 +211,7 @@ namespace EShopWebApp.Core.Services
                     Name = p.Name,
                     Price = p.Price,
                     Description = p.Description,
-                    Image = p.Photo.Picture,
+                    Image = p.FrontPhoto.Picture,
                     
                    
                     Category = new CategoryViewModel()
@@ -238,7 +244,7 @@ namespace EShopWebApp.Core.Services
                 Price = p.Price,
                 StockQuantity = p.Quantity,
                 Description = p.Description,
-                Image = p.Photo.Picture,
+                Image = p.FrontPhoto.Picture,
               
                 Category = new CategoryViewModel()
                 {

@@ -63,16 +63,16 @@ namespace EShopWebApp.Controllers
         public async Task<IActionResult> AddToCart(Guid id)
         {
             
-            CartViewModel cartView = new CartViewModel();
+            
             if (!User.Identity!.IsAuthenticated)
             {
-                cartView = await _cartService.AddProductToGuestCartAsync(id);
+                 await _cartService.AddProductToGuestCartAsync(id);
 
             }
             else
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                cartView = await _cartService.AddProductToCartAsync(id, userId!);
+                await _cartService.AddProductToCartAsync(id, userId!);
             }
             
             return RedirectToAction("All","Product");
@@ -97,6 +97,20 @@ namespace EShopWebApp.Controllers
             
             return View("Index", cartView);
             
+        }
+        public async Task<IActionResult> BuyItNow(Guid id)
+        {
+            CartViewModel cartView = new CartViewModel();
+            if (!User.Identity!.IsAuthenticated)
+            {
+                cartView = await _cartService.AddProductToGuestCartAsync(id);
+            }
+            else
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                cartView = await _cartService.AddProductToCartAsync(id, userId!);
+            }
+            return RedirectToAction("Index", "Cart");
         }
 
 

@@ -71,13 +71,22 @@
                             <input class="form-control" type="file" name="file" id="formFile">
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="mb-3">
-                        <label for="formFile" class="form-label">Choose more images to add to product</label>
-                        <input class="form-control" type="file" name="file" id="formFile">
+                <div class="container">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Upload Image</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-default btn-file">
+                                        Browse… <input type="file" id="imgInp">
+                                    </span>
+                                </span>
+                                <input type="text" name="img" class="form-control" readonly>
+                            </div>
+                            <img id='img-upload' />
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
         <input class="btn btn-primary mt-3" type="submit" value="Create" />
 
@@ -88,6 +97,5 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
 
 

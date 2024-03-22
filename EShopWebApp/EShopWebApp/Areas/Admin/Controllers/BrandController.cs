@@ -1,5 +1,4 @@
 ﻿using EShopWebApp.Core.Contracts;
-using EShopWebApp.Core.Services;
 using EShopWebApp.Core.ViewModels.BrandViewModels;
 using Microsoft.AspNetCore.Mvc;
 
