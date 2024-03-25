@@ -2,6 +2,7 @@
 // Shopping Cart API
 // ************************************************
 
+
 var shoppingCart = (function () {
     // =============================
     // Private methods and propeties
@@ -30,7 +31,7 @@ var shoppingCart = (function () {
     if (sessionStorage.getItem("shoppingCart") != null) {
         loadCart();
     }
-
+    
 
     // =============================
     // Public methods and propeties
@@ -60,17 +61,19 @@ var shoppingCart = (function () {
         }
     };
     // Remove item from cart
-    obj.removeItemFromCart = function (name) {
+    obj.removeItemFromCart = async function (name) {
         for (var item in cart) {
             if (cart[item].name === name) {
                 cart[item].count--;
                 if (cart[item].count === 0) {
                     cart.splice(item, 1);
                 }
+                
                 break;
             }
         }
         saveCart();
+        
     }
 
     // Remove all items from cart
@@ -91,10 +94,15 @@ var shoppingCart = (function () {
     }
 
     // Count cart 
-    obj.totalCount = function () {
-        var totalCount = fetch('api/cart/totalcount')
+    obj.totalCount =  function () {
+        var totalCount = 0;
+        for (var item in cart) {
+            totalCount += cart[item].count;
+        }
+        
         
         return totalCount;
+        
     }
 
     // Total cart
@@ -141,31 +149,49 @@ var shoppingCart = (function () {
 // Triggers / Events
 // ***************************************** 
 // Add item
-$('.add-to-cart').on('click',( async function (event) {
+$('.add-to-cart').on('click', (async function (event) {
     event.preventDefault();
     event.stopPropagation();
     var id = $(this).data('id');
     var name = $(this).data('name');
     var price = $(this).data('price');
     
-   
-    shoppingCart.addItemToCart(id, name, price, 1);
     
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(id)
+    };
+
+    // Send the POST request
+    await fetch('/api/cartapi/addtocart', options)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data
+            
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+    
+
+    shoppingCart.addItemToCart(id, name, price, 1);
     displayCart();
    
-    var product = {
-        id: id,
-        name: name,
-        price: price,
-        quantity: 1
-    };
+
+       
+}));    
     
    
-}));
+
 
 
 // Clear items
-$('.clear-cart').on('click',(function () {
+$('.clear-cart').on('click',(async function () {
     shoppingCart.clearCart();
     displayCart();
 }));
@@ -201,18 +227,76 @@ $('.show-cart').on("click", ".delete-item", function (event) {
 
 
 // -1
-$('.show-cart').on('click', '.minus-item', function (event) {
+$('.show-cart').on('click', '.minus-item', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     var name = $(this).data('name')
+    var id = $(this).data('id')
+    for (var item in cart) {
+
+        if (cart[item].name === name) {
+            id = cart[item].id;
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(id)
+            };
+            await fetch('/api/cartapi/removefromcart', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(id);
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+
+        }
+    }
+            
+
+        
+
+    
+    
     shoppingCart.removeItemFromCart(name);
     displayCart();
 })
 // +1
-$('.show-cart').on('click', '.plus-item', function (event) {
+$('.show-cart').on('click', '.plus-item', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     var id = $(this).data('id')
     var name = $(this).data('name')
     var price = $(this).data('price')
     var count = $(this).data('count')
+    for (var item in cart) {
 
+
+        if (cart[item].name === name) {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart[item].id)
+            };
+            await fetch('/api/cartapi/addtocart', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(cart[item].id);
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+
+        }
+    }
 
     shoppingCart.addItemToCart(id,name,price,count);
     displayCart();
@@ -225,6 +309,103 @@ $('.show-cart').on('change', '.item-count', function (event) {
     shoppingCart.setCountForItem(name, count);
     displayCart();
 });
+//Remove item from cart on order page
+$('.cart-item').on('click', '.minus-item', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var name = $(this).data('name')
+    var id = $(this).data('id')
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(id)
+            };
+            await fetch('/api/cartapi/removefromcart', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(id);
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+
+        
+    
+    
+    shoppingCart.removeItemFromCart(name);
+    displayCart();
+})
+$('.cart-item').on('click', '.plus-item', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var name = $(this).data('name')
+    var id = $(this).data('id')
+    var price = $(this).data('price')
+    var count = $(this).data('count')
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(id)
+    };
+    await fetch('/api/cartapi/addtocart', options)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data
+            console.log(id);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+
+
+
+
+    shoppingCart.addItemToCart(id, name, price, count);
+    displayCart();
+})
+//Load cart items ON LOGIN //TO DO !!!!
+$('.load-cart-items-login').on('click', (async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+    };
+
+    // Send the POST request
+    await fetch('/api/cartapi/getcart', options)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data
+
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+
+
+    shoppingCart.addItemToCart(id, name, price, 1);
+    displayCart();
+
+
+
+}));    
+
 
 
 

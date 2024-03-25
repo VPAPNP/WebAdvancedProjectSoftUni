@@ -50,20 +50,12 @@ namespace EShopWebApp.Controllers
                 cartView = await _cartService.GetCartAsync(userId!);
             }
 
-            
-
-
             return View(cartView);
-            
-
-
             
         }
         
         public async Task<IActionResult> AddToCart(Guid id)
         {
-            
-            
             if (!User.Identity!.IsAuthenticated)
             {
                  await _cartService.AddProductToGuestCartAsync(id);
@@ -74,7 +66,6 @@ namespace EShopWebApp.Controllers
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 await _cartService.AddProductToCartAsync(id, userId!);
             }
-            
             return RedirectToAction("All","Product");
         }
         public async Task<IActionResult> RemoveFromCart(Guid id)
@@ -92,8 +83,6 @@ namespace EShopWebApp.Controllers
                 await _cartService.RemoveProduct(id, userId!);
                 cartView = await _cartService.GetCartAsync(userId!);
             }
-            
-
             
             return View("Index", cartView);
             

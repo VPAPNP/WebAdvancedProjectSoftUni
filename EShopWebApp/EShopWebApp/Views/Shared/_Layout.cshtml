@@ -42,7 +42,9 @@
                         <li class="nav-item hover-zoom">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="All">Shop</a>
                         </li>
-                        
+                        <li class="nav-item hover-zoom">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Order</a>
+                        </li>
                         
                         
                         
@@ -52,8 +54,8 @@
                    
 
                 </div>
-               
-                <a asp-action="Index" asp-controller="Cart" class="btn ml-5 cart"><img src="/cart-icon.png" alt="My Happy SVG" /> <span class="total-count"></span></a>
+
+                <button type="button" class="btn ml-5 cart" data-toggle="modal" data-target="#cart"><img src="/cart-icon.png" alt="My Happy SVG" />  <span class="total-count"></span></button>
                   
             </div>
         </nav>
@@ -84,7 +86,7 @@
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="~/js/cart.js"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>
