@@ -4,6 +4,8 @@ using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants;
+using System.Security.Claims;
 
 namespace EShopWebApp.Core.Services
 {
@@ -269,10 +271,6 @@ namespace EShopWebApp.Core.Services
            
         }
 
-        public Task<int> GetCartProductsCountAsync(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task RemoveProduct(Guid productId, string userId)
         {
@@ -287,7 +285,7 @@ namespace EShopWebApp.Core.Services
             }
             if (userId == null)
             {
-                 cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId));
+                 cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId) && sci.ProductId == productId);
             }
             else
             {
@@ -355,20 +353,14 @@ namespace EShopWebApp.Core.Services
 
         }
 
-        public Task<decimal> GetCartTotalPriceAsync(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task RemoveAllProductsFromCartAsync(Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task RemoveProductFromCartAsync(Guid productId, Guid userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
 		public async Task<string> CreateShoppingCartSession()
 		{
@@ -424,6 +416,30 @@ namespace EShopWebApp.Core.Services
 			return new List<ShoppingCartItemViewModel>(); // Return an empty list if session identifier is not found
 		}
 
-       
+        public async Task RemoveShoppingCartItemsAsync(string productId, string userId)
+        {
+            if (userId != null)
+            {
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
+                var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == Guid.Parse(productId));
+                if (cartItem != null)
+                {
+                    _context.ShoppingCartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.SessionId == Guid.Parse(sessionId));
+                var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == Guid.Parse(productId) && sci.SessionId == Guid.Parse(sessionId!));
+                if (cartItem != null)
+                {
+                    _context.ShoppingCartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+        }
     }
 }

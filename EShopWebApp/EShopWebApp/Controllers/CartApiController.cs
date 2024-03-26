@@ -1,6 +1,7 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
 
 
@@ -60,7 +61,7 @@ namespace EShopWebApp.Controllers
 
         
         [HttpDelete("removefromcart")]
-        public async Task Delete([FromBody]string id)
+        public async Task DeleteItem([FromBody]string id)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -73,6 +74,16 @@ namespace EShopWebApp.Controllers
                 await _cartService.RemoveGuestProduct(Guid.Parse(id));
             }
         }
-       
+        [HttpDelete("removecartitem")]
+        public async Task DeleteCartItem([FromBody] string id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _cartService.RemoveShoppingCartItemsAsync(id,userId);
+
+            await Console.Out.WriteLineAsync();
+
+        }
+
+
     }
 }

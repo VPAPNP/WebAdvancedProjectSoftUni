@@ -221,6 +221,27 @@ function displayCart() {
 
 $('.show-cart').on("click", ".delete-item", function (event) {
     var name = $(this).data('name')
+    for (var item in cart) {
+        if (cart[item].name === name) {
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart[item].id)
+            };
+            fetch('/api/cartapi/removecartitem', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(cart[item].id);
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+         }
+    }
     shoppingCart.removeItemFromCartAll(name);
     displayCart();
 })

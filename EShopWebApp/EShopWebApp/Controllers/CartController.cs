@@ -1,6 +1,5 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
-using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -71,15 +70,16 @@ namespace EShopWebApp.Controllers
         public async Task<IActionResult> RemoveFromCart(Guid id)
         {
             CartViewModel cartView = new CartViewModel();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.Identity!.IsAuthenticated)
             {
-                await _cartService.RemoveGuestProduct(id);
+                await _cartService.RemoveProduct(id,userId!);
                 string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
                 cartView = await _cartService.GetGuestCartAsync(sessionId);
             }
             else 
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
                 await _cartService.RemoveProduct(id, userId!);
                 cartView = await _cartService.GetCartAsync(userId!);
             }
