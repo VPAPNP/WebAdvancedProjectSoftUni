@@ -38,11 +38,11 @@
                                 
                                 @foreach (var item in Model.ShoppingCartItems)
                                 {
-                                    <div class="card mb-3 ">
+                                    <div class="card mb-3">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
+                                            <div class="d-flex justify-content-between" >
+                                                <div class="d-flex flex-row align-items-center" >
+                                                    <div onclick="redirectToDetails('@item.Product.Id')">
                                                         <img src="data:image;base64,@System.Convert.ToBase64String(item.Product.Image)"
                                                              class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
                                                     </div>
@@ -51,14 +51,14 @@
                                                         <p class="small mb-0">@item.Product.Description</p>
                                                     </div>
                                                 </div>
-                                               
-                                                
-                                                <div class="d-flex flex-row align-items-center cart-item">
-                                                    <button onclick="location.reload();" class="minus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id">-</button>
+
+
+                                                <div class="d-flex flex-row align-items-center cart-item" >
+                                                    <button  class="minus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id">-</button>
                                                     <div style="width: 50px;">
-                                                        <h5 class="text-center fw-normal mb-0">@item.Quantity</h5>
+                                                        <h5 class="text-center fw-normal cart-item-count-@item.Product.Id mb-0"></h5>
                                                     </div>
-                                                    <button onclick="location.reload();" class="plus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id" data-price="@item.Product.Price">+</button>
+                                                    <button  class="plus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id" data-price="@item.Product.Price">+</button>
                                                    
                                                     <div style="width: 80px;">
                                                         <h5 class="mb-0 text-center">@item.Product.Price$</h5>
@@ -176,3 +176,8 @@
         </div>
     </div>
 </section>
+<script>
+    function redirectToDetails(productId) {
+        window.location.href = '@Url.Action("Details", "Product")?id=' + productId;
+    }
+</script>

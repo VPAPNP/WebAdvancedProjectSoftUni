@@ -200,7 +200,10 @@ $('.clear-cart').on('click',(async function () {
 function displayCart() {
     var cartArray = shoppingCart.listCart();
     var output = "";
+    
     for (var i in cartArray) {
+        
+        var itemCount = cartArray[i].count;
         output += "<tr>"
             + "<td>" + cartArray[i].name + "</td>"
             + "<td>(" + cartArray[i].price + ")</td>"
@@ -211,6 +214,7 @@ function displayCart() {
             + " = "
             + "<td>" + cartArray[i].total + "</td>"
             + "</tr>";
+        $('.cart-item-count-' + cartArray[i].id + '').html(cartArray[i].count);
     }
     $('.show-cart').html(output);
     $('.total-cart').html(shoppingCart.totalCart());
