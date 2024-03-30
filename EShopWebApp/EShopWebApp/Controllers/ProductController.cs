@@ -28,6 +28,7 @@ namespace EShopWebApp.Controllers
             
             queryModel.Products = serviceModel.Products;
             queryModel.TotalProducts = serviceModel.TotalProducts;
+           
             queryModel.Categories = await _categoryService.GetAllNamesAsync();
             queryModel.Brands = await _brandService.GetAllNamesAsync();
 
