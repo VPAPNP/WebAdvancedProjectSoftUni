@@ -80,7 +80,7 @@
                     
                         
                     </div>
-                    <a asp-action="BuyItNow" asp-controller="Cart" asp-route-id="@Model.Id" class="btn btn-warning shadow-0"> Buy now </a>
+                <a href="#" onclick="redirectToCart()" data-id="@Model.Id" data-image="@Model.Image" data-name="@Model.Name" data-price="@Model.Price" class="btn btn-warning add-to-cart shadow-0"> Buy now </a>
                 <a data-id="@Model.Id"  data-name="@Model.Name" data-price="@Model.Price" class="btn btn-primary add-to-cart shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
                     <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
                 </div>
@@ -213,4 +213,8 @@
         </div>
     </div>
 </section>
-
+<script>
+    function redirectToCart() {
+        window.location.href = '@Url.Action("Index", "Cart")';
+    }
+</script>

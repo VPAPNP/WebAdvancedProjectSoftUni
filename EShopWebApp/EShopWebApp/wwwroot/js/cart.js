@@ -348,7 +348,7 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                 body: JSON.stringify(id)
             };
             await fetch('/api/cartapi/removefromcart', options)
-                .then(response => response.json())
+                .then(response => response)
                 .then(data => {
                     // Handle the response data
                     console.log(id);
@@ -358,7 +358,19 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                     console.error('Error:', error);
                 });
 
-        
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
+   
     
     
     shoppingCart.removeItemFromCart(name);
@@ -379,10 +391,10 @@ $('.cart-item').on('click', '.plus-item', async function (event) {
         body: JSON.stringify(id)
     };
     await fetch('/api/cartapi/addtocart', options)
-        .then(response => response.json())
+        .then(response => response)
         .then(data => {
             // Handle the response data
-            console.log(id);
+            console.log({ id: id });
         })
         .catch(error => {
             // Handle any errors that occur during the fetch request
@@ -412,7 +424,7 @@ $('.load-cart-items-login').on('click', (async function (event) {
 
     // Send the POST request
     await fetch('/api/cartapi/getcart', options)
-        .then(response => response.json())
+        .then(response => response)
         .then(data => {
             // Handle the response data
 

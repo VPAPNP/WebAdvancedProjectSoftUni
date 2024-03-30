@@ -13,12 +13,13 @@ namespace EShopWebApp.Controllers
     {
         private readonly ICartService _cartService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<CartApiController> _logger;
 
-        public CartApiController(ICartService cartService, IHttpContextAccessor httpContextAccessor)
+        public CartApiController(ICartService cartService, IHttpContextAccessor httpContextAccessor, ILogger<CartApiController> logger)
         {
             _cartService = cartService;
             _httpContextAccessor = httpContextAccessor;
-           
+            _logger = logger;
         }
 
         // GET: api/<CartApiController>
@@ -41,20 +42,35 @@ namespace EShopWebApp.Controllers
 
         // POST api/<CartApiController>
         [HttpPost("addtocart")]
+        [ProducesResponseType<string>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task Post([FromBody] string id)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                await _cartService.AddProductToCartAsync(Guid.Parse(id), userId);
+                if (User.Identity.IsAuthenticated)
+                {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _cartService.AddProductToCartAsync(Guid.Parse(id), userId);
+                    
+                }
+                else
+                {
+
+
+                    await _cartService.AddProductToGuestCartAsync(Guid.Parse(id));
+                    
+                }
+               
+               
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while processing the request. api/addtocart");
+                throw; // Rethrow the exception to let the global exception handler handle it
                 
-                
-               await _cartService.AddProductToGuestCartAsync( Guid.Parse(id));
             }
-            
+           
         }
 
         
