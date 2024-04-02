@@ -40,6 +40,23 @@ namespace EShopWebApp.Areas.Admin.Controllers
             var categories = await _categoryService.GetAllAsync();
             return View(categories);
         }
+        public async Task<IActionResult> Edit(string id)
+        {
+            var category = await _categoryService.GetByIdAsync(Guid.Parse(id));
+            return View(category);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CategoryViewModel categoryView)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(categoryView);
+            }
+
+            await _categoryService.EditAsync(categoryView);
+           
+            return RedirectToAction("All", "Category");
+        }
 
 
         public async Task<IActionResult> Delete(string id)

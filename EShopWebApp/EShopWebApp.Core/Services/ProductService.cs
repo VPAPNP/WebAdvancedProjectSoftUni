@@ -1,7 +1,7 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.Services.ServiceModels;
+using EShopWebApp.Core.ViewModels.BrandViewModels;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
@@ -11,41 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EShopWebApp.Core.Services
 {
-    public class ProductService : IProductService
+	public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
-        private readonly Contracts.IPhotoService _imageService;
+        private readonly IPhotoService _photoService;
 
-        public ProductService(ApplicationDbContext context, Contracts.IPhotoService imageService)
+        public ProductService(ApplicationDbContext context,IPhotoService photoService)
         {
             _context = context;
-            _imageService = imageService;
+            _photoService = photoService;
         }
-        public async Task<ICollection<ProductAllViewModel>> GetAllAsync()
+		public async Task<ICollection<ProductAllViewModel>> GetAllAsync()
+		{
+			var products = await _context.Products.Include(c => c.Category).Where(p => p.IsDeleted == false).Select(p => new ProductAllViewModel
+			{
+				Id = p.Id.ToString(),
+				Name = p.Name,
+				Price = p.Price,
+				StockQuantity = p.Quantity,
+				Description = p.Description,
+				Image = p.FrontPhoto.Picture,
+
+				Category = new CategoryViewModel()
+				{
+					Id = p.Category.Id.ToString(),
+					Name = p.Category.Name
+				}
+			}).ToListAsync();
+
+			return products;
+		}
+
+		public async Task<ProductAllViewModel> GetByIdAsync(Guid id)
         {
-            var products = await _context.Products.Include(c=>c.Category).Where(p=>p.IsDeleted == false).Select(p=> new ProductAllViewModel
+           
+            var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
+            
+            
+				product!.Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == product.BrandId);
+				product.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+				product.FrontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
+			
+           
+
+
+            var productAllViewModel = new ProductAllViewModel
             {
-                Id = p.Id.ToString(),
-                Name = p.Name,
-                Price = p.Price,
-                StockQuantity = p.Quantity,
-                Description = p.Description,
-                Image = p.Photo.Picture,
-              
+                Id = product!.Id.ToString(),
+                Name = product.Name,
+                Price = product.Price,
+                StockQuantity = product.Quantity,
+                Description = product.Description,
+                Image = product.FrontPhoto.Picture,
                 Category = new CategoryViewModel()
                 {
-                    Id = p.Category.Id.ToString(),
-                    Name = p.Category.Name
-                }
-            }).ToListAsync();
-            Console.WriteLine();
-               return products;
-        }
-
-        public async Task<Product> GetByIdAsync(Guid id)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            return product!;
+                    Id = product.Category.Id.ToString(),
+                    Name = product.Category.Name
+                },
+                Brand = new BrandViewModel()
+                {
+                    Id = product.Brand.Id.ToString(),
+                    Name = product.Brand.Name
+                },
+                PhotoId = product.FrontPhotoId.ToString(),
+                CategoryId = product.CategoryId.ToString(),
+                BrandId = product.BrandId.ToString(),
+               
+                
+                
+                
+            };
+            return productAllViewModel;
             
         }
 
@@ -53,7 +89,7 @@ namespace EShopWebApp.Core.Services
         {
             
 
-            var image = _imageService.CreateImage(file, file.FileName);
+            var image = _photoService.CreateImage(file, file.FileName);
             var photo = await _context.Photos.AddAsync(new Photo
             {
                 Name = image.Name,
@@ -69,7 +105,7 @@ namespace EShopWebApp.Core.Services
                 Description = productCreateViewModel.Description,
                 Price = productCreateViewModel.Price,
                 Quantity = productCreateViewModel.StockQuantity,
-                PhotoId = id,
+                FrontPhotoId = id,
                 CategoryId = Guid.Parse(productCreateViewModel.CategoryId),
                 BrandId = Guid.Parse(productCreateViewModel.BrandId)
                 
@@ -85,8 +121,8 @@ namespace EShopWebApp.Core.Services
         public async Task DeleteAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photoId = product!.PhotoId;
-            await _imageService.DeletePhotoAsync(photoId);
+            var photoId = product!.FrontPhotoId;
+            await _photoService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
@@ -94,19 +130,39 @@ namespace EShopWebApp.Core.Services
         public async Task EditAsync(IFormFile file,Guid id,ProductEditViewModel editProductModel)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.PhotoId);
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product!.FrontPhotoId);
+            if (product != null) 
+            {
+                if (file != null)
+                {
+                    if (file.FileName != photo!.Name)
+                    {
+                        var newPhoto = _photoService.CreateImage(file, file.FileName);
+                        photo = new Photo
+                        {
+                            Name = newPhoto.Name,
+                            Picture = newPhoto.Picture
+
+                        };
+                        await _context.Photos.AddAsync(photo);
+                        await _context.SaveChangesAsync();
+                        product.FrontPhoto = photo;
+                    }
+                }
+            }
+            
             
             
             
             product!.Name = editProductModel.Name;
             product.Description = editProductModel.Description;
             product.Price = editProductModel.Price;
-            product.PhotoId = photo!.Id;
+            product.FrontPhotoId = photo!.Id;
             product.Quantity = editProductModel.StockQuantity;
             product.CategoryId = Guid.Parse(editProductModel.CategoryId);
             product.BrandId = Guid.Parse(editProductModel.BrandId);
             product.ModifiedOn = DateTime.UtcNow;
-            product.Photo = photo;
+             
 
 
             await _context.SaveChangesAsync();
@@ -159,7 +215,7 @@ namespace EShopWebApp.Core.Services
                     Name = p.Name,
                     Price = p.Price,
                     Description = p.Description,
-                    Image = p.Photo.Picture,
+                    Image = p.FrontPhoto.Picture,
                     
                    
                     Category = new CategoryViewModel()
@@ -181,6 +237,27 @@ namespace EShopWebApp.Core.Services
             return allProductsFilteredAndPagedServiceModel;
 
 
+        }
+
+        public async Task<ICollection<ProductAllViewModel>> GetLastThreeAddedAsync()
+        {
+            var products =  await _context.Products.Include(c=>c.Category).Where(p=>p.IsDeleted == false).OrderByDescending(p=>p.CreatedOn).Take(3).Select(p=> new ProductAllViewModel
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                Price = p.Price,
+                StockQuantity = p.Quantity,
+                Description = p.Description,
+                Image = p.FrontPhoto.Picture,
+              
+                Category = new CategoryViewModel()
+                {
+                    Id = p.Category.Id.ToString(),
+                    Name = p.Category.Name
+                }
+            }).ToListAsync();
+
+            return products;
         }
     }
 }

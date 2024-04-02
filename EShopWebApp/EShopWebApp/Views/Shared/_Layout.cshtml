@@ -6,9 +6,12 @@
     <title>@ViewData["Title"] - EShopWebApp</title>
     <link rel="icon" type="image/x-icon" href="/online-shopping.png">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/googleButton.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/details.css" rel="stylesheet" type="text/css" />
     <link href="~/css/cart.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="~/EShopWebApp.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/d81e025cab.js" crossorigin="anonymous"></script>
     
     <script src="https://apis.google.com/js/platform.js" async defer></script>
    
@@ -18,8 +21,12 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow pb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index"><img style= "height:50px; width:50px;" src="/ShopIcon.svg" alt="My Happy SVG" /> EShopWebApp</a>
-                
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index"><img style="height:50px; width:50px;" src="/ShopIcon.svg" alt="My Happy SVG" /> EShopWebApp</a>
+                }
+
+                <a class="navbar-brand"  asp-controller="Home" asp-action="Index"><img style="height:50px; width:50px;" src="/ShopIcon.svg" alt="My Happy SVG" /> EShopWebApp</a>
                 
 
                 
@@ -35,9 +42,7 @@
                         <li class="nav-item hover-zoom">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="All">Shop</a>
                         </li>
-                        <li class="nav-item hover-zoom">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">CartAndOrder</a>
-                        </li>
+                       
                         
                         
                         
@@ -47,7 +52,9 @@
                    
 
                 </div>
-                <button type="button" class="btn ml-5 cart" data-toggle="modal"  data-target="#cart"><img src="/cart-icon.png" alt="My Happy SVG" />  <span class="total-count"></span></button>
+
+                <button type="button" class="btn ml-5 cart" data-toggle="modal" data-target="#cart"><img src="/cart-icon.png" alt="My Happy SVG" />  <span class="total-count"></span></button>
+                  
             </div>
         </nav>
     </header>
@@ -61,7 +68,7 @@
      </main>
    
 
-    <footer class="footer text-muted border-top">
+    <footer class="text-center text-white fixed-bottom" style="background-color: #BDBDBD ">
         <div class="container">
             @if (DateTime.Now.Year > 2024)
             {
@@ -69,7 +76,7 @@
             }
             else
             {
-                <text>&copy; @DateTime.Now.Year - EShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></text>
+                <text>&copy; @DateTime.Now.Year - EShopWebApp  - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></text>
                 
             }
             
@@ -77,8 +84,8 @@
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/cart.js?version=2.9"></script>
     
-    <script src="~/js/cart.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

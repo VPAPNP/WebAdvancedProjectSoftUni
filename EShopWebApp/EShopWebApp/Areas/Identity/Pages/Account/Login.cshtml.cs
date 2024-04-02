@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using EShopWebApp.Infrastructure.Data.Models;
 using System.Security.Claims;
 using EShopWebApp.Core.Contracts;
+using static System.Collections.Specialized.BitVector32;
 
 namespace EShopWebApp.Areas.Identity.Pages.Account
 {
@@ -124,13 +125,16 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
                         {
                             await _cartService.AddProductToCartAsync(product.Id, userId.ToString());
                             await _cartService.RemoveGuestProduct(product.Id);
+                            
                         }
 
 
 
                     }
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+					
+
+					return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -150,6 +154,12 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+
+            
+
         }
     }
+
 }
+
+

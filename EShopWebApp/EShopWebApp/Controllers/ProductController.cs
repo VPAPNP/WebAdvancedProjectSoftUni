@@ -28,12 +28,17 @@ namespace EShopWebApp.Controllers
             
             queryModel.Products = serviceModel.Products;
             queryModel.TotalProducts = serviceModel.TotalProducts;
+           
             queryModel.Categories = await _categoryService.GetAllNamesAsync();
             queryModel.Brands = await _brandService.GetAllNamesAsync();
 
             return View(queryModel);
         }
-
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var product = await _productService.GetByIdAsync(id);
+            return View(product);
+        }
         
 
         

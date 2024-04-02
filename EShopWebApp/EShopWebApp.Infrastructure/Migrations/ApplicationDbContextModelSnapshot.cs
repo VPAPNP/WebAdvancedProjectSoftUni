@@ -246,7 +246,9 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -257,7 +259,12 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Photos", t =>
                         {
@@ -290,6 +297,9 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<Guid>("FrontPhotoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -302,9 +312,6 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("PhotoId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -322,7 +329,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("PhotoId");
+                    b.HasIndex("FrontPhotoId");
 
                     b.HasIndex("WishListId");
 
@@ -392,6 +399,8 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
 
                     b.HasIndex("UserId")
                         .IsUnique()
@@ -652,6 +661,16 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Photo", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductPhotos")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
                 {
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.Brand", "Brand")
@@ -666,9 +685,9 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Photo", "Photo")
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Photo", "FrontPhoto")
                         .WithMany()
-                        .HasForeignKey("PhotoId")
+                        .HasForeignKey("FrontPhotoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -680,7 +699,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("Photo");
+                    b.Navigation("FrontPhoto");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShippingInfo", b =>
@@ -696,9 +715,15 @@ namespace EShopWebApp.Infrastructure.Migrations
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", b =>
                 {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.ShoppingCartSession", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId");
+
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.ApplicationUser", "User")
                         .WithOne("ShoppingCart")
                         .HasForeignKey("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", "UserId");
+
+                    b.Navigation("Session");
 
                     b.Navigation("User");
                 });
@@ -804,6 +829,11 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.Navigation("ShippingInfo")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
+                {
+                    b.Navigation("ProductPhotos");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", b =>

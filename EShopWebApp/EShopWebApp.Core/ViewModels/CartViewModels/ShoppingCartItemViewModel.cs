@@ -7,6 +7,6 @@
 		public Guid SessionId { get; set; }
 		public Guid CartId { get; set; }
         public int Quantity { get; set; }
-        public ProductViewModel Product { get; set; } = new ProductViewModel();
+        public CartProductViewModel Product { get; set; } = new CartProductViewModel();
     }
 }

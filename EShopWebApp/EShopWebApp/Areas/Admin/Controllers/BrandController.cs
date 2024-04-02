@@ -1,5 +1,4 @@
 ﻿using EShopWebApp.Core.Contracts;
-using EShopWebApp.Core.Services;
 using EShopWebApp.Core.ViewModels.BrandViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +36,23 @@ namespace EShopWebApp.Areas.Admin.Controllers
         {
             var brands = await _brandService.GetAllAsync();
             return View(brands);
+        }
+        public async Task<IActionResult> Edit(string id)
+        {
+            var brand = await _brandService.GetByIdAsync(Guid.Parse(id));
+            return View(brand);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(BrandViewModel brandView)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(brandView);
+            }
+
+            await _brandService.EditAsync(brandView);
+           
+            return RedirectToAction("All", "Brand");
         }
 
 

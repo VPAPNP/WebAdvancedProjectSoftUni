@@ -17,8 +17,8 @@ namespace EShopWebApp.Core.Services
         }
         public async Task UndoDeleteAsync(string id)
         {
-            var category = await _dbContext.Brands.FirstAsync(c => c.Id == Guid.Parse(id));
-            category.IsDeleted = false;
+            var brand = await _dbContext.Brands.FirstAsync(c => c.Id == Guid.Parse(id));
+            brand.IsDeleted = false;
             await _dbContext.SaveChangesAsync();
         }
         public async Task<ICollection<BrandViewModel>> GetAllAsync()
@@ -88,5 +88,13 @@ namespace EShopWebApp.Core.Services
             return brands;
            
         }
+
+        public async Task EditAsync(BrandViewModel brandEditViewModel)
+        {
+           var brand = await _dbContext.Brands.FirstAsync(c => c.Id == Guid.Parse(brandEditViewModel.Id));
+            brand.Name = brandEditViewModel.Name;
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

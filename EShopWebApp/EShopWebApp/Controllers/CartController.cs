@@ -1,6 +1,5 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
-using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -50,53 +49,57 @@ namespace EShopWebApp.Controllers
                 cartView = await _cartService.GetCartAsync(userId!);
             }
 
-            
-
-
             return View(cartView);
-            
-
-
             
         }
         
         public async Task<IActionResult> AddToCart(Guid id)
         {
+            if (!User.Identity!.IsAuthenticated)
+            {
+                 await _cartService.AddProductToGuestCartAsync(id);
+
+            }
+            else
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _cartService.AddProductToCartAsync(id, userId!);
+            }
+            return RedirectToAction("All","Product");
+        }
+        public async Task<IActionResult> RemoveFromCart(Guid id)
+        {
+            CartViewModel cartView = new CartViewModel();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!User.Identity!.IsAuthenticated)
+            {
+                await _cartService.RemoveProduct(id,userId!);
+                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                cartView = await _cartService.GetGuestCartAsync(sessionId);
+            }
+            else 
+            {
+                
+                await _cartService.RemoveProduct(id, userId!);
+                cartView = await _cartService.GetCartAsync(userId!);
+            }
             
+            return View("Index", cartView);
+            
+        }
+        public async Task<IActionResult> BuyItNow(Guid id)
+        {
             CartViewModel cartView = new CartViewModel();
             if (!User.Identity!.IsAuthenticated)
             {
                 cartView = await _cartService.AddProductToGuestCartAsync(id);
-
             }
             else
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 cartView = await _cartService.AddProductToCartAsync(id, userId!);
             }
-            
-            return RedirectToAction("All","Product");
-        }
-        public async Task<IActionResult> RemoveFromCart(Guid id)
-        {
-            CartViewModel cartView = new CartViewModel();
-            if (!User.Identity!.IsAuthenticated)
-            {
-                await _cartService.RemoveGuestProduct(id);
-                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
-                cartView = await _cartService.GetGuestCartAsync(sessionId);
-            }
-            else 
-            {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                await _cartService.RemoveProduct(id, userId!);
-                cartView = await _cartService.GetCartAsync(userId!);
-            }
-            
-
-            
-            return View("Index", cartView);
-            
+            return RedirectToAction("Index", "Cart");
         }
 
 

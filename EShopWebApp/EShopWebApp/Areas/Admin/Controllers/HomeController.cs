@@ -1,8 +1,6 @@
 using EShopWebApp.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using EShopWebApp.Areas.Admin.Controllers;
-using static EShopWebApp.Core.DataConstants.GeneralApplicationConstants;
 namespace EShopWebApp.Areas.Admin.Controllers
 {
     public class HomeController : BaseAdminController

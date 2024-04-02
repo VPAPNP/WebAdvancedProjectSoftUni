@@ -9,7 +9,7 @@ namespace EShopWebApp.Core.Contracts
     {
         Task<ICollection<ProductAllViewModel>> GetAllAsync();
 
-        Task<Product> GetByIdAsync(Guid id);
+        Task<ProductAllViewModel> GetByIdAsync(Guid id);
 
         Task CreateAsync(IFormFile file,ProductCreateViewModel productCreateViewModel);
         Task DeleteAsync(Guid id);
@@ -17,6 +17,8 @@ namespace EShopWebApp.Core.Contracts
         Task EditAsync(IFormFile file,Guid id,ProductEditViewModel productEditViewModel);
 
         Task<AllProductsFilteredAndPagedServiceModel> GetAllFilteredAndPagedAsync(AllProductsQueryModel productsQueryModel);
+
+        Task<ICollection<ProductAllViewModel>> GetLastThreeAddedAsync();
 
     }
 }

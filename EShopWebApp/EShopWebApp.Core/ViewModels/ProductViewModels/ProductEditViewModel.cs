@@ -17,6 +17,7 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         [Required]
         [Range(PriceMinValue, PriceMaxValue)]
         public decimal Price { get; set; }
+        public string? PhotoName { get; set; } 
         public Guid ImageId { get; set; }
         [Required]
         [Range(QuantityMinValue, QuantityMaxValue)]

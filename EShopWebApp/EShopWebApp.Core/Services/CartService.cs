@@ -1,11 +1,10 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
-using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants;
 using System.Security.Claims;
 
 namespace EShopWebApp.Core.Services
@@ -33,7 +32,7 @@ namespace EShopWebApp.Core.Services
                sessionId =  await CreateShoppingCartSession();
             }
 
-            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
+            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
              
             if (cart == null)
             {
@@ -61,7 +60,7 @@ namespace EShopWebApp.Core.Services
                 });
                
                 await _context.SaveChangesAsync();
-                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
+                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId));
             }
            
 
@@ -75,12 +74,13 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                     }
                 }).ToList()
             };
@@ -89,7 +89,7 @@ namespace EShopWebApp.Core.Services
         public async Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId)
         {
             
-            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
+            var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
 
             
 
@@ -120,7 +120,7 @@ namespace EShopWebApp.Core.Services
                 });
 
                 await _context.SaveChangesAsync();
-                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
+                cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph => ph.FrontPhoto).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
             }
 
            
@@ -134,12 +134,13 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                     }
                 }).ToList()
             };
@@ -148,13 +149,15 @@ namespace EShopWebApp.Core.Services
         public async Task<CartViewModel> GetCartAsync(string userId)
         {
             var cart = await _context.ShoppingCarts.Include(sci=>sci.ShoppingCartItems)
-                .ThenInclude(p=>p.Product)
+                .ThenInclude(p=>p.Product).ThenInclude(ph=>ph.FrontPhoto)
 
                 .FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
 
             if (cart == null)
             {
+                
                 return new CartViewModel();
+
             }
 
             return new CartViewModel
@@ -167,12 +170,13 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
                        
                     }
                 }).ToList()
@@ -185,12 +189,43 @@ namespace EShopWebApp.Core.Services
         {
             string curSessionId = sessionId;
             var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems)
-                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Product).ThenInclude(ph=>ph.FrontPhoto)
 
                 .FirstOrDefaultAsync(c => c.SessionId == Guid.Parse(sessionId));
 
             if (cart == null)
             {
+                if(sessionId!=null)
+                {
+                    cart = new ShoppingCart
+                    {
+                        SessionId = Guid.Parse(sessionId)
+
+                    };
+                    _context.ShoppingCarts.Add(cart);
+                    await _context.SaveChangesAsync();
+                    return new CartViewModel
+                    {
+                        Id = cart.Id,
+                        SessionId = cart.SessionId,
+                        ShoppingCartItems = cart.ShoppingCartItems.Select(sci => new ShoppingCartItemViewModel
+                        {
+                            Id = sci.Id,
+                            ProductId = sci.ProductId,
+                            CartId = sci.CartId,
+                            Quantity = sci.Quantity,
+                            Product = new CartProductViewModel
+                            {
+                                Id = sci.Product!.Id,
+                                Name = sci.Product.Name,
+                                Description = sci.Product.Description,
+                                Price = sci.Product.Price,
+                                Image = sci.Product.FrontPhoto.Picture,
+
+                            }
+                        }).ToList()
+                    };
+                }
                 return new CartViewModel();
             }
 
@@ -204,12 +239,13 @@ namespace EShopWebApp.Core.Services
                     ProductId = sci.ProductId,
                     CartId = sci.CartId,
                     Quantity = sci.Quantity,
-                    Product = new ProductViewModel
+                    Product = new CartProductViewModel
                     {
                         Id = sci.Product!.Id,
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
+                        Image = sci.Product.FrontPhoto.Picture,
 
                     }
                 }).ToList()
@@ -219,10 +255,10 @@ namespace EShopWebApp.Core.Services
 
         }
 
-        public async  Task<IEnumerable<ProductViewModel>> GetGuestCartProductsAsync(Guid sessionId)
+        public async  Task<IEnumerable<CartProductViewModel>> GetGuestCartProductsAsync(Guid sessionId)
         {
            var prducts = await _context.ShoppingCartItems.Include(p=>p.Product).Where(c => c.SessionId == sessionId)
-                .Select(sci => new ProductViewModel
+                .Select(sci => new CartProductViewModel
                 {
                     Id = sci.Product!.Id,
                     Name = sci.Product.Name,
@@ -235,10 +271,6 @@ namespace EShopWebApp.Core.Services
            
         }
 
-        public Task<int> GetCartProductsCountAsync(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task RemoveProduct(Guid productId, string userId)
         {
@@ -253,11 +285,11 @@ namespace EShopWebApp.Core.Services
             }
             if (userId == null)
             {
-                 cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId));
+                 cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId) && sci.ProductId == productId);
             }
             else
             {
-                cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.UserId == Guid.Parse(userId));
+                cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.UserId == Guid.Parse(userId) && sci.ProductId == productId);
             }
 
             
@@ -293,7 +325,7 @@ namespace EShopWebApp.Core.Services
             
             ShoppingCartItem? cartItem = null;
             
-            cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId));
+            cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.SessionId == Guid.Parse(sessionId) && sci.ProductId == productId);
             
             
 
@@ -321,20 +353,14 @@ namespace EShopWebApp.Core.Services
 
         }
 
-        public Task<decimal> GetCartTotalPriceAsync(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task RemoveAllProductsFromCartAsync(Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task RemoveProductFromCartAsync(Guid productId, Guid userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
 		public async Task<string> CreateShoppingCartSession()
 		{
@@ -373,7 +399,7 @@ namespace EShopWebApp.Core.Services
 						ProductId = sci.ProductId,
 						CartId = sci.CartId,
 						Quantity = sci.Quantity,
-						Product = new ProductViewModel
+						Product = new CartProductViewModel
                         {
 							Id = sci.Product!.Id,
 							Name = sci.Product.Name,
@@ -390,6 +416,30 @@ namespace EShopWebApp.Core.Services
 			return new List<ShoppingCartItemViewModel>(); // Return an empty list if session identifier is not found
 		}
 
-       
+        public async Task RemoveShoppingCartItemsAsync(string productId, string userId)
+        {
+            if (userId != null)
+            {
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
+                var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == Guid.Parse(productId));
+                if (cartItem != null)
+                {
+                    _context.ShoppingCartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.SessionId == Guid.Parse(sessionId));
+                var cartItem = cart.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == Guid.Parse(productId) && sci.SessionId == Guid.Parse(sessionId!));
+                if (cartItem != null)
+                {
+                    _context.ShoppingCartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+        }
     }
 }

@@ -96,19 +96,20 @@ namespace EShopWebApp.Areas.Admin.Controllers
             var product = await _productService.GetByIdAsync(Guid.Parse(id));
             var categories = await _categoryService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
-            var photo = await _imageService.GetPhotoById(product.PhotoId);
+            var photo = await _imageService.GetPhotoById(Guid.Parse(product.PhotoId));
             var productEditForm = new ProductEditFormViewModel
             {
 
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                StockQuantity = product.Quantity,
-                BrandId = product.BrandId.ToString()!,
+                StockQuantity = product.StockQuantity,
+                BrandId = product.BrandId,
                 CreatedOn = product.CreatedOn,
                 CategoryId = product.CategoryId.ToString()!,
                 Categories = categories,
-                Brands = brands,
+                PhotoId =Guid.Parse( product.PhotoId),
+                Brands = brands
                
 
             };
@@ -118,16 +119,20 @@ namespace EShopWebApp.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(IFormFile file ,string id, ProductEditViewModel editProductModel)
         {
+            
+            ModelState.Remove("file");
+
             if (!ModelState.IsValid)
             {
                 var categories = await _categoryService.GetAllAsync();
                 var brands = await _brandService.GetAllAsync();
+                
                 var productEditForm = new ProductEditFormViewModel
                 {
                     Name = editProductModel.Name,
                     Description = editProductModel.Description,
                     Price = editProductModel.Price,
-                    ImageId = editProductModel.ImageId,
+                    PhotoId = editProductModel.ImageId,
                     StockQuantity = editProductModel.StockQuantity,
                     BrandId = editProductModel.BrandId,
                     CategoryId = editProductModel.CategoryId,

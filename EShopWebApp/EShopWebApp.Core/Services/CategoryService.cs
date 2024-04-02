@@ -89,5 +89,17 @@ namespace EShopWebApp.Core.Services
 
             return categories;
         }
+
+        public async Task EditAsync(CategoryViewModel categoryEditViewModel)
+        {
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == Guid.Parse(categoryEditViewModel.Id));
+
+            if (category != null)
+            {
+                category.Name = categoryEditViewModel.Name;
+                await _dbContext.SaveChangesAsync();
+            }
+
+        }
     }
 }
