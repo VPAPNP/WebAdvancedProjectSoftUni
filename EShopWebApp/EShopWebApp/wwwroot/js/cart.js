@@ -186,9 +186,6 @@ $('.add-to-cart').on('click', (async function (event) {
        
 }));    
     
-   
-
-
 
 // Clear items
 $('.clear-cart').on('click',(async function () {
@@ -281,11 +278,6 @@ $('.show-cart').on('click', '.minus-item', async function (event) {
 
         }
     }
-            
-
-        
-
-    
     
     shoppingCart.removeItemFromCart(name);
     displayCart();
@@ -357,7 +349,7 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                     // Handle any errors that occur during the fetch request
                     console.error('Error:', error);
                 });
-
+                // Hide the element if the count is 0
     for (const item in cart) {
         if (cart[item].count === 1 && cart[item].name === name) {
             // Construct the ID of the element to hide
@@ -370,8 +362,6 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
             }
         }
     }
-   
-    
     
     shoppingCart.removeItemFromCart(name);
     displayCart();
@@ -402,8 +392,6 @@ $('.cart-item').on('click', '.plus-item', async function (event) {
         });
 
 
-
-
     shoppingCart.addItemToCart(id, name, price, count);
     displayCart();
 })
@@ -411,9 +399,6 @@ $('.cart-item').on('click', '.plus-item', async function (event) {
 $('.load-cart-items-login').on('click', (async function (event) {
     event.preventDefault();
     event.stopPropagation();
-    
-
-
     const options = {
         method: 'GET',
         headers: {
@@ -442,8 +427,6 @@ $('.load-cart-items-login').on('click', (async function (event) {
 
 
 }));    
-
-
 
 
 displayCart();

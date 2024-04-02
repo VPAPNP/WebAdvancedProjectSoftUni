@@ -2,7 +2,6 @@
 using EShopWebApp.Core.Services.ServiceModels;
 using EShopWebApp.Core.ViewModels.BrandViewModels;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
@@ -12,43 +11,48 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EShopWebApp.Core.Services
 {
-    public class ProductService : IProductService
+	public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IPhotoService _imageService;
+        private readonly IPhotoService _photoService;
 
-        public ProductService(ApplicationDbContext context,IPhotoService imageService)
+        public ProductService(ApplicationDbContext context,IPhotoService photoService)
         {
             _context = context;
-            _imageService = imageService;
+            _photoService = photoService;
         }
-        public async Task<ICollection<ProductAllViewModel>> GetAllAsync()
-        {
-            var products = await _context.Products.Include(c=>c.Category).Where(p=>p.IsDeleted == false).Select(p=> new ProductAllViewModel
-            {
-                Id = p.Id.ToString(),
-                Name = p.Name,
-                Price = p.Price,
-                StockQuantity = p.Quantity,
-                Description = p.Description,
-                Image = p.FrontPhoto.Picture,
-              
-                Category = new CategoryViewModel()
-                {
-                    Id = p.Category.Id.ToString(),
-                    Name = p.Category.Name
-                }
-            }).ToListAsync();
-            Console.WriteLine();
-               return products;
-        }
+		public async Task<ICollection<ProductAllViewModel>> GetAllAsync()
+		{
+			var products = await _context.Products.Include(c => c.Category).Where(p => p.IsDeleted == false).Select(p => new ProductAllViewModel
+			{
+				Id = p.Id.ToString(),
+				Name = p.Name,
+				Price = p.Price,
+				StockQuantity = p.Quantity,
+				Description = p.Description,
+				Image = p.FrontPhoto.Picture,
 
-        public async Task<ProductAllViewModel> GetByIdAsync(Guid id)
+				Category = new CategoryViewModel()
+				{
+					Id = p.Category.Id.ToString(),
+					Name = p.Category.Name
+				}
+			}).ToListAsync();
+
+			return products;
+		}
+
+		public async Task<ProductAllViewModel> GetByIdAsync(Guid id)
         {
+           
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-            product.Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == product.BrandId);
-            product.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
-            product.FrontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
+            
+            
+				product!.Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == product.BrandId);
+				product.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+				product.FrontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
+			
+           
 
 
             var productAllViewModel = new ProductAllViewModel
@@ -85,7 +89,7 @@ namespace EShopWebApp.Core.Services
         {
             
 
-            var image = _imageService.CreateImage(file, file.FileName);
+            var image = _photoService.CreateImage(file, file.FileName);
             var photo = await _context.Photos.AddAsync(new Photo
             {
                 Name = image.Name,
@@ -118,7 +122,7 @@ namespace EShopWebApp.Core.Services
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
             var photoId = product!.FrontPhotoId;
-            await _imageService.DeletePhotoAsync(photoId);
+            await _photoService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
@@ -133,7 +137,7 @@ namespace EShopWebApp.Core.Services
                 {
                     if (file.FileName != photo!.Name)
                     {
-                        var newPhoto = _imageService.CreateImage(file, file.FileName);
+                        var newPhoto = _photoService.CreateImage(file, file.FileName);
                         photo = new Photo
                         {
                             Name = newPhoto.Name,
