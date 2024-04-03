@@ -1,20 +1,18 @@
-﻿using NUnit.Framework;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using EShopWebApp.Core.Contracts;
+﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.Services;
+using EShopWebApp.Core.Services.ServiceModels;
+using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
+using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
-using Moq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace TestingEShopWebApp.UnitTests
 {
-	public class ProductServiceTests
+	public class ProductServiceTest
 	{
 		private ApplicationDbContext _context;
 		private Mock<IPhotoService> _photoServiceMock;
@@ -126,6 +124,91 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(productCreateViewModel.CategoryId)));
 			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(productCreateViewModel.BrandId)));
 		}
+		[Test]
+		public async Task DeleteAsync_MarksProductAsDeleted()
+		{
+			// Arrange
+			var testId = productId1; // Use one of the product IDs from your test data
+
+			// Act
+			await _productService.DeleteAsync(testId);
+
+			// Assert
+			var product = await _context.Products.FindAsync(testId);
+			Assert.That(product, Is.Not.Null);
+			Assert.That(product.IsDeleted, Is.True);
+		}
+		[Test]
+		public async Task EditAsync_UpdatesProduct()
+		{
+			// Arrange
+			var testId = productId1; // Use one of the product IDs from your test data
+			var mockFile = new Mock<IFormFile>();
+			var editProductModel = new ProductEditViewModel
+			{
+				Name = "Updated Product",
+				Description = "Updated Description",
+				Price = 15.0m,
+				StockQuantity = 10,
+				CategoryId = Guid.NewGuid().ToString(),
+				BrandId = Guid.NewGuid().ToString()
+			};
+
+			// Act
+			await _productService.EditAsync(mockFile.Object, testId, editProductModel);
+
+			// Assert
+			var product = await _context.Products.FindAsync(testId);
+			Assert.That(product, Is.Not.Null);
+			Assert.That(product.Name, Is.EqualTo(editProductModel.Name));
+			Assert.That(product.Description, Is.EqualTo(editProductModel.Description));
+			Assert.That(product.Price, Is.EqualTo(editProductModel.Price));
+			Assert.That(product.Quantity, Is.EqualTo(editProductModel.StockQuantity));
+			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(editProductModel.CategoryId)));
+			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(editProductModel.BrandId)));
+		}
+		[Test]
+		public async Task GetAllFilteredAndPagedAsync_ReturnsFilteredAndPagedProducts()
+		{
+			// Arrange
+			var productsQueryModel = new AllProductsQueryModel
+			{
+				Brand = "Brand 1",
+				Category = "Category 1",
+				SearchTerm = "Product 1",
+				ProductSorting = ProductSorting.Newest,
+				CurrentPage = 1,
+				PageSize = 1
+			};
+
+			// Act
+			var result = await _productService.GetAllFilteredAndPagedAsync(productsQueryModel);
+
+			// Assert
+			Assert.That(result, Is.TypeOf<AllProductsFilteredAndPagedServiceModel>());
+			Assert.That(result.TotalProducts, Is.EqualTo(1));
+			Assert.That(result.Products, Has.Exactly(1).Items);
+			var product = result.Products.First();
+			Assert.That(product.Name, Is.EqualTo("Product 1"));
+		}
+		[Test]
+		public async Task GetLastThreeAddedAsync_ReturnsLastThreeAddedProducts()
+		{
+			// Act
+			var result = await _productService.GetLastThreeAddedAsync();
+				List<ProductAllViewModel> products = result.ToList();
+
+			// Assert
+			Assert.That(result, Is.TypeOf<List<ProductAllViewModel>>());
+			Assert.That(result.Count, Is.EqualTo(2));
+			
+			Assert.That(products[1].Name, Is.EqualTo("Product 2")); // Assuming "Product 2" is the second last added product
+			Assert.That(products[0].Name, Is.EqualTo("Product 1")); // Assuming "Product 1" is the third last added product
+		}
+
+
+
+
 
 		[TearDown]
 		public void TearDown()

@@ -1,15 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Product;
 namespace EShopWebApp.Infrastructure.Data.Models
 {
-    /// <summary>
-    /// This class represents the product table.
-    /// </summary>
-    [Comment("Product table")]
+	/// <summary>
+	/// This class represents the product table.
+	/// </summary>
+	[Comment("Product table")]
     public class Product
     {
         /// <summary>
