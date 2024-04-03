@@ -37,7 +37,7 @@ namespace EShopWebApp.Core.Services
 
             return img;
         }
-
+        //TODO: Implement DownloadPhotoAsync    
         public Task DownloadPhotoAsync(Guid Id)
         {
             throw new NotImplementedException();

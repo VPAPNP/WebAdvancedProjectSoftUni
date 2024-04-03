@@ -12,7 +12,7 @@ using Moq;
 
 namespace TestingEShopWebApp.UnitTests
 {
-	public class ProductServiceTests
+	public class ProductServiceTest
 	{
 		private ApplicationDbContext _context;
 		private Mock<IPhotoService> _photoServiceMock;

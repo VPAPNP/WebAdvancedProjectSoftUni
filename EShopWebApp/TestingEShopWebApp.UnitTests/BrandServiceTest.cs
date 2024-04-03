@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace TestingEShopWebApp.UnitTests
 {
 	[TestFixture]
-	public class BrandServiceTests
+	public class BrandServiceTest
 	{
 		private ApplicationDbContext CreateDbContext()
 		{
