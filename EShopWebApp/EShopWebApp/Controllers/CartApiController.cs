@@ -27,10 +27,10 @@ namespace EShopWebApp.Controllers
         public async Task<CartViewModel> Get()
         {
             CartViewModel cart = new CartViewModel();
-            if (User.Identity.IsAuthenticated) 
+            if (User.Identity!.IsAuthenticated) 
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                cart = await _cartService.GetCartAsync(userId);
+                cart = await _cartService.GetCartAsync(userId!);
 
                return cart;
             }

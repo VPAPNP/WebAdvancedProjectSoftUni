@@ -111,5 +111,11 @@ public class PhotoServiceTests
 		Assert.That(result.Name, Is.EqualTo(photo.Name));
 		Assert.That(result.Picture, Is.EqualTo(photo.Picture));
 	}
+	[TearDown]
+	public void TearDown()
+	{
+		_context.Database.EnsureDeleted();
+		_context.Dispose();
+	}
 
 }
