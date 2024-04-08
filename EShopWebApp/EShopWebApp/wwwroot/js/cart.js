@@ -2,12 +2,12 @@
 // Shopping Cart API
 // ************************************************
 
-
 var shoppingCart = (function () {
     // =============================
     // Private methods and propeties
     // =============================
     cart = [];
+    var userCartLoaded = sessionStorage.getItem('userCartLoaded') === 'true';
 
     // Constructor
     function Item(id, name, price, count) {
@@ -16,15 +16,22 @@ var shoppingCart = (function () {
         this.price = price;
         this.count = count;
     }
+    
     //Load cart items from database if user is logged in
-    const userLoggedInCookieValue = getCookie('UserLoggedIn');
-    if (userLoggedInCookieValue === 'true') {
-        //check if shopping cart is empty
-        var shoppingCartString = sessionStorage.getItem("shoppingCart");
-        if (sessionStorage.getItem("shoppingCart") === null || JSON.parse(shoppingCartString).length === 0) {
+    if (!userCartLoaded) {
+        const userLoggedInCookieValue = getCookie('UserLoggedIn');
+        if (userLoggedInCookieValue === 'true') {
+
+            //set in session cart to empty
+            sessionStorage.setItem('shoppingCart', JSON.stringify([]));
+           
+            //check if shopping cart is empty
+
+
             // User is logged in, perform actions accordingly
             console.log('User is logged in.');
             //retrieve cart items from database
+            
             const options = {
                 method: 'GET',
                 headers: {
@@ -32,6 +39,7 @@ var shoppingCart = (function () {
                 },
 
             };
+            
             fetch('/api/cartapi/getcart', options)
                 .then(response => response.json())
                 .then(data => {
@@ -45,6 +53,8 @@ var shoppingCart = (function () {
                         const count = item.stockQuantity;
                         shoppingCart.addItemToCart(id, name, price, count);
                     }
+                    userCartLoaded = true;
+                    sessionStorage.setItem('userCartLoaded', 'true'); // Set flag in sessionStorage
                     displayCart();
                 })
                 .catch(error => {
@@ -52,11 +62,10 @@ var shoppingCart = (function () {
                     console.error('Error:', error);
                 });
 
-
-
         }
-       
+
     }
+   
     
     // Save cart
     function saveCart() {
@@ -435,6 +444,13 @@ $('.cart-item').on('click', '.plus-item', async function (event) {
     displayCart();
 })
 //Load cart items ON LOGIN //TO DO !!!!
+$('.logout-flag').on('click', (async function (event) {
+
+    
+    
+    sessionStorage.setItem('userCartLoaded', 'false');
+   
+}));
 $('.load-cart-items-login').on('click', (async function (event) {
     event.preventDefault();
     event.stopPropagation();
