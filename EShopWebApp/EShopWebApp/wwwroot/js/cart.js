@@ -16,6 +16,7 @@ var shoppingCart = (function () {
         this.price = price;
         this.count = count;
     }
+    //Load cart items from database if user is logged in
     const userLoggedInCookieValue = getCookie('UserLoggedIn');
     if (userLoggedInCookieValue === 'true') {
         //check if shopping cart is empty
@@ -56,19 +57,6 @@ var shoppingCart = (function () {
         }
        
     }
-
-      
-
-
-
-        
-
-    
-
-
-
-   
-
     
     // Save cart
     function saveCart() {
