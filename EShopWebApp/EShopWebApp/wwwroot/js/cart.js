@@ -18,42 +18,50 @@ var shoppingCart = (function () {
     }
     const userLoggedInCookieValue = getCookie('UserLoggedIn');
     if (userLoggedInCookieValue === 'true') {
-        // User is logged in, perform actions accordingly
-        console.log('User is logged in.');
-        //retrieve cart items from database
-        const options = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+        //check if shopping cart is empty
+        var shoppingCartString = sessionStorage.getItem("shoppingCart");
+        if (sessionStorage.getItem("shoppingCart") === null || JSON.parse(shoppingCartString).length === 0) {
+            // User is logged in, perform actions accordingly
+            console.log('User is logged in.');
+            //retrieve cart items from database
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-        };
-        fetch('/api/cartapi/getcart', options)
-        .then(response => response.json())
-            .then(data => {
-                // Handle the response data
-                console.log(data);
-                for (let i = 0; i < data.length; i++) {
-                    const item = data[i];
-                    const id = item.id;
-                    const name = item.name;
-                    const price = item.price;
-                    const count = item.count;
-                    shoppingCart.addItemToCart(id, name, price, count);
-                }
-                displayCart();
-            })
-            .catch(error => {
-                // Handle any errors that occur during the fetch request
-                console.error('Error:', error);
-            });
+            };
+            fetch('/api/cartapi/getcart', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        const item = data[i];
+                        const id = item.id;
+                        const name = item.name;
+                        const price = item.price;
+                        const count = item.stockQuantity;
+                        shoppingCart.addItemToCart(id, name, price, count);
+                    }
+                    displayCart();
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+
+
+
+        }
+       
+    }
+
+      
+
+
 
         
-
-    } else {
-        // User is not logged in
-        console.log('User is not logged in.');
-    }
 
     
 

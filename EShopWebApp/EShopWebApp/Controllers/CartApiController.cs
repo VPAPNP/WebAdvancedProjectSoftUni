@@ -1,5 +1,6 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
+using EShopWebApp.Core.ViewModels.ProductViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
@@ -24,18 +25,27 @@ namespace EShopWebApp.Controllers
 
         // GET: api/<CartApiController>
         [HttpGet("getcart")]
-        public async Task<CartViewModel> Get()
+        public async Task<IEnumerable<ProductAllViewModel>> Get()
         {
             CartViewModel cart = new CartViewModel();
+            var list = new List<ProductAllViewModel>();
             if (User.Identity!.IsAuthenticated) 
             {
+                
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 cart = await _cartService.GetCartAsync(userId!);
+                list = cart.ShoppingCartItems.Select(x => new ProductAllViewModel
+                {
+                    Id = x.ProductId.ToString(),
+                    Name = x.Product.Name,
+                    Price = x.Product.Price,
+                    StockQuantity = x.Quantity
+                }).ToList();
 
-               return cart;
+               return list;
             }
             
-            return cart ;
+            return list ;
         }
 
         
