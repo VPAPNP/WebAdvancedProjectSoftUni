@@ -71,6 +71,15 @@
                             <input class="form-control" type="file" name="file" id="formFile">
                     </div>
                 </div>
+                <div class="container">
+                    <fieldset class="form-group">
+                        <a href="javascript:void(0)" onclick="$('#pro-image').click()">Upload More Images</a>
+                        <input type="file" id="pro-image" name="pro-image" style="display: none;" class="form-control" multiple>
+                    </fieldset>
+                    <div class="preview-images-zone">
+                       
+                    </div>
+                </div>
                 
         </div>
         <input class="btn btn-primary mt-3" type="submit" value="Create" />
@@ -82,5 +91,8 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script> src="~/js/uploadImage.js"</script>
+
 
 
