@@ -31,11 +31,9 @@
 </div>
     <script>
     function redirectToDetails(productId) {
-        // Get the current URL
+        
         var currentUrl = window.location.href;
-        // Extract the base URL without the product ID
         var baseUrl = currentUrl.substr(0, currentUrl.lastIndexOf('/') + 1);
-        // Redirect to the constructed URL with the new product ID
         window.location.href = baseUrl + productId;
     }
     </script>
