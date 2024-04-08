@@ -1,6 +1,5 @@
 ﻿using EShopWebApp.Core.Services.ServiceModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
-using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace EShopWebApp.Core.Contracts
@@ -19,6 +18,8 @@ namespace EShopWebApp.Core.Contracts
         Task<AllProductsFilteredAndPagedServiceModel> GetAllFilteredAndPagedAsync(AllProductsQueryModel productsQueryModel);
 
         Task<ICollection<ProductAllViewModel>> GetLastThreeAddedAsync();
+
+        Task<ICollection<ProductAllViewModel>> GetRelatedProductsAsync(Guid categoryId);
 
     }
 }

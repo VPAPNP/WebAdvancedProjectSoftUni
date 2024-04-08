@@ -37,7 +37,15 @@ namespace EShopWebApp.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
-            return View(product);
+
+            var relatedProducts = await _productService.GetRelatedProductsAsync(Guid.Parse(product.CategoryId));
+
+            var productDetailsViewModel = new ProductDetailsViewModel
+            {
+                Product = product,
+                RelatedProducts = relatedProducts.ToList()
+            };
+            return View(productDetailsViewModel);
         }
         
 

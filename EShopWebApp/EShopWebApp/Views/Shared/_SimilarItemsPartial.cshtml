@@ -1,0 +1,41 @@
+﻿@model ICollection<ProductAllViewModel>
+
+<div class="px-0 border rounded-2 shadow-0">
+    <div class="card">
+
+        <div class="card-body">
+
+            <h5 class="card-title">Similar items</h5>
+
+
+            @foreach (var item in Model)
+            {
+                <div class="d-flex mb-3 hover-zoom" onclick="redirectToDetails('@item.Id')">
+                    <a  class="me-3">
+                        <img alt="@item.Name" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" src="data:image;base64,@System.Convert.ToBase64String(item.Image)">
+                    </a>
+                    <div class="info">
+                        <a  class="nav-link mb-1">
+                            @item.Name <br />
+                            @item.Description
+                        </a>
+                        <strong class="text-dark"> $@item.Price</strong>
+                    </div>
+                </div>
+
+            }
+           
+        </div>
+    </div>
+
+</div>
+    <script>
+    function redirectToDetails(productId) {
+        // Get the current URL
+        var currentUrl = window.location.href;
+        // Extract the base URL without the product ID
+        var baseUrl = currentUrl.substr(0, currentUrl.lastIndexOf('/') + 1);
+        // Redirect to the constructed URL with the new product ID
+        window.location.href = baseUrl + productId;
+    }
+    </script>

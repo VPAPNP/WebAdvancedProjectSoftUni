@@ -259,5 +259,25 @@ namespace EShopWebApp.Core.Services
 
             return products;
         }
+
+        public async Task<ICollection<ProductAllViewModel>> GetRelatedProductsAsync(Guid categoryId)
+        {
+            var relatedProducts = await _context.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId).Select(p => new ProductAllViewModel
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                Price = p.Price,
+                StockQuantity = p.Quantity,
+                Description = p.Description,
+                Image = p.FrontPhoto.Picture,
+                Category = new CategoryViewModel()
+                {
+                    Id = p.Category.Id.ToString(),
+                    Name = p.Category.Name
+                }
+            }).Take(5).ToListAsync();
+
+            return relatedProducts;
+        }
     }
 }
