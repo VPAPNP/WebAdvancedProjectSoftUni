@@ -16,7 +16,50 @@ var shoppingCart = (function () {
         this.price = price;
         this.count = count;
     }
+    const userLoggedInCookieValue = getCookie('UserLoggedIn');
+    if (userLoggedInCookieValue === 'true') {
+        // User is logged in, perform actions accordingly
+        console.log('User is logged in.');
+        //retrieve cart items from database
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+        };
+        fetch('/api/cartapi/getcart', options)
+        .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+                console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    const id = item.id;
+                    const name = item.name;
+                    const price = item.price;
+                    const count = item.count;
+                    shoppingCart.addItemToCart(id, name, price, count);
+                }
+                displayCart();
+            })
+            .catch(error => {
+                // Handle any errors that occur during the fetch request
+                console.error('Error:', error);
+            });
+
+        
+
+    } else {
+        // User is not logged in
+        console.log('User is not logged in.');
+    }
+
     
+
+
+
+   
 
     
     // Save cart
@@ -167,7 +210,7 @@ $('.add-to-cart').on('click', (async function (event) {
 
     // Send the POST request
     await fetch('/api/cartapi/addtocart', options)
-        .then(response => response.json())
+        .then(response => response)
         .then(data => {
             // Handle the response data
             
@@ -427,6 +470,21 @@ $('.load-cart-items-login').on('click', (async function (event) {
 
 
 }));    
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Check if this cookie name is the one we're looking for
+        if (cookie.startsWith(name + '=')) {
+            // Return the cookie value
+            return cookie.substring(name.length + 1);
+        }
+    }
+    // Return null if cookie not found
+    return null;
+}
+
+
 
 
 displayCart();
