@@ -71,15 +71,19 @@
                             <input class="form-control" type="file" name="file" id="formFile">
                     </div>
                 </div>
-                <div class="container">
-                    <fieldset class="form-group">
-                        <a href="javascript:void(0)" onclick="$('#pro-image').click()">Upload More Images</a>
-                        <input type="file" id="pro-image" name="pro-image" style="display: none;" class="form-control" multiple>
-                    </fieldset>
-                    <div class="preview-images-zone">
-                       
+
+                <div class="upload__box">
+                    <div class="upload__btn-box">
+                        <label class="upload__btn">
+                            <p>Upload images</p>
+                            <input type="file" name="files" multiple="" data-max_length="20" class="upload__inputfile">
+                        </label>
                     </div>
+                    <div class="upload__img-wrap"></div>
                 </div>
+
+                
+                
                 
         </div>
         <input class="btn btn-primary mt-3" type="submit" value="Create" />

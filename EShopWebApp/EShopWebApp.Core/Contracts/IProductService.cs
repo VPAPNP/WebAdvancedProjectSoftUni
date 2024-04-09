@@ -10,7 +10,7 @@ namespace EShopWebApp.Core.Contracts
 
         Task<ProductAllViewModel> GetByIdAsync(Guid id);
 
-        Task CreateAsync(IFormFile file,ProductCreateViewModel productCreateViewModel);
+        Task CreateAsync(IEnumerable<IFormFile>files, IFormFile file,ProductCreateViewModel productCreateViewModel);
         Task DeleteAsync(Guid id);
 
         Task EditAsync(IFormFile file,Guid id,ProductEditViewModel productEditViewModel);

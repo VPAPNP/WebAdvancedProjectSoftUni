@@ -1,44 +1,60 @@
-$(document).ready(function () {
-    document.getElementById('pro-image').addEventListener('change', readImage, false);
-
-    $(".preview-images-zone").sortable();
-
-    $(document).on('click', '.image-cancel', function () {
-        let no = $(this).data('no');
-        $(".preview-image.preview-show-" + no).remove();
-    });
+jQuery(document).ready(function () {
+    ImgUpload();
 });
 
+function ImgUpload() {
+    var imgWrap = "";
+    var imgArray = [];
 
+    $('.upload__inputfile').each(function () {
+        $(this).on('change', function (e) {
+            imgWrap = $(this).closest('.upload__box').find('.upload__img-wrap');
+            var maxLength = $(this).attr('data-max_length');
 
-var num = 4;
-function readImage() {
-    if (window.File && window.FileList && window.FileReader) {
-        var files = event.target.files; //FileList object
-        var output = $(".preview-images-zone");
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var iterator = 0;
+            filesArr.forEach(function (f, index) {
 
-        for (let i = 0; i < files.length; i++) {
-            var file = files[i];
-            if (!file.type.match('image')) continue;
+                if (!f.type.match('image.*')) {
+                    return;
+                }
 
-            var picReader = new FileReader();
+                if (imgArray.length > maxLength) {
+                    return false
+                } else {
+                    var len = 0;
+                    for (var i = 0; i < imgArray.length; i++) {
+                        if (imgArray[i] !== undefined) {
+                            len++;
+                        }
+                    }
+                    if (len > maxLength) {
+                        return false;
+                    } else {
+                        imgArray.push(f);
 
-            picReader.addEventListener('load', function (event) {
-                var picFile = event.target;
-                var html = '<div class="preview-image preview-show-' + num + '">' +
-                    '<div class="image-cancel" data-no="' + num + '">x</div>' +
-                    '<div class="image-zone"><img id="pro-img-' + num + '" src="' + picFile.result + '"></div>' +
-                    
-                    '</div>';
-
-                output.append(html);
-                num = num + 1;
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var html = "<div class='upload__img-box'><div style='background-image: url(" + e.target.result + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+                            imgWrap.append(html);
+                            iterator++;
+                        }
+                        reader.readAsDataURL(f);
+                    }
+                }
             });
+        });
+    });
 
-            picReader.readAsDataURL(file);
+    $('body').on('click', ".upload__img-close", function (e) {
+        var file = $(this).parent().data("file");
+        for (var i = 0; i < imgArray.length; i++) {
+            if (imgArray[i].name === file) {
+                imgArray.splice(i, 1);
+                break;
+            }
         }
-        $("#pro-image").val('');
-    } else {
-        console.log('Browser not support');
-    }
+        $(this).parent().parent().remove();
+    });
 }

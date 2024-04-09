@@ -32,8 +32,7 @@
     <script>
     function redirectToDetails(productId) {
         
-        var currentUrl = window.location.href;
-        var baseUrl = currentUrl.substr(0, currentUrl.lastIndexOf('/') + 1);
-        window.location.href = baseUrl + productId;
+       
+        window.location.href = '@Url.Action("Details", "Product")?id=' + productId;
     }
     </script>

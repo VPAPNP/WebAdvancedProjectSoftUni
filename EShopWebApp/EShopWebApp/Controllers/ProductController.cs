@@ -11,13 +11,15 @@ namespace EShopWebApp.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
+        private readonly IPhotoService _photoService;
         
 
-        public ProductController(IProductService productService,ICategoryService categoryService,IBrandService brandService)
+        public ProductController(IProductService productService,ICategoryService categoryService,IBrandService brandService,IPhotoService photoService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
+            _photoService = photoService;
             
         }
         
@@ -40,10 +42,15 @@ namespace EShopWebApp.Controllers
 
             var relatedProducts = await _productService.GetRelatedProductsAsync(Guid.Parse(product.CategoryId));
 
+            var photos = await _photoService.GetPhotoByProductId(id);
+
+            
+
             var productDetailsViewModel = new ProductDetailsViewModel
             {
                 Product = product,
-                RelatedProducts = relatedProducts.ToList()
+                RelatedProducts = relatedProducts.ToList(),
+                Photos = photos.ToList()
             };
             return View(productDetailsViewModel);
         }

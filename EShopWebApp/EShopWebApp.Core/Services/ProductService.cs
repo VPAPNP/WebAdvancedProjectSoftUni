@@ -85,7 +85,7 @@ namespace EShopWebApp.Core.Services
             
         }
 
-        public async Task  CreateAsync(IFormFile file,ProductCreateViewModel productCreateViewModel)
+        public async Task  CreateAsync(IEnumerable<IFormFile> files, IFormFile file,ProductCreateViewModel productCreateViewModel)
         {
             
 
@@ -113,6 +113,24 @@ namespace EShopWebApp.Core.Services
 
             
             await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+            var productPhotos = new List<Photo>();
+            foreach (var formFile in files)
+            {
+                var imageGallery = _photoService.CreateImage(formFile, formFile.FileName);
+                var photoToUpload = new Photo 
+                {
+                    Name = imageGallery.Name,
+                    Picture = imageGallery.Picture,
+                    ProductId = product.Id
+                    
+                };
+                productPhotos.Add(photoToUpload);
+                
+               
+                                
+            }
+            await _context.Photos.AddRangeAsync(productPhotos);
             await _context.SaveChangesAsync();
 
             
