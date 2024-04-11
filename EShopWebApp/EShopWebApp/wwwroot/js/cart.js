@@ -229,10 +229,57 @@ $('.add-to-cart').on('click', (async function (event) {
 
     shoppingCart.addItemToCart(id, name, price, 1);
     displayCart();
+    
+   
    
 
        
 }));    
+//But Now Button
+$('.buy-it-now').on('click', (async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).data('id');
+    var name = $(this).data('name');
+    var price = $(this).data('price');
+
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(id)
+    };
+
+    // Send the POST request
+    await fetch('/api/cartapi/addtocart', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+
+
+    shoppingCart.addItemToCart(id, name, price, 1);
+    displayCart();
+    redirectToCart('/cart/index');
+
+    function redirectToCart(url) {
+        // Redirect to the specified URL
+        window.location.href = url;
+    }
+
+
+
+}));    
+
+
     
 
 // Clear items
@@ -291,6 +338,19 @@ $('.show-cart').on("click", ".delete-item", function (event) {
                 });
          }
     }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
     shoppingCart.removeItemFromCartAll(name);
     displayCart();
 })
@@ -324,6 +384,19 @@ $('.show-cart').on('click', '.minus-item', async function (event) {
                     console.error('Error:', error);
                 });
 
+        }
+    }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
         }
     }
     
@@ -398,18 +471,7 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                     console.error('Error:', error);
                 });
                 // Hide the element if the count is 0
-    for (const item in cart) {
-        if (cart[item].count === 1 && cart[item].name === name) {
-            // Construct the ID of the element to hide
-            const elementId = 'item-' + cart[item].id;
-
-            // Hide the element
-            const element = document.querySelector('.' + elementId);
-            if (element) {
-                element.classList.add("visually-hidden");
-            }
-        }
-    }
+   
     
     shoppingCart.removeItemFromCart(name);
     displayCart();
@@ -495,6 +557,7 @@ function getCookie(name) {
     // Return null if cookie not found
     return null;
 }
+
 
 
 

@@ -77,7 +77,7 @@ namespace EShopWebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while processing the request. api/addtocart");
-                throw; // Rethrow the exception to let the global exception handler handle it
+                throw; 
                 
             }
            
