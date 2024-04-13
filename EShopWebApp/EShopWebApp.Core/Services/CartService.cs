@@ -84,7 +84,7 @@ namespace EShopWebApp.Core.Services
             };
             
         }
-        public async Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId)
+        public async Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId,int quantity)
         {
             
             var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph=>ph!.FrontPhoto).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
@@ -109,14 +109,30 @@ namespace EShopWebApp.Core.Services
             }
             else
             {
-                await _context.ShoppingCartItems.AddAsync(new ShoppingCartItem
+                if (quantity > 0)
                 {
-                    ProductId = productId,
-                    UserId = Guid.Parse(userId),
-                    CartId = cart.Id,
-                    Quantity = 1
-                });
+                    await _context.ShoppingCartItems.AddAsync(new ShoppingCartItem
+                    {
+                        ProductId = productId,
+                        UserId = Guid.Parse(userId),
+                        CartId = cart.Id,
 
+                        Quantity = quantity
+                    });
+                }
+                else
+                {
+                    await _context.ShoppingCartItems.AddAsync(new ShoppingCartItem
+                    {
+                        ProductId = productId,
+                        UserId = Guid.Parse(userId),
+                        CartId = cart.Id,
+
+                        Quantity = 1
+                    });
+                }
+
+                
                 await _context.SaveChangesAsync();
                 cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).ThenInclude(p => p.Product).ThenInclude(ph => ph!.FrontPhoto).FirstOrDefault(c => c.UserId == Guid.Parse(userId));
             }
@@ -262,6 +278,8 @@ namespace EShopWebApp.Core.Services
                     Name = sci.Product.Name,
                     Description = sci.Product.Description,
                     Price = sci.Product.Price,
+                    Quantity = sci.Quantity,
+                    
                 }).ToListAsync();
 
             return prducts;

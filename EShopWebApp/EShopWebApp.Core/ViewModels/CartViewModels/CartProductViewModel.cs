@@ -8,5 +8,7 @@
         public decimal Price { get; set; }
         public byte[] Image { get; set; } = null!;
         public string CategoryName { get; set; } = string.Empty;
+
+        public int Quantity { get; set; }
     }
 }

@@ -61,7 +61,7 @@ namespace EShopWebApp.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    await _cartService.AddProductToCartAsync(Guid.Parse(id), userId);
+                    await _cartService.AddProductToCartAsync(Guid.Parse(id), userId,1);
                     
                 }
                 else

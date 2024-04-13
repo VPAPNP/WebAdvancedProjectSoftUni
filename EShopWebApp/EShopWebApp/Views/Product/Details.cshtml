@@ -61,21 +61,22 @@
                        @Model.Product.Description
                     </p>
 
-                    <div class="row">
+                    <card class="row">
                         <dt class="col-3">Category:</dt>
                         <dd class="col-9">@Model.Product.Category.Name</dd>
 
                         <dt class="col-3">Brand:</dt>
                         <dd class="col-9">@Model.Product.Brand.Name</dd>
-                    </div>
+                    </card>
 
                     <hr />
 
                     
                         
-                    </div>
-                <a data-id="@Model.Product.Id" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn buy-it-now btn-warning  shadow-0"> Buy now </a>
-                <a data-id="@Model.Product.Id"  data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn btn-primary add-to-cart shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                </div>
+
+                            <a data-id="@Model.Product.Id" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn buy-it-now btn-warning  shadow-0"> Buy now </a>
+                            <a data-id="@Model.Product.Id"  data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn btn-primary add-to-cart shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
                     <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
                 </div>
             </main>
@@ -157,13 +158,12 @@
     </div>
 </section>
 
-@section Scripts {
-    <script src="~/js/cart.js"></script>
+
     <script>
         var cartUrl = '@Url.Action("Index", "Cart")';
         redirectToCart(cartUrl);
     </script>
-}
+
     
 
     

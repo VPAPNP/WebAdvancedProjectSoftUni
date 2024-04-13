@@ -470,7 +470,20 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                     // Handle any errors that occur during the fetch request
                     console.error('Error:', error);
                 });
-                // Hide the element if the count is 0
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
+
    
     
     shoppingCart.removeItemFromCart(name);

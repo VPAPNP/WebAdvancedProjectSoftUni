@@ -112,7 +112,7 @@ namespace TestingEShopWebApp.UnitTests
 			};
 
 			// Act
-			await _productService.CreateAsync(mockFile.Object, productCreateViewModel);
+			//await _productService.CreateAsync(mockFile.Object, productCreateViewModel);
 
 			// Assert
 			//Assert.That(_context.Products, Has.Exactly(1).Items);

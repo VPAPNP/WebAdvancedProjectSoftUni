@@ -6,7 +6,7 @@ namespace EShopWebApp.Core.Contracts
     {
         
         Task<CartViewModel> AddProductToGuestCartAsync(Guid productId);
-        Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId);
+        Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId,int quantity);
        
         Task RemoveAllProductsFromCartAsync(Guid userId);
         Task RemoveShoppingCartItemsAsync(string productId,string userId);

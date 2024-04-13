@@ -130,11 +130,12 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
 
                         foreach (var product in productsFromGuestCart)
                         {
-                            await _cartService.AddProductToCartAsync(product.Id, userId.ToString());
+                            int quantity = product.Quantity;
+                            await _cartService.AddProductToCartAsync(product.Id, userId.ToString(),quantity);
                             await _cartService.RemoveGuestProduct(product.Id);
                             
                         }
-                        _httpContextAccessor.HttpContext.Response.Cookies.Delete("ShoppingCartSessionId");
+                        
 
                     }
                     
