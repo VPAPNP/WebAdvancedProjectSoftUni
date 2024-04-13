@@ -19,5 +19,7 @@ namespace EShopWebApp.Core.Contracts
         Task<string> CreateShoppingCartSession();
         Task<List<ShoppingCartItemViewModel>> GetCartItems();
 
+        Task AddCartItemToUserCart(Guid productId, int quantity, string userId);
+
 	}
 }
