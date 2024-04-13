@@ -2,15 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using EShopWebApp.Core.Contracts;
+using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using EShopWebApp.Infrastructure.Data.Models;
 using System.Security.Claims;
-using EShopWebApp.Core.Contracts;
-using static System.Collections.Specialized.BitVector32;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EShopWebApp.Areas.Identity.Pages.Account
 {
@@ -20,6 +20,8 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
         private readonly ILogger<LoginModel> _logger;
         private readonly ICartService _cartService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        
+
 
         public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, ICartService cartService, IHttpContextAccessor httpContextAccessor)
         {
@@ -27,6 +29,7 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
             _logger = logger;
             _cartService = cartService;
             _httpContextAccessor = httpContextAccessor;
+            
         }
 
         /// <summary>
@@ -115,6 +118,10 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    //set flag for client in session storage to know that the user has logged in
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("UserLoggedIn", "true");
+
+
                     string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
                     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     if (sessionId != null)
@@ -127,14 +134,13 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
                             await _cartService.RemoveGuestProduct(product.Id);
                             
                         }
-
-
+                        _httpContextAccessor.HttpContext.Response.Cookies.Delete("ShoppingCartSessionId");
 
                     }
-                    _logger.LogInformation("User logged in.");
-					
+                    
 
-					return LocalRedirect(returnUrl);
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {

@@ -35,7 +35,7 @@ namespace EShopWebApp.Controllers
             CartViewModel cartView = new CartViewModel();
             if (!User.Identity!.IsAuthenticated)
             {
-                string curSessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                string curSessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"]!;
                 if (string.IsNullOrEmpty(curSessionId)) 
                 {
                     curSessionId = await _cartService.CreateShoppingCartSession();
@@ -62,7 +62,7 @@ namespace EShopWebApp.Controllers
             }
             else
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 await _cartService.AddProductToCartAsync(id, userId!);
             }
             return RedirectToAction("All","Product");
@@ -74,8 +74,8 @@ namespace EShopWebApp.Controllers
             if (!User.Identity!.IsAuthenticated)
             {
                 await _cartService.RemoveProduct(id,userId!);
-                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
-                cartView = await _cartService.GetGuestCartAsync(sessionId);
+                string sessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"]!;
+                cartView = await _cartService.GetGuestCartAsync(sessionId!);
             }
             else 
             {
@@ -96,7 +96,7 @@ namespace EShopWebApp.Controllers
             }
             else
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 cartView = await _cartService.AddProductToCartAsync(id, userId!);
             }
             return RedirectToAction("Index", "Cart");

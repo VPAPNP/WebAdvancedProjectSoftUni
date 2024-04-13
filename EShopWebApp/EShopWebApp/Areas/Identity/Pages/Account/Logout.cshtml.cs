@@ -13,17 +13,21 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
+            //set flag for client in session storage to know that the user has logged in
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("UserLoggedIn", "false");
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

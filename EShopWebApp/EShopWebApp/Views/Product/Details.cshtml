@@ -1,4 +1,4 @@
-﻿@model ProductAllViewModel 
+﻿@model ProductDetailsViewModel 
 
 @{
     ViewData["Title"] = "Details";
@@ -14,25 +14,19 @@
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
                     <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp">
-                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="data:image;base64,@System.Convert.ToBase64String(Model.Image)" />
+                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="data:image;base64,@System.Convert.ToBase64String(Model.Product.Image)" />
                     </a>
                 </div>
                 <div class="d-flex justify-content-center mb-3">
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big1.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big1.webp" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big2.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big2.webp" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big3.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big3.webp" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big4.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big4.webp" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp" />
-                    </a>
+                    @foreach (var item in Model.Photos)
+                    {
+                        <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image"  class="item-thumb">
+                            <img width="60" height="60" class="rounded-2" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
+                        </a>
+                        
+                    }
+                    
+                    
                 </div>
                 <!-- thumbs-wrap.// -->
                 <!-- gallery-wrap .end// -->
@@ -40,7 +34,7 @@
             <main class="col-lg-6">
                 <div class="ps-lg-3">
                     <h4 class="title text-dark">
-                        @Model.Name <br />
+                        @Model.Product.Name <br />
                         
                     </h4>
                     <div class="d-flex flex-row my-3">
@@ -59,20 +53,20 @@
                     </div>
 
                     <div class="mb-3">
-                        <span class="h5">$@Model.Price</span>
+                        <span class="h5">$@Model.Product.Price</span>
                         <span class="text-muted">/per (messure unit)</span>
                     </div>
 
                     <p>
-                       @Model.Description
+                       @Model.Product.Description
                     </p>
 
                     <div class="row">
                         <dt class="col-3">Category:</dt>
-                        <dd class="col-9">@Model.Category.Name</dd>
+                        <dd class="col-9">@Model.Product.Category.Name</dd>
 
                         <dt class="col-3">Brand:</dt>
-                        <dd class="col-9">@Model.Brand.Name</dd>
+                        <dd class="col-9">@Model.Product.Brand.Name</dd>
                     </div>
 
                     <hr />
@@ -80,8 +74,8 @@
                     
                         
                     </div>
-                <a href="#" onclick="redirectToCart()" data-id="@Model.Id" data-image="@Model.Image" data-name="@Model.Name" data-price="@Model.Price" class="btn btn-warning add-to-cart shadow-0"> Buy now </a>
-                <a data-id="@Model.Id"  data-name="@Model.Name" data-price="@Model.Price" class="btn btn-primary add-to-cart shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                <a data-id="@Model.Product.Id" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn buy-it-now btn-warning  shadow-0"> Buy now </a>
+                <a data-id="@Model.Product.Id"  data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="btn btn-primary add-to-cart shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
                     <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
                 </div>
             </main>
@@ -157,64 +151,21 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="px-0 border rounded-2 shadow-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Similar items</h5>
-                            <div class="d-flex mb-3">
-                                <a href="#" class="me-3">
-                                    <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/8.webp" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
-                                </a>
-                                <div class="info">
-                                    <a href="#" class="nav-link mb-1">
-                                        Rucksack Backpack Large <br />
-                                        Line Mounts
-                                    </a>
-                                    <strong class="text-dark"> $38.90</strong>
-                                </div>
-                            </div>
-
-                            <div class="d-flex mb-3">
-                                <a href="#" class="me-3">
-                                    <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/9.webp" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
-                                </a>
-                                <div class="info">
-                                    <a href="#" class="nav-link mb-1">
-                                        Summer New Men's Denim <br />
-                                        Jeans Shorts
-                                    </a>
-                                    <strong class="text-dark"> $29.50</strong>
-                                </div>
-                            </div>
-
-                            <div class="d-flex mb-3">
-                                <a href="#" class="me-3">
-                                    <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/10.webp" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
-                                </a>
-                                <div class="info">
-                                    <a href="#" class="nav-link mb-1"> T-shirts with multiple colors, for men and lady </a>
-                                    <strong class="text-dark"> $120.00</strong>
-                                </div>
-                            </div>
-
-                            <div class="d-flex">
-                                <a href="#" class="me-3">
-                                    <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/11.webp" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
-                                </a>
-                                <div class="info">
-                                    <a href="#" class="nav-link mb-1"> Blazer Suit Dress Jacket for Men, Blue color </a>
-                                    <strong class="text-dark"> $339.90</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               <partial name="_SimilarItemsPartial", model="@Model.RelatedProducts" />
             </div>
         </div>
     </div>
 </section>
-<script>
-    function redirectToCart() {
-        window.location.href = '@Url.Action("Index", "Cart")';
-    }
-</script>
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+    <script>
+        var cartUrl = '@Url.Action("Index", "Cart")';
+        redirectToCart(cartUrl);
+    </script>
+}
+    
+
+    
+
+

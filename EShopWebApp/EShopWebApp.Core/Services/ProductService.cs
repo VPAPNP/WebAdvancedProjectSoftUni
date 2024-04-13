@@ -85,7 +85,7 @@ namespace EShopWebApp.Core.Services
             
         }
 
-        public async Task  CreateAsync(IFormFile file,ProductCreateViewModel productCreateViewModel)
+        public async Task  CreateAsync(IEnumerable<IFormFile> files, IFormFile file,ProductCreateViewModel productCreateViewModel)
         {
             
 
@@ -113,6 +113,24 @@ namespace EShopWebApp.Core.Services
 
             
             await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+            var productPhotos = new List<Photo>();
+            foreach (var formFile in files)
+            {
+                var imageGallery = _photoService.CreateImage(formFile, formFile.FileName);
+                var photoToUpload = new Photo 
+                {
+                    Name = imageGallery.Name,
+                    Picture = imageGallery.Picture,
+                    ProductId = product.Id
+                    
+                };
+                productPhotos.Add(photoToUpload);
+                
+               
+                                
+            }
+            await _context.Photos.AddRangeAsync(productPhotos);
             await _context.SaveChangesAsync();
 
             
@@ -258,6 +276,26 @@ namespace EShopWebApp.Core.Services
             }).ToListAsync();
 
             return products;
+        }
+
+        public async Task<ICollection<ProductAllViewModel>> GetRelatedProductsAsync(Guid categoryId)
+        {
+            var relatedProducts = await _context.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId).Select(p => new ProductAllViewModel
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                Price = p.Price,
+                StockQuantity = p.Quantity,
+                Description = p.Description,
+                Image = p.FrontPhoto.Picture,
+                Category = new CategoryViewModel()
+                {
+                    Id = p.Category.Id.ToString(),
+                    Name = p.Category.Name
+                }
+            }).Take(5).ToListAsync();
+
+            return relatedProducts;
         }
     }
 }

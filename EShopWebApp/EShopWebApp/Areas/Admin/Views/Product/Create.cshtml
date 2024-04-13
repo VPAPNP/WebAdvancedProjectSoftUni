@@ -71,22 +71,20 @@
                             <input class="form-control" type="file" name="file" id="formFile">
                     </div>
                 </div>
-                <div class="container">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Upload Image</label>
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <span class="btn btn-default btn-file">
-                                        Browse… <input type="file" id="imgInp">
-                                    </span>
-                                </span>
-                                <input type="text" name="img" class="form-control" readonly>
-                            </div>
-                            <img id='img-upload' />
-                        </div>
+
+                <div class="upload__box">
+                    <div class="upload__btn-box">
+                        <label class="upload__btn">
+                            <p>Upload images</p>
+                            <input type="file" name="files" multiple="" data-max_length="20" class="upload__inputfile">
+                        </label>
                     </div>
+                    <div class="upload__img-wrap"></div>
                 </div>
+
+                
+                
+                
         </div>
         <input class="btn btn-primary mt-3" type="submit" value="Create" />
 
@@ -97,5 +95,8 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script> src="~/js/uploadImage.js"</script>
+
 
 

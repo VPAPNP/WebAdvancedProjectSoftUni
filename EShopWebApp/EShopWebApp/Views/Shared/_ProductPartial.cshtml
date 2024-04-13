@@ -10,11 +10,11 @@
                 <h4 class="card-title">@Model.Name</h4>
                 <p class="card-text">@Model.Price $</p>
             </div>
-            <div class="card-footer text-center">
+    <div class="card-footer text-center">
               
         <a href="#" data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary">Add to cart</a>
     </div>
-        </div>
+</div>
 <script>
     function redirectToDetails(productId) {
         window.location.href = '@Url.Action("Details", "Product")?id=' + productId;

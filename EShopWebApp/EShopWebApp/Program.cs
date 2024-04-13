@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = builder.Configuration["GoogleKeys:ClientId"];
-    googleOptions.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
+    googleOptions.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
+    googleOptions.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"]!;
 });
 // Add services to the container.
 

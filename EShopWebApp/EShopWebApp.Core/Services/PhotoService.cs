@@ -1,6 +1,7 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.ImageViewModels;
 using EShopWebApp.Infrastructure.Data;
+using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,6 +77,43 @@ namespace EShopWebApp.Core.Services
             var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == id);
             db.Photos.Remove(photo!);
             await db.SaveChangesAsync();
+        }
+
+        public async Task UploadImagesToProductAsync(Guid productId, IEnumerable<IFormFile> images)
+        {
+            foreach (var image in images)
+            {
+                var photo = CreateImage(image, image.FileName);
+                var photoDb = new Photo()
+                {
+                    ProductId = productId,
+                    Name = photo.Name,
+                    Picture = photo.Picture
+                };
+                await db.Photos.AddAsync(photoDb);
+                await db.SaveChangesAsync();
+            }
+            
+        }
+
+        public async Task<ICollection<PhotoViewModel>> GetPhotoByProductId(Guid id)
+        {
+            var photos = await db.Photos.Where(p => p.ProductId == id).ToListAsync();
+
+            var photosViewModel = new List<PhotoViewModel>();
+
+            foreach (var photo in photos) 
+            {
+                var photoViewModel = new PhotoViewModel()
+                {
+                    Name = photo.Name,
+                    Picture = photo.Picture
+                };
+                photosViewModel.Add(photoViewModel);
+            }
+
+            return photosViewModel;
+            
         }
     }
 }

@@ -2,12 +2,12 @@
 // Shopping Cart API
 // ************************************************
 
-
 var shoppingCart = (function () {
     // =============================
     // Private methods and propeties
     // =============================
     cart = [];
+    var userCartLoaded = sessionStorage.getItem('userCartLoaded') === 'true';
 
     // Constructor
     function Item(id, name, price, count) {
@@ -17,7 +17,55 @@ var shoppingCart = (function () {
         this.count = count;
     }
     
+    //Load cart items from database if user is logged in
+    if (!userCartLoaded) {
+        const userLoggedInCookieValue = getCookie('UserLoggedIn');
+        if (userLoggedInCookieValue === 'true') {
 
+            //set in session cart to empty
+            sessionStorage.setItem('shoppingCart', JSON.stringify([]));
+           
+            //check if shopping cart is empty
+
+
+            // User is logged in, perform actions accordingly
+            console.log('User is logged in.');
+            //retrieve cart items from database
+            
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+            };
+            
+            fetch('/api/cartapi/getcart', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        const item = data[i];
+                        const id = item.id;
+                        const name = item.name;
+                        const price = item.price;
+                        const count = item.stockQuantity;
+                        shoppingCart.addItemToCart(id, name, price, count);
+                    }
+                    userCartLoaded = true;
+                    sessionStorage.setItem('userCartLoaded', 'true'); // Set flag in sessionStorage
+                    displayCart();
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+
+        }
+
+    }
+   
     
     // Save cart
     function saveCart() {
@@ -167,7 +215,7 @@ $('.add-to-cart').on('click', (async function (event) {
 
     // Send the POST request
     await fetch('/api/cartapi/addtocart', options)
-        .then(response => response.json())
+        .then(response => response)
         .then(data => {
             // Handle the response data
             
@@ -181,10 +229,57 @@ $('.add-to-cart').on('click', (async function (event) {
 
     shoppingCart.addItemToCart(id, name, price, 1);
     displayCart();
+    
+   
    
 
        
 }));    
+//But Now Button
+$('.buy-it-now').on('click', (async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).data('id');
+    var name = $(this).data('name');
+    var price = $(this).data('price');
+
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(id)
+    };
+
+    // Send the POST request
+    await fetch('/api/cartapi/addtocart', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+
+
+    shoppingCart.addItemToCart(id, name, price, 1);
+    displayCart();
+    redirectToCart('/cart/index');
+
+    function redirectToCart(url) {
+        // Redirect to the specified URL
+        window.location.href = url;
+    }
+
+
+
+}));    
+
+
     
 
 // Clear items
@@ -243,6 +338,19 @@ $('.show-cart').on("click", ".delete-item", function (event) {
                 });
          }
     }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
     shoppingCart.removeItemFromCartAll(name);
     displayCart();
 })
@@ -276,6 +384,19 @@ $('.show-cart').on('click', '.minus-item', async function (event) {
                     console.error('Error:', error);
                 });
 
+        }
+    }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
         }
     }
     
@@ -350,18 +471,7 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
                     console.error('Error:', error);
                 });
                 // Hide the element if the count is 0
-    for (const item in cart) {
-        if (cart[item].count === 1 && cart[item].name === name) {
-            // Construct the ID of the element to hide
-            const elementId = 'item-' + cart[item].id;
-
-            // Hide the element
-            const element = document.querySelector('.' + elementId);
-            if (element) {
-                element.classList.add("visually-hidden");
-            }
-        }
-    }
+   
     
     shoppingCart.removeItemFromCart(name);
     displayCart();
@@ -396,6 +506,13 @@ $('.cart-item').on('click', '.plus-item', async function (event) {
     displayCart();
 })
 //Load cart items ON LOGIN //TO DO !!!!
+$('.logout-flag').on('click', (async function (event) {
+
+    
+    
+    sessionStorage.setItem('userCartLoaded', 'false');
+   
+}));
 $('.load-cart-items-login').on('click', (async function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -427,6 +544,22 @@ $('.load-cart-items-login').on('click', (async function (event) {
 
 
 }));    
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Check if this cookie name is the one we're looking for
+        if (cookie.startsWith(name + '=')) {
+            // Return the cookie value
+            return cookie.substring(name.length + 1);
+        }
+    }
+    // Return null if cookie not found
+    return null;
+}
+
+
+
 
 
 displayCart();

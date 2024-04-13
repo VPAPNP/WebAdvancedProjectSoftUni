@@ -41,8 +41,10 @@ namespace EShopWebApp.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(IFormFile file,ProductCreateViewModel productView)
+        public async Task<IActionResult> Create(IEnumerable<IFormFile> files, IFormFile file, ProductCreateViewModel productView)
         {
+            
+
             if (!User.IsInRole("Admin"))
             {
                 return RedirectToAction("Index", "Home");
@@ -74,9 +76,20 @@ namespace EShopWebApp.Areas.Admin.Controllers
             }
 
 
-            await _productService.CreateAsync(file,productView);
+            try
+            {
+                
+                await _productService.CreateAsync(files,file, productView);
 
-            return RedirectToAction("All", "Product");
+
+                return RedirectToAction("All", "Product"); // Redirect to appropriate action
+            }
+            catch (Exception)
+            {
+                
+                ModelState.AddModelError("Error Create Product", "An error occurred while processing your request.");
+                return View(productView); 
+            }
         }
 
         public async Task<IActionResult> All()
