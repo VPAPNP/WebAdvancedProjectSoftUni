@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using EShopWebApp.Core.Contracts;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,10 +26,15 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICartService _cartService;
+
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
+            ICartService cartService,
+            IHttpContextAccessor httpContextAccessor,
             IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
@@ -39,6 +45,8 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            _httpContextAccessor = httpContextAccessor;
+            _cartService = cartService;
         }
 
         /// <summary>
@@ -112,6 +120,38 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("UserLoggedIn", "true");
+
+
+                string sessionId = _httpContextAccessor.HttpContext.Request.Cookies["ShoppingCartSessionId"];
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (sessionId != null)
+                {
+                    var productsFromGuestCart = await _cartService.GetGuestCartProductsAsync(Guid.Parse(sessionId));
+
+                    foreach (var product in productsFromGuestCart)
+                    {
+                        int quantity = product.Quantity;
+                        await _cartService.AddCartItemToUserCart(product.Id, quantity, userId);
+                        await _cartService.RemoveGuestProduct(product.Id);
+
+
+
+
+
+                    }
+
+
+
+                    //remove the session cookie
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete("ShoppingCartSessionId");
+
+
+
+
+                }
+
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
