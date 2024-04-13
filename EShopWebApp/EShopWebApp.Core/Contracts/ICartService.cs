@@ -6,7 +6,7 @@ namespace EShopWebApp.Core.Contracts
     {
         
         Task<CartViewModel> AddProductToGuestCartAsync(Guid productId);
-        Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId,int quantity);
+        Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId);
        
         Task RemoveAllProductsFromCartAsync(Guid userId);
         Task RemoveShoppingCartItemsAsync(string productId,string userId);
@@ -18,6 +18,8 @@ namespace EShopWebApp.Core.Contracts
         Task RemoveGuestProduct(Guid productId);
         Task<string> CreateShoppingCartSession();
         Task<List<ShoppingCartItemViewModel>> GetCartItems();
+
+        Task AddCartItemToUserCart(Guid productId, int quantity, string userId);
 
 	}
 }

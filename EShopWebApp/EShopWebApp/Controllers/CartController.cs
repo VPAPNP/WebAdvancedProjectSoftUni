@@ -63,7 +63,7 @@ namespace EShopWebApp.Controllers
             else
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                await _cartService.AddProductToCartAsync(id, userId!,1);
+                await _cartService.AddProductToCartAsync(id, userId!);
             }
             return RedirectToAction("All","Product");
         }
@@ -97,7 +97,7 @@ namespace EShopWebApp.Controllers
             else
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                cartView = await _cartService.AddProductToCartAsync(id, userId!, 1);
+                cartView = await _cartService.AddProductToCartAsync(id, userId!);
             }
             return RedirectToAction("Index", "Cart");
         }
