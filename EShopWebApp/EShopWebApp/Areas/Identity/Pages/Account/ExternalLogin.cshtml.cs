@@ -136,22 +136,14 @@ namespace EShopWebApp.Areas.Identity.Pages.Account
                         await _cartService.AddCartItemToUserCart(product.Id, quantity, userId);
                         await _cartService.RemoveGuestProduct(product.Id);
 
-
-
-
-
                     }
 
-
-
                     //remove the session cookie
-                    _httpContextAccessor.HttpContext.Response.Cookies.Delete("ShoppingCartSessionId");
-
-
+                    
 
 
                 }
-
+                _httpContextAccessor.HttpContext.Response.Cookies.Delete("ShoppingCartSessionId");
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)

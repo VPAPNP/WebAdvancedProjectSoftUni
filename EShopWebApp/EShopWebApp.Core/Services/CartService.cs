@@ -460,22 +460,24 @@ namespace EShopWebApp.Core.Services
                 _context.ShoppingCarts.Add(cart);
                 await _context.SaveChangesAsync();
             }
-
-            var cartItem = new ShoppingCartItem
+            if (cart.ShoppingCartItems.Any(p=>p.ProductId == productId))
             {
-                ProductId = productId,
-                UserId = Guid.Parse(userId),
-                CartId = cart.Id,
-                Quantity = quantity
-            };
-            _context.ShoppingCartItems.Add(cartItem);
+                cart.ShoppingCartItems.FirstOrDefault(p => p.ProductId == productId)!.Quantity += quantity;
+                await _context.SaveChangesAsync();
 
-            _context.SaveChanges();
-
-
-            
-
-           
+            }
+            else
+            {
+                var cartItem = new ShoppingCartItem
+                {
+                    ProductId = productId,
+                    UserId = Guid.Parse(userId),
+                    CartId = cart.Id,
+                    Quantity = quantity
+                };
+                _context.ShoppingCartItems.Add(cartItem);
+                await _context.SaveChangesAsync();
+            }
             
         }
     }
