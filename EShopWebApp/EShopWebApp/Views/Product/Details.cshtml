@@ -13,23 +13,18 @@
         <div class="row gx-5">
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp">
-                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="data:image;base64,@System.Convert.ToBase64String(Model.Product.Image)" />
-                    </a>
+                          
+                        <img id="main-image" style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="data:image;base64,@System.Convert.ToBase64String(Model.Photos[0].Picture)" />
+                    
                 </div>
                 <div class="d-flex justify-content-center mb-3">
                     @foreach (var item in Model.Photos)
                     {
-                        <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image"  class="item-thumb">
-                            <img width="60" height="60" class="rounded-2" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
+                        <a class="border mx-1 rounded-2 item-thumb" target="_blank" data-type="image">
+                            <img onclick="updateMainImage(this)" width="60" height="60" class="rounded-2" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
                         </a>
-                        
                     }
-                    
-                    
                 </div>
-                <!-- thumbs-wrap.// -->
-                <!-- gallery-wrap .end// -->
             </aside>
             <main class="col-lg-6">
                 <div class="ps-lg-3">
@@ -163,7 +158,14 @@
         var cartUrl = '@Url.Action("Index", "Cart")';
         redirectToCart(cartUrl);
     </script>
-
+<script>
+    function updateMainImage(clickedImage) {
+        var mainImage = document.getElementById('main-image');
+        var mainImageLink = document.getElementById('main-image-link');
+        mainImage.src = clickedImage.src;
+        mainImageLink.href = clickedImage.src; // Update lightbox href if needed
+    }
+</script>
     
 
     

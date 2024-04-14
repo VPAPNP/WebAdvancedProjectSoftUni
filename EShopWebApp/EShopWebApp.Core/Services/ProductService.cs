@@ -114,7 +114,12 @@ namespace EShopWebApp.Core.Services
             
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
+
+            var frontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
+            frontPhoto!.ProductId = product.Id;
             var productPhotos = new List<Photo>();
+
+
             foreach (var formFile in files)
             {
                 var imageGallery = _photoService.CreateImage(formFile, formFile.FileName);
@@ -139,6 +144,8 @@ namespace EShopWebApp.Core.Services
         public async Task DeleteAsync(Guid id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
+           
+
             var photoId = product!.FrontPhotoId;
             await _photoService.DeletePhotoAsync(photoId);
             product!.IsDeleted = true;
@@ -280,7 +287,7 @@ namespace EShopWebApp.Core.Services
 
         public async Task<ICollection<ProductAllViewModel>> GetRelatedProductsAsync(Guid categoryId)
         {
-            var relatedProducts = await _context.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId).Select(p => new ProductAllViewModel
+            var relatedProducts = await _context.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId && p.IsDeleted == false).Select(p => new ProductAllViewModel
             {
                 Id = p.Id.ToString(),
                 Name = p.Name,

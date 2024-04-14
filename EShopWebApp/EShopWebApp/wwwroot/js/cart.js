@@ -90,7 +90,7 @@ var shoppingCart = (function () {
     obj.addItemToCart = function (id,name, price, count) {
         for (var item in cart) {
             if (cart[item].name === name) {
-                if (count == 1) {
+                if (count == 1 || count === undefined) {
                     cart[item].count++;
                 }
                 else {

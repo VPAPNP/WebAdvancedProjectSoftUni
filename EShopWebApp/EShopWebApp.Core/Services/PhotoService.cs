@@ -75,7 +75,10 @@ namespace EShopWebApp.Core.Services
         public async Task DeletePhotoAsync(Guid id)
         {
             var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == id);
-            db.Photos.Remove(photo!);
+            foreach (var item in db.Photos)
+            {
+                item.IsDeleted = true;
+            }
             await db.SaveChangesAsync();
         }
 
