@@ -20,8 +20,9 @@ namespace TestingEShopWebApp.UnitTests
 		Guid productId1 ;
 		Guid productId2 ;
 		Guid productId3 ;
-		
-		[SetUp]
+        public Guid categoryId = Guid.NewGuid();
+
+        [SetUp]
 		public void Setup()
 		{
 			// Use a fresh in-memory database for each test
@@ -52,7 +53,7 @@ namespace TestingEShopWebApp.UnitTests
 			var frontPhoto = new Photo { Id = Guid.NewGuid(), Name="NewName", Picture = new byte[0] };
 			_context.Photos.Add(frontPhoto);
 			_context.SaveChanges();
-			var categoryId = Guid.NewGuid();
+			
 			var brandId = Guid.NewGuid();
 			var category = new Category { Id = categoryId, Name = "Category 1" };
 			var brand = new Brand { Id = brandId, Name = "Brand 1" };
@@ -75,7 +76,7 @@ namespace TestingEShopWebApp.UnitTests
 
 			// Assert
 			Assert.That(result, Is.TypeOf<List<ProductAllViewModel>>());
-			// TODO: Add more assertions based on your setup
+			
 			Assert.That(result.Count, Is.EqualTo(2));
 			Assert.That(result.Any());
 			Assert.That(result.Any(p => p.Id == productId1.ToString()));
@@ -101,7 +102,12 @@ namespace TestingEShopWebApp.UnitTests
 			var mockFile = new Mock<IFormFile>();
 			mockFile.Setup(file => file.FileName).Returns("test.jpg");
 			mockFile.Setup(file => file.Length).Returns(1);
-			var productCreateViewModel = new ProductCreateViewModel
+            var files = new List<IFormFile>
+            {
+                new FormFile(new MemoryStream(), 0, 0, "file1", "file1.jpg"),
+                new FormFile(new MemoryStream(), 0, 0, "file2", "file2.jpg")
+            };
+            var productCreateViewModel = new ProductCreateViewModel
 			{
 				Name = "Test Product",
 				Description = "Test Description",
@@ -112,10 +118,10 @@ namespace TestingEShopWebApp.UnitTests
 			};
 
 			// Act
-			//await _productService.CreateAsync(mockFile.Object, productCreateViewModel);
+			await _productService.CreateAsync(files,mockFile.Object, productCreateViewModel);
 
 			// Assert
-			//Assert.That(_context.Products, Has.Exactly(1).Items);
+			Assert.That(_context.Products, Has.Exactly(4).Items);
 			var product = _context.Products.Where(p => p.Name == "Test Product").First();
 			Assert.That(product.Name, Is.EqualTo(productCreateViewModel.Name));
 			Assert.That(product.Description, Is.EqualTo(productCreateViewModel.Description));
@@ -128,7 +134,7 @@ namespace TestingEShopWebApp.UnitTests
 		public async Task DeleteAsync_MarksProductAsDeleted()
 		{
 			// Arrange
-			var testId = productId1; // Use one of the product IDs from your test data
+			var testId = productId1; // Use one of the product IDs from test data
 
 			// Act
 			await _productService.DeleteAsync(testId);
@@ -202,15 +208,50 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(result, Is.TypeOf<List<ProductAllViewModel>>());
 			Assert.That(result.Count, Is.EqualTo(2));
 			
-			Assert.That(products[1].Name, Is.EqualTo("Product 2")); // Assuming "Product 2" is the second last added product
-			Assert.That(products[0].Name, Is.EqualTo("Product 1")); // Assuming "Product 1" is the third last added product
+			Assert.That(products[1].Name, Is.EqualTo("Product 2")); 
+			Assert.That(products[0].Name, Is.EqualTo("Product 1")); 
 		}
+        [Test]
+        public async Task GetRelatedProductsAsync_WithExistingCategoryId_ShouldReturnRelatedProducts()
+        {
+            // Arrange
+            
+            
+
+            // Add products with the specified category to the database
+           
+           
+
+            // Act
+            var relatedProducts = await _productService.GetRelatedProductsAsync(categoryId);
+
+            // Assert
+            Assert.IsNotNull(relatedProducts);
+            Assert.That(relatedProducts.Count(), Is.EqualTo(2));// setup adds 3 products but one is deleted
+            Assert.IsTrue(relatedProducts.Any(p => p.Id == productId1.ToString()));
+            Assert.IsTrue(relatedProducts.Any(p => p.Id == productId2.ToString()));
+
+        }
+
+        [Test]
+        public async Task GetRelatedProductsAsync_WithNonExistingCategoryId_ShouldReturnEmptyList()
+        {
+            // Arrange
+            var nonExistingCategoryId = Guid.NewGuid();
+
+            // Act
+            var relatedProducts = await _productService.GetRelatedProductsAsync(nonExistingCategoryId);
+
+            // Assert
+            Assert.IsNotNull(relatedProducts);
+            Assert.IsEmpty(relatedProducts);
+        }
 
 
 
 
 
-		[TearDown]
+        [TearDown]
 		public void TearDown()
 		{
 			_context.Database.EnsureDeleted();

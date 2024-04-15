@@ -15,6 +15,8 @@
 </head>
 <body>
     <header>
+       
+
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index"><img style="height:50px; width:50px" src="/ShopIcon.svg" alt="My Happy SVG" /> EShopWebApp</a>
@@ -64,10 +66,27 @@
                 </div>
             </div>
         </nav>
+        <aside>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong>Welcome!</strong> This is the admin area of the EShopWebApp. Here you can manage the products, categories and brands.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
     </header>
+    
     <div class="container">
         <main role="main" class="pb-3">
+            
+
             @RenderBody()
+            
         </main>
     </div>
 
