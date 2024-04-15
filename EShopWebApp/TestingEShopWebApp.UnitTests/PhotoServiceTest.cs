@@ -87,7 +87,8 @@ public class PhotoServiceTests
 
 		// Assert
 		var result = await _context.Photos.FindAsync(photoId);
-		Assert.IsNull(result);
+		bool isDeleted = result.IsDeleted;
+		Assert.IsTrue(isDeleted);
 	}
 	[Test]
 	public async Task GetPhotoById_ShouldReturnCorrectPhoto()
@@ -111,7 +112,45 @@ public class PhotoServiceTests
 		Assert.That(result.Name, Is.EqualTo(photo.Name));
 		Assert.That(result.Picture, Is.EqualTo(photo.Picture));
 	}
-	[TearDown]
+    [Test]
+    public async Task GetPhotoByProductId_WithExistingProductId_ShouldReturnPhotos()
+    {
+        // Arrange
+        var productId = Guid.NewGuid();
+        var photoId1 = Guid.NewGuid();
+        var photoId2 = Guid.NewGuid();
+
+        // Add photos with the specified product ID to the database
+        await _context.Photos.AddRangeAsync(
+            new Photo { Id = photoId1, Name = "Photo 1", Picture = new byte[] { 0x01, 0x02, 0x03 }, ProductId = productId },
+            new Photo { Id = photoId2, Name = "Photo 2", Picture = new byte[] { 0x04, 0x05, 0x06 }, ProductId = productId }
+        );
+        await _context.SaveChangesAsync();
+
+        // Act
+        var photosViewModel = await _service.GetPhotoByProductId(productId);
+
+        // Assert
+        Assert.IsNotNull(photosViewModel);
+        Assert.That(photosViewModel.Count, Is.EqualTo(2));
+        Assert.IsTrue(photosViewModel.Any(p => p.Name == "Photo 1" && p.Picture.SequenceEqual(new byte[] { 0x01, 0x02, 0x03 })));
+        Assert.IsTrue(photosViewModel.Any(p => p.Name == "Photo 2" && p.Picture.SequenceEqual(new byte[] { 0x04, 0x05, 0x06 })));
+    }
+
+    [Test]
+    public async Task GetPhotoByProductId_WithNonExistingProductId_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var nonExistingProductId = Guid.NewGuid();
+
+        // Act
+        var photosViewModel = await _service.GetPhotoByProductId(nonExistingProductId);
+
+        // Assert
+        Assert.IsNotNull(photosViewModel);
+        Assert.IsEmpty(photosViewModel);
+    }
+    [TearDown]
 	public void TearDown()
 	{
 		_context.Database.EnsureDeleted();
