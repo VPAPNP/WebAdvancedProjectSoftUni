@@ -21,5 +21,7 @@ namespace EShopWebApp.Core.Contracts
 
         Task AddCartItemToUserCart(Guid productId, int quantity, string userId);
 
+        Task SetQuantityToCartItem(Guid productId, int quantity, string userId);
+
 	}
 }

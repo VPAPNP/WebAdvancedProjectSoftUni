@@ -6,6 +6,7 @@
         {
             public const int NameMaxLength = 50;
             public const int DescriptionMaxLength = 1000;
+            public const int LongDescriptionMaxLength = 2000;
             public const int QuantityMinValue = 0;
             public const int QuantityMaxValue = Int32.MaxValue;
             public const decimal PriceMaxValue = Decimal.MaxValue;

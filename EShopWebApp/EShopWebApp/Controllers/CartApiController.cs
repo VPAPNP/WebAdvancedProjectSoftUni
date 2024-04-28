@@ -47,6 +47,21 @@ namespace EShopWebApp.Controllers
             
             return list ;
         }
+        //set quantity to cart item
+        [HttpPost("setquantity")]
+        public async Task SetQuantity([FromBody] SetQuantityViewModel model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (User.Identity!.IsAuthenticated)
+            {
+               
+                await _cartService.SetQuantityToCartItem(Guid.Parse(model.Id!), model.Quantity, userId!);
+            }
+            else
+            {
+                await _cartService.SetQuantityToCartItem(Guid.Parse(model.Id!), model.Quantity, userId!);
+            }
+        }
 
         
 

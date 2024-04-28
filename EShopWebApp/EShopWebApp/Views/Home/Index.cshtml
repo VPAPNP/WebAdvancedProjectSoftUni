@@ -4,8 +4,22 @@
     var products = Model.ToList();
   
 }
+<!-- hero area -->
 
-<h1 class="text-center"> <span><img style="height:50px; width:50px;" src="/ShopIcon.svg" alt="My Happy SVG"</span> Добре дошли!</h1>
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <h1>Shop</h1>
+                    <p>Fresh and Organic</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- end hero area -->
 
 
 @if (!products.Any())
@@ -44,8 +58,9 @@
                      src="@imgSrc" alt="@product.Name">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>
-                        <a class="btn btn-primary" asp-controller="Product" asp-action="Details"
-                           asp-route-id="@product.Id"> @product.Name</a>
+                        
+                        <a asp-controller="Product" asp-action="Details"
+                           asp-route-id="@product.Id" class="cart-btn"><i class="fas fa-shopping-cart"></i> @product.Name</a>
                     </h5>
                 </div>
             </div>

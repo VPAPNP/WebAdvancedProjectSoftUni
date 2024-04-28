@@ -108,7 +108,12 @@ var shoppingCart = (function () {
     obj.setCountForItem = function (name, count) {
         for (var i in cart) {
             if (cart[i].name === name) {
+
                 cart[i].count = count;
+                saveCart();
+
+                
+
                 break;
             }
         }
@@ -151,6 +156,7 @@ var shoppingCart = (function () {
         var totalCount = 0;
         for (var item in cart) {
             totalCount += cart[item].count;
+           
         }
         
         
@@ -304,7 +310,7 @@ function displayCart() {
         output += "<tr>"
             + "<td>" + cartArray[i].name + "</td>"
             + "<td>(" + cartArray[i].price + ")</td>"
-            + "<td><div class='input-group'><button class='minus-item input-group-addon btn btn-primary' data-name='" + cartArray[i].name + "'>-</button>"
+            + "<td><div class='input-group cart-count-item'><button class='minus-item input-group-addon btn btn-primary' data-name='" + cartArray[i].name + "'>-</button>"
             + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
             + "<button class='plus-item btn btn-primary input-group-addon' data-name='" + cartArray[i].name + "'>+</button></div></td>"
             + "<td><button class='delete-item btn btn-danger' data-name='" + cartArray[i].name + "'>X</button></td>"
@@ -446,11 +452,51 @@ $('.show-cart').on('click', '.plus-item', async function (event) {
 })
 
 // Item count input
-$('.show-cart').on('change', '.item-count', function (event) {
+$('.cart-item').on('change', '.item-count', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).data('id');
     var name = $(this).data('name');
     var count = Number($(this).val());
+    
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id, quantity: count })         
+        
+        
+    };
+    fetch('/api/cartapi/setquantity', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
     shoppingCart.setCountForItem(name, count);
+    for (const item in cart) {
+        if (cart[item].count === 0 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
     displayCart();
+
+    // Hide the element if the count is 0
+    
+
+    
 });
 //Remove item from cart on order page
 $('.cart-item').on('click', '.minus-item', async function (event) {
@@ -488,10 +534,51 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
             }
         }
     }
+    
 
    
     
     shoppingCart.removeItemFromCart(name);
+    displayCart();
+})
+//DELETE ITEM FROM CART
+$('.cart-item').on("click", ".delete-item", function (event) {
+    var name = $(this).data('name')
+    for (var item in cart) {
+        if (cart[item].name === name) {
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart[item].id)
+            };
+            fetch('/api/cartapi/removecartitem', options)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(cart[item].id);
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+        }
+    }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].count === 1 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
+    shoppingCart.removeItemFromCartAll(name);
     displayCart();
 })
 $('.cart-item').on('click', '.plus-item', async function (event) {

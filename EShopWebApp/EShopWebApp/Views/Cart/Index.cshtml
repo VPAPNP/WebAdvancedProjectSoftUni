@@ -1,5 +1,5 @@
 ﻿@model CartViewModel
-<section class="h-100 h-custom" style="background-color: #eee;">
+@* <section class="h-100 h-custom" style="background-color: #eee;">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col">
@@ -180,7 +180,110 @@
             </div>
         </div>
     </div>
-</section>
+</section> *@
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <h1>Cart</h1>
+                    <p>Fresh and Organic</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+<!-- cart -->
+<div class="cart-section mt-150 mb-150 ">
+    <div class="container ">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <div class="cart-table-wrap">
+                    <table class="cart-table">
+                        <thead class="cart-table-head">
+                            <tr class="table-head-row">
+                                <th class="product-remove"></th>
+                                <th class="product-image">Product Image</th>
+                                <th class="product-name">Name</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quantity">Quantity</th>
+                                <th class="product-total">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ShoppingCartItems)
+                            {
+                                <tr class="item-@item.ProductId">
+                                    <td class="product-remove cart-item">
+                                        <a data-id="@item.Id" data-name="@item.Product.Name" class="delete-item"><i class="far fa-window-close"></i></a>
+                                    </td>
+                                    <td class="product-image"><img src="data:image;base64,@System.Convert.ToBase64String(item.Product.Image)" alt=""></td>
+                                    <td class="product-name">@item.Product.Name</td>
+                                    <td class="product-price">$@item.Product.Price</td>
+                                    <td class="product-quantity cart-item">
+                                        <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" class="quantity-input item-count">
+                                    </td>
+                                    <td class="product-total">$@(@item.Product.Price * @item.Quantity)</td>
+                                </tr>
+                               
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="total-section">
+                    <table class="total-table">
+                        <thead class="total-table-head">
+                            <tr class="table-total-row">
+                                <th>Total</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="total-data">
+                                <td><strong>Subtotal: </strong></td>
+                                <td>$500</td>
+                            </tr>
+                            <tr class="total-data">
+                                <td><strong>Shipping: </strong></td>
+                                <td>$45</td>
+                            </tr>
+                            <tr class="total-data">
+                                <td><strong>Total: </strong></td>
+                                <td>$545</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="cart-buttons">
+                        <a href="cart.html" class="boxed-btn">Update Cart</a>
+                        <a href="checkout.html" class="boxed-btn black">Check Out</a>
+                    </div>
+                </div>
+
+                <div class="coupon-section">
+                    <h3>Apply Coupon</h3>
+                    <div class="coupon-form-wrap">
+                        <form action="index.html">
+                            <p><input type="text" placeholder="Coupon"></p>
+                            <p><input type="submit" value="Apply"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end cart -->
+
+
+    
+   
+    
+
+
 <script>
     function redirectToDetails(productId) {
         window.location.href = '@Url.Action("Details", "Product")?id=' + productId;

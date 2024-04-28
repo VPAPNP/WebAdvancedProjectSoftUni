@@ -1,7 +1,7 @@
 ﻿@model AllProductViewForSearch
 
 
-<div class="card m-2 d-grid hover-zoom" style="width: 20rem" onclick="redirectToDetails('@Model.Id')" ;>
+@* <div class="card m-2 d-grid hover-zoom" style="width: 20rem" onclick="redirectToDetails('@Model.Id')" ;>
     
         <img alt="@Model.Name" class="card-img-top" src="data:image;base64,@System.Convert.ToBase64String(Model.Image)">
    
@@ -15,6 +15,25 @@
         <a href="#" data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart btn btn-primary">Add to cart</a>
     </div>
 </div>
+ *@
+
+
+   
+    
+        <div class="col-lg-4 col-md-6 text-center">
+            <div class="single-product-item">
+                <div class="product-image">
+                <a onclick="redirectToDetails('@Model.Id')"><img alt="@Model.Name" class="card-img-top" src="data:image;base64,@System.Convert.ToBase64String(Model.Image)"></a>
+                </div>
+                <h3>@Model.Name</h3>
+                <p class="product-price"><span>Per Kg</span> @Model.Price$ </p>
+        <a data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+            </div>
+        </div>
+    
+    
+
+
 <script>
     function redirectToDetails(productId) {
         window.location.href = '@Url.Action("Details", "Product")?id=' + productId;

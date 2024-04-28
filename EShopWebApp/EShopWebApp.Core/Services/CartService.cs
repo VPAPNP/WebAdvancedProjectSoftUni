@@ -445,6 +445,7 @@ namespace EShopWebApp.Core.Services
             }
 
         }
+       
 
         public async Task AddCartItemToUserCart(Guid productId, int quantity, string userId)
         {
@@ -478,6 +479,35 @@ namespace EShopWebApp.Core.Services
                 _context.ShoppingCartItems.Add(cartItem);
                 await _context.SaveChangesAsync();
             }
+            
+        }
+
+        public async Task SetQuantityToCartItem(Guid productId, int quantity, string userId)
+        {
+            var session = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"];
+            if (userId != null)
+            {
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
+                var cartItem = cart!.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == productId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = quantity;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                var cart = await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.SessionId == Guid.Parse(session!));
+                var cartItem = cart!.ShoppingCartItems.FirstOrDefault(sci => sci.ProductId == productId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = quantity;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            
+            
+
             
         }
     }

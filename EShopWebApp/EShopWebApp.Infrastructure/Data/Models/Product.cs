@@ -21,6 +21,8 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [Required]
         [MaxLength(DescriptionMaxLength)]
         public required string Description { get; set; }
+        [MaxLength(LongDescriptionMaxLength)]
+        public string? LongDescription { get; set; }
         [Required]
         public int Quantity { get; set; }
         [Required]
