@@ -1,4 +1,5 @@
-﻿using EShopWebApp.Core.ViewModels.ImageViewModels;
+﻿using EShopWebApp.Core.ViewModels.CartViewModels;
+using EShopWebApp.Core.ViewModels.ImageViewModels;
 
 namespace EShopWebApp.Core.ViewModels.ProductViewModels
 {
@@ -9,5 +10,7 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         public List<ProductAllViewModel> RelatedProducts { get; set; } = new List<ProductAllViewModel>();
 
         public List<PhotoViewModel> Photos { get; set; } = new List<PhotoViewModel>();
+
+        public ShoppingCartItemViewModel ShoppingCartItem { get; set; } = new ShoppingCartItemViewModel();
     }
 }

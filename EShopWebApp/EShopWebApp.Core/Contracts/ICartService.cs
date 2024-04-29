@@ -23,5 +23,7 @@ namespace EShopWebApp.Core.Contracts
 
         Task SetQuantityToCartItem(Guid productId, int quantity, string userId);
 
+        Task<ShoppingCartItemViewModel> GetCartItem(string id);
+
 	}
 }

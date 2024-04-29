@@ -12,14 +12,17 @@ namespace EShopWebApp.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly IPhotoService _photoService;
+        private readonly ICartService _cartService;
         
 
-        public ProductController(IProductService productService,ICategoryService categoryService,IBrandService brandService,IPhotoService photoService)
+        public ProductController(IProductService productService,ICategoryService categoryService,IBrandService brandService,IPhotoService photoService,
+            ICartService cartService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
             _photoService = photoService;
+            _cartService = cartService;
             
         }
         
@@ -44,13 +47,15 @@ namespace EShopWebApp.Controllers
 
             var photos = await _photoService.GetPhotoByProductId(id);
 
-            
+            var shoppingCartItem = await _cartService.GetCartItem(id.ToString());
+
 
             var productDetailsViewModel = new ProductDetailsViewModel
             {
                 Product = product,
                 RelatedProducts = relatedProducts.ToList(),
-                Photos = photos.ToList()
+                Photos = photos.ToList(),
+                ShoppingCartItem = shoppingCartItem
             };
             return View(productDetailsViewModel);
         }

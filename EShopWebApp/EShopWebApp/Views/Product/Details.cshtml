@@ -172,7 +172,16 @@
         <div class="row">
             <div class="col-md-5">
                 <div class="single-product-img">
-                    <img src="data:image;base64,@System.Convert.ToBase64String(Model.Photos[0].Picture)" alt="">
+                    <img id="main-image" src="data:image;base64,@System.Convert.ToBase64String(Model.Photos[0].Picture)" alt="">
+                </div>
+                <br>
+                <div class="d-flex justify-content-center mb-3 single-product-img">
+                    @foreach (var item in Model.Photos)
+                    {
+                        <a class="border mx-1 rounded-2 item-thumb" target="_blank" data-type="image">
+                            <img onclick="updateMainImage(this)" width="60" height="60" class="rounded-2" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
+                        </a>
+                    }
                 </div>
             </div>
             <div class="col-md-7">
@@ -180,11 +189,12 @@
                     <h3>@Model.Product.Description</h3>
                     <p class="single-product-pricing"><span>Per Kg</span> $50</p>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta sint dignissimos, rem commodi cum voluptatem quae reprehenderit repudiandae ea tempora incidunt ipsa, quisquam animi perferendis eos eum modi! Tempora, earum.</p>
-                    <div class="single-product-form">
-                        <form action="index.html">
-                            <input type="number" placeholder="0">
-                        </form>
-                        <a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                    <div class="product-quantity cart-item">
+                        
+                            <input type="number" data-id="@Model.Product.Id" data-name="@Model.Product.Name" value="@Model.ShoppingCartItem.Quantity" min="1" class="quantity-input item-count">
+                        
+                        <a data-id ="@Model.Product.Id" data-image="@Model.Product.Image" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="add-to-cart cart-btn" class="cart-btn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart</a>
                         <p><strong>Categories: </strong>Fruits, Organic</p>
                     </div>
                     <h4>Share:</h4>
@@ -218,11 +228,11 @@
                 <div class="col-lg-4 col-md-6 text-center">
                     <div class="single-product-item">
                         <div class="product-image">
-                            <a href="single-product.html"><img src="data:image;base64,@System.Convert.ToBase64String(product.Image)" alt=""></a>
+                            <a asp-area="" asp-action="Details" asp-controller="Product" asp-route-id="@product.Id"><img src="data:image;base64,@System.Convert.ToBase64String(product.Image)" alt=""></a>
                         </div>
                         <h3>@product.Name</h3>
                         <p class="product-price"><span>Per Kg</span> @product.Price$ </p>
-                        <a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                        <a data-id="@product.Id" data-image="@product.Image" data-name="@product.Name" data-price="@product.Price" class="add-to-cart cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
                     </div>
                 </div>
             })

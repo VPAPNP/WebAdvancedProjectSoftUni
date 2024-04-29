@@ -62,7 +62,7 @@ namespace EShopWebApp.Core.Services
                 Price = product.Price,
                 StockQuantity = product.Quantity,
                 Description = product.Description,
-                Image = product.FrontPhoto.Picture,
+                Image = product.FrontPhoto!.Picture,
                 Category = new CategoryViewModel()
                 {
                     Id = product.Category.Id.ToString(),
@@ -70,7 +70,7 @@ namespace EShopWebApp.Core.Services
                 },
                 Brand = new BrandViewModel()
                 {
-                    Id = product.Brand.Id.ToString(),
+                    Id = product.Brand!.Id.ToString(),
                     Name = product.Brand.Name
                 },
                 PhotoId = product.FrontPhotoId.ToString(),

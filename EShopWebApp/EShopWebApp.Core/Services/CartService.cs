@@ -510,5 +510,30 @@ namespace EShopWebApp.Core.Services
 
             
         }
+
+        public async Task<ShoppingCartItemViewModel> GetCartItem(string id)
+        {
+            var cartItem = await _context.ShoppingCartItems.Include(p=>p.Product).FirstOrDefaultAsync(c => c.Id == Guid.Parse(id));
+           if (cartItem == null)
+           {
+                return new ShoppingCartItemViewModel();
+           }
+            return new ShoppingCartItemViewModel
+            {
+                Id = cartItem.Id,
+                ProductId = cartItem.ProductId,
+                CartId = cartItem.CartId,
+                Quantity = cartItem.Quantity,
+                Product = new CartProductViewModel
+                {
+                    Id = cartItem.Product!.Id,
+                    Name = cartItem.Product.Name,
+                    Description = cartItem.Product.Description,
+                    Price = cartItem.Product.Price,
+                    Image = cartItem.Product.FrontPhoto.Picture,
+                }
+            };
+            
+        }
     }
 }
