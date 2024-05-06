@@ -224,7 +224,7 @@
                                     <td class="product-quantity cart-item">
                                         <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" class="quantity-input item-count">
                                     </td>
-                                    <td class="product-total">$@(@item.Product.Price * @item.Quantity)</td>
+                                    <td class="product-total">$<span class="cart-item-price-@item.Product.Id"></span></td>
                                 </tr>
                                
                             }
@@ -232,7 +232,13 @@
                     </table>
                 </div>
             </div>
-
+            @{
+                decimal subtotal = 0;
+                foreach (var item in Model.ShoppingCartItems)
+                {
+                    subtotal += item.Product.Price * item.Quantity;
+                }
+            }
             <div class="col-lg-4">
                 <div class="total-section">
                     <table class="total-table">
@@ -245,15 +251,15 @@
                         <tbody>
                             <tr class="total-data">
                                 <td><strong>Subtotal: </strong></td>
-                                <td>$500</td>
+                                <td>$<span class="total-cart"></span></td>
                             </tr>
                             <tr class="total-data">
                                 <td><strong>Shipping: </strong></td>
-                                <td>$45</td>
+                                <td>$0</td>
                             </tr>
                             <tr class="total-data">
                                 <td><strong>Total: </strong></td>
-                                <td>$545</td>
+                                <td>$<span class="total-cart"></span> </td>
                             </tr>
                         </tbody>
                     </table>
@@ -262,7 +268,22 @@
                         <a href="checkout.html" class="boxed-btn black">Check Out</a>
                     </div>
                 </div>
+                <div>
+                    <h5 id="price"></h5>
+                    <h5 id="price-currency"></h5>
+                    <a id="getRates">Get Rates</a>
+                </div>
+               
+               <div>
+                   <a href="@Url.Action("All", "Product")" class="boxed-btn">Continue Shopping</a>
 
+               </div>
+
+
+
+
+                
+            
                 <div class="coupon-section">
                     <h3>Apply Coupon</h3>
                     <div class="coupon-form-wrap">

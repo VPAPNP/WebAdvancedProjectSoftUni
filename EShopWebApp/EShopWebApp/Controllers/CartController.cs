@@ -13,6 +13,9 @@ namespace EShopWebApp.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
+        private readonly IEcontService _econtService;
+        
 
 
         public CartController(
@@ -20,14 +23,16 @@ namespace EShopWebApp.Controllers
             IProductService productService,
             ICategoryService categoryService,
             IBrandService brandService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration,IEcontService econtService)
         {
             _cartService = cartService;
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
             _httpContextAccessor = httpContextAccessor;
-
+            _configuration = configuration;
+            _econtService = econtService;
             
         }
         public async Task<IActionResult> Index()
@@ -48,7 +53,7 @@ namespace EShopWebApp.Controllers
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 cartView = await _cartService.GetCartAsync(userId!);
             }
-
+          
             return View(cartView);
             
         }

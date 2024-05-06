@@ -191,10 +191,8 @@
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta sint dignissimos, rem commodi cum voluptatem quae reprehenderit repudiandae ea tempora incidunt ipsa, quisquam animi perferendis eos eum modi! Tempora, earum.</p>
                     <div class="product-quantity cart-item">
                         
-                            <input type="number" data-id="@Model.Product.Id" data-name="@Model.Product.Name" value="@Model.ShoppingCartItem.Quantity" min="1" class="quantity-input item-count">
-                        
-                        <a data-id ="@Model.Product.Id" data-image="@Model.Product.Image" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="add-to-cart cart-btn" class="cart-btn">
-                            <i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                      
+                        <a data-id ="@Model.Product.Id" data-image="@Model.Product.Image" data-name="@Model.Product.Name" data-price="@Model.Product.Price" class="add-to-cart cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
                         <p><strong>Categories: </strong>Fruits, Organic</p>
                     </div>
                     <h4>Share:</h4>
@@ -243,10 +241,10 @@
 </div>
 <!-- end more products -->
 
-    <script>
+    @* <script>
         var cartUrl = '@Url.Action("Index", "Cart")';
         redirectToCart(cartUrl);
-    </script>
+    </script> *@
 <script>
     function updateMainImage(clickedImage) {
         var mainImage = document.getElementById('main-image');

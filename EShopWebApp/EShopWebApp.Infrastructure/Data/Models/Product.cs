@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EShopWebApp.Infrastructure.Data.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Product;
@@ -23,6 +24,7 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public required string Description { get; set; }
         [MaxLength(LongDescriptionMaxLength)]
         public string? LongDescription { get; set; }
+        public PackageType PackageType { get; set; }
         [Required]
         public int Quantity { get; set; }
         [Required]

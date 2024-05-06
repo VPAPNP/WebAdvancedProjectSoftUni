@@ -15,6 +15,8 @@ namespace EShopWebApp.Infrastructure.Data.Configurations
             
             builder.Property(p => p.IsDeleted)
                 .HasDefaultValue(false);
+            builder.Property(p=>p.PackageType)
+				.HasConversion<int>();
            
 
 

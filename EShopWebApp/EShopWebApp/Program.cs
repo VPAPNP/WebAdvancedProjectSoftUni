@@ -1,4 +1,5 @@
 using EShopWebApp.Core.Contracts;
+using EShopWebApp.Core.Services;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using EShopWebApp.Infrastructure.DataBaseInitialization;
@@ -23,11 +24,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddTransient<DatabaseInitializer>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IEcontService, EcontService>();
+
+
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddApplicationServices(typeof(IPhotoService));
+
 builder.Services.AddControllersWithViews()
     .AddMvcOptions(options =>
     {
@@ -38,6 +43,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+   
 
     var databaseInitializer = services.GetRequiredService<DatabaseInitializer>();
 
@@ -59,7 +65,9 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error/500");
+    app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
+    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

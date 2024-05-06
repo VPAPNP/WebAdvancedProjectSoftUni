@@ -25,5 +25,7 @@ namespace EShopWebApp.Core.Contracts
 
         Task<ShoppingCartItemViewModel> GetCartItem(string id);
 
+
+        
 	}
 }

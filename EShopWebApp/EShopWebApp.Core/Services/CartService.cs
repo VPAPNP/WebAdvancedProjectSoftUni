@@ -8,15 +8,17 @@ using Microsoft.EntityFrameworkCore;
 namespace EShopWebApp.Core.Services
 {
 
-    public class CartService : ICartService
+	public class CartService : ICartService
     {
         private readonly ApplicationDbContext _context;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		
 		public CartService(ApplicationDbContext context,
 			IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            
             
         }
         
@@ -535,5 +537,7 @@ namespace EShopWebApp.Core.Services
             };
             
         }
-    }
+
+		
+	}
 }

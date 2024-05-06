@@ -189,6 +189,8 @@ var shoppingCart = (function () {
         return cartCopy;
     }
 
+    
+
     // cart : Array
     // Item : Object/Class
     // addItemToCart : Function
@@ -318,10 +320,12 @@ function displayCart() {
             + "<td>" + cartArray[i].total + "</td>"
             + "</tr>";
         $('.cart-item-count-' + cartArray[i].id + '').html(cartArray[i].count);
+        $('.cart-item-price-' + cartArray[i].id + '').html(cartArray[i].total);
     }
     $('.show-cart').html(output);
     $('.total-cart').html(shoppingCart.totalCart());
     $('.total-count').html(shoppingCart.totalCount());
+    $('.total-cart').html(shoppingCart.totalCart());
 }
 
 // Delete item button
@@ -554,10 +558,10 @@ $('.cart-item').on("click", ".delete-item", function (event) {
                 body: JSON.stringify(cart[item].id)
             };
             fetch('/api/cartapi/removecartitem', options)
-                .then(response => response.json())
+                .then(response => response)
                 .then(data => {
                     // Handle the response data
-                    console.log(cart[item].id);
+                    console.log('deleted');
                 })
                 .catch(error => {
                     // Handle any errors that occur during the fetch request
@@ -567,7 +571,7 @@ $('.cart-item').on("click", ".delete-item", function (event) {
     }
     // Hide the element if the count is 0
     for (const item in cart) {
-        if (cart[item].count === 1 && cart[item].name === name) {
+        if (cart[item].name === name) {
             // Construct the ID of the element to hide
             const elementId = 'item-' + cart[item].id;
 
