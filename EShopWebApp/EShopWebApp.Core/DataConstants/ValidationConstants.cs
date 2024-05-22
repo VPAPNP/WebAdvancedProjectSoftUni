@@ -12,6 +12,7 @@
             public const int QuantityMaxValue = Int32.MaxValue;
             public const int PriceMinValue = 0;
             public const int PriceMaxValue = Int32.MaxValue;
+            public const int LongDescriptionMaxLength = 2000;
             
         }
 

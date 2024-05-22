@@ -8,8 +8,9 @@ namespace EShopWebApp.Infrastructure.Data.Enums
 {
 	public enum PackageType
 	{
-		Package = 1,
-		Letter = 2,
-		Pallet = 3
+		Bag = 0,
+		Pack = 1,
+		Pallet = 2
+
 	}
 }

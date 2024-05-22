@@ -74,6 +74,7 @@ namespace EShopWebApp.Controllers
         }
         public async Task<IActionResult> RemoveFromCart(Guid id)
         {
+            await _cartService.RemoveAllProductsFromCartAsync();
             CartViewModel cartView = new CartViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.Identity!.IsAuthenticated)

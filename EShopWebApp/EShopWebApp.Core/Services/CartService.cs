@@ -4,6 +4,7 @@ using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EShopWebApp.Core.Services
 {
@@ -86,6 +87,7 @@ namespace EShopWebApp.Core.Services
             };
             
         }
+
         public async Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId)
         {
             
@@ -180,7 +182,8 @@ namespace EShopWebApp.Core.Services
                         Name = sci.Product.Name,
                         Description = sci.Product.Description,
                         Price = sci.Product.Price,
-                        Image = sci.Product.FrontPhoto.Picture,
+                        Image = sci.Product.FrontPhoto.Picture
+                        
                        
                     }
                 }).ToList()
@@ -189,6 +192,7 @@ namespace EShopWebApp.Core.Services
 
             
         }
+
         public async Task<CartViewModel> GetGuestCartAsync(string sessionId)
         {
             string curSessionId = sessionId;
@@ -277,7 +281,6 @@ namespace EShopWebApp.Core.Services
            
         }
 
-
         public async Task RemoveProduct(Guid productId, string userId)
         {
             var cart = await _context.ShoppingCarts
@@ -322,6 +325,7 @@ namespace EShopWebApp.Core.Services
 
 
         }
+
         public async Task RemoveGuestProduct(Guid productId)
         {
             string? sessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"];
@@ -358,15 +362,37 @@ namespace EShopWebApp.Core.Services
 
 
         }
-
-       
         //To Do
-        public Task RemoveAllProductsFromCartAsync(Guid userId)
+        public async Task RemoveAllProductsFromCartAsync()
         {
-            throw new NotImplementedException();
-        }
+            var user = _httpContextAccessor.HttpContext!.User;
 
-       
+            if (user.Identity!.IsAuthenticated)
+            {
+                var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cart =  await _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefaultAsync(c => c.UserId == Guid.Parse(userId));
+                if (cart != null)
+                {
+                    _context.ShoppingCartItems.RemoveRange(cart.ShoppingCartItems);
+                    _context.ShoppingCarts.Remove(cart);
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                string? sessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"];
+                var cart = _context.ShoppingCarts.Include(sci => sci.ShoppingCartItems).FirstOrDefault(c => c.SessionId == Guid.Parse(sessionId!));
+                if (cart != null)
+                {
+                    _context.ShoppingCartItems.RemoveRange(cart.ShoppingCartItems);
+                   // _context.ShoppingCarts.Remove(cart);
+                    _context.SaveChanges();
+                }
+            }
+
+            
+
+        }
 
 		public async Task<string> CreateShoppingCartSession()
 		{
@@ -447,7 +473,6 @@ namespace EShopWebApp.Core.Services
             }
 
         }
-       
 
         public async Task AddCartItemToUserCart(Guid productId, int quantity, string userId)
         {

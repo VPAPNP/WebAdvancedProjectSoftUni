@@ -209,6 +209,7 @@
                                 <th class="product-price">Price</th>
                                 <th class="product-quantity">Quantity</th>
                                 <th class="product-total">Total</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -225,6 +226,7 @@
                                         <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" class="quantity-input item-count">
                                     </td>
                                     <td class="product-total">$<span class="cart-item-price-@item.Product.Id"></span></td>
+                                   
                                 </tr>
                                
                             }
@@ -264,7 +266,7 @@
                         </tbody>
                     </table>
                     <div class="cart-buttons">
-                        <a href="cart.html" class="boxed-btn">Update Cart</a>
+                        <a class="boxed-btn clear-cart-clear">Clear Cart</a>
                         <a href="checkout.html" class="boxed-btn black">Check Out</a>
                     </div>
                 </div>

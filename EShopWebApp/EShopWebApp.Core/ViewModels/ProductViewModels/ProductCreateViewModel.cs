@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
+using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using static EShopWebApp.Core.DataConstants.ValidationConstants.Product;
 
 
@@ -20,6 +20,8 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         [MaxLength(DescriptionMaxLength)]
         [MinLength(DescriptionMinLength)]
         public string Description { get; set; } = null!;
+        [MaxLength(LongDescriptionMaxLength)]
+        public string LongDescription { get; set; } = null!;
         [Required]
         [Range(PriceMinValue, PriceMaxValue)]
         public decimal Price { get; set; }
@@ -32,6 +34,12 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public string CategoryId { get; set; } = null!;
+
+        public List<Guid> SelectedCategoryIds { get; set; } = new List<Guid>();
+
+        
+
+      
         
 
     }

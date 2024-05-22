@@ -61,9 +61,9 @@ namespace TestingEShopWebApp.UnitTests
 			_context.Brands.Add(brand);
 			_context.Products.AddRange(new[]
 			{
-				new Product { Id = productId1, Name = "Product 1", Price = 10.0m, IsDeleted = false,CategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
-				new Product { Id = productId2, Name = "Product 2", Price = 20.0m, IsDeleted = false,CategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
-				new Product { Id = productId3, Name = "Product 3", Price = 30.0m, IsDeleted = true, CategoryId= categoryId, Description="New Description", BrandId = brandId, FrontPhoto = frontPhoto}
+				new Product { Id = productId1, Name = "Product 1", Price = 10.0m, IsDeleted = false,MainCategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
+				new Product { Id = productId2, Name = "Product 2", Price = 20.0m, IsDeleted = false,MainCategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
+				new Product { Id = productId3, Name = "Product 3", Price = 30.0m, IsDeleted = true, MainCategoryId= categoryId, Description="New Description", BrandId = brandId, FrontPhoto = frontPhoto}
 			});
 			_context.SaveChanges();
 		}
@@ -127,7 +127,7 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.Description, Is.EqualTo(productCreateViewModel.Description));
 			Assert.That(product.Price, Is.EqualTo(productCreateViewModel.Price));
 			Assert.That(product.Quantity, Is.EqualTo(productCreateViewModel.StockQuantity));
-			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(productCreateViewModel.CategoryId)));
+			Assert.That(product.MainCategoryId, Is.EqualTo(Guid.Parse(productCreateViewModel.CategoryId)));
 			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(productCreateViewModel.BrandId)));
 		}
 		[Test]
@@ -170,7 +170,7 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.Description, Is.EqualTo(editProductModel.Description));
 			Assert.That(product.Price, Is.EqualTo(editProductModel.Price));
 			Assert.That(product.Quantity, Is.EqualTo(editProductModel.StockQuantity));
-			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(editProductModel.CategoryId)));
+			Assert.That(product.MainCategoryId, Is.EqualTo(Guid.Parse(editProductModel.CategoryId)));
 			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(editProductModel.BrandId)));
 		}
 		[Test]

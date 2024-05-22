@@ -2,7 +2,6 @@
 using EShopWebApp.Core.ViewModels.CartViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
 
 
@@ -23,7 +22,7 @@ namespace EShopWebApp.Controllers
             _logger = logger;
         }
 
-        // GET: api/<CartApiController>
+       
         [HttpGet("getcart")]
         public async Task<IEnumerable<ProductAllViewModel>> Get()
         {
@@ -65,7 +64,7 @@ namespace EShopWebApp.Controllers
 
         
 
-        // POST api/<CartApiController>
+        
         [HttpPost("addtocart")]
         [ProducesResponseType<string>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -118,13 +117,18 @@ namespace EShopWebApp.Controllers
         [HttpDelete("removecartitem")]
         public async Task DeleteCartItem([FromBody] string id)
         {
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _cartService.RemoveShoppingCartItemsAsync(id,userId);
+            await _cartService.RemoveShoppingCartItemsAsync(id, userId);
 
             await Console.Out.WriteLineAsync();
+        }
+        [HttpDelete("removeallcartitems")]
+        public async Task DeleteAllCartItems()
+        {
+            await _cartService.RemoveAllProductsFromCartAsync();
 
         }
-
-
+        
     }
 }

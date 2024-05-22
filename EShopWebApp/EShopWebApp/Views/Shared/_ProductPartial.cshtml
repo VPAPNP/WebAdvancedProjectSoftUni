@@ -27,7 +27,15 @@
                 </div>
                 <h3>@Model.Name</h3>
                 <p class="product-price"><span>Per Kg</span> @Model.Price$ </p>
-        <a data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                @if (Model.StockQuantity <= 0)
+                {
+                        <p>Out of Stock</p>
+                }
+                else
+                {
+                       <a data-id="@Model.Id" data-image="@Model.ImageUrl" data-name="@Model.Name" data-price="@Model.Price" class="add-to-cart cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                }
+        
             </div>
         </div>
     

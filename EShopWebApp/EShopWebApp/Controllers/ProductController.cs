@@ -49,13 +49,17 @@ namespace EShopWebApp.Controllers
 
             var shoppingCartItem = await _cartService.GetCartItem(id.ToString());
 
+            var categories = await _categoryService.GetAllByProductId(id);
+
 
             var productDetailsViewModel = new ProductDetailsViewModel
             {
                 Product = product,
                 RelatedProducts = relatedProducts.ToList(),
                 Photos = photos.ToList(),
-                ShoppingCartItem = shoppingCartItem
+                ShoppingCartItem = shoppingCartItem,
+                ProductCategories = categories.ToList()
+                
             };
             return View(productDetailsViewModel);
         }

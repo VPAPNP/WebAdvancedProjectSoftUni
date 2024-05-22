@@ -49,7 +49,7 @@ var shoppingCart = (function () {
                         const item = data[i];
                         const id = item.id;
                         const name = item.name;
-                        const price = item.price;
+                        const price = parseNumber(item.price);
                         const count = item.stockQuantity;
                         shoppingCart.addItemToCart(id, name, price, count);
                     }
@@ -65,7 +65,12 @@ var shoppingCart = (function () {
         }
 
     }
-   
+    function parseNumber(value) {
+        if (typeof value === 'string') {
+            value = value.replace(',', '.');
+        }
+        return parseFloat(value);
+    }
     
     // Save cart
     function saveCart() {
@@ -87,7 +92,8 @@ var shoppingCart = (function () {
     var obj = {};
 
     // Add to cart
-    obj.addItemToCart = function (id,name, price, count) {
+    obj.addItemToCart = function (id, name, price, count) {
+        price = parseNumber(price);
         for (var item in cart) {
             if (cart[item].name === name) {
                 if (count == 1 || count === undefined) {
@@ -292,11 +298,47 @@ $('.buy-it-now').on('click', (async function (event) {
 
 }));    
 
+$('.clear-cart-clear').on('click', (async function () {
 
+    const options = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+    };
+    await fetch('/api/cartapi/removeallcartitems', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+    for (const item in cart) {
+
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+
+    }
+    shoppingCart.clearCart();
+    displayCart();
+}));
     
 
 // Clear items
-$('.clear-cart').on('click',(async function () {
+$('.clear-cart').on('click', (async function () {
+
+  
+   
     shoppingCart.clearCart();
     displayCart();
 }));
@@ -647,7 +689,7 @@ $('.load-cart-items-login').on('click', (async function (event) {
         });
 
 
-    shoppingCart.addItemToCart(id, name, price, 1);
+    shoppingCart.addItemToCart(id,name,price, 1);
     displayCart();
 
 

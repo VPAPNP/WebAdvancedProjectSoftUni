@@ -15,8 +15,11 @@ namespace EShopWebApp.Infrastructure.Data.Configurations
             
             builder.Property(p => p.IsDeleted)
                 .HasDefaultValue(false);
-            builder.Property(p=>p.PackageType)
-				.HasConversion<int>();
+
+            builder.HasMany(p => p.ProductCategories)
+                .WithOne(pc => pc.Product)
+                .HasForeignKey(pc => pc.ProductId);
+           
            
 
 

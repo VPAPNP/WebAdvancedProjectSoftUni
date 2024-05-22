@@ -24,9 +24,10 @@ namespace EShopWebApp.Areas.Admin.Controllers
         {
             var categories = await _categoryService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
-
+            
             productCreateForm.Categories = categories;
             productCreateForm.Brands = brands;
+            
             if (!User.IsInRole("Admin"))
             {
                 return RedirectToAction("Index", "Home");
@@ -70,7 +71,10 @@ namespace EShopWebApp.Areas.Admin.Controllers
                     CreatedOn = productView.CreatedOn,
                     CategoryId = productView.CategoryId,
                     Categories = categories,
-                    Brands = brands
+                    Brands = brands,
+                    LongDescription = productView.LongDescription
+                    
+
                 };
                 return View(productCreateForm);
             }
@@ -109,52 +113,73 @@ namespace EShopWebApp.Areas.Admin.Controllers
             var product = await _productService.GetByIdAsync(Guid.Parse(id));
             var categories = await _categoryService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
-            var photo = await _imageService.GetPhotoById(Guid.Parse(product.PhotoId));
+            var selCategories = await _categoryService.GetAllByProductId(Guid.Parse(id));
+
+
+
+
+            var photos = await _imageService.GetPhotoByProductId(Guid.Parse(id));
+           
             var productEditForm = new ProductEditFormViewModel
             {
-
+                Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
-                BrandId = product.BrandId,
+                BrandId = Guid.Parse(product.BrandId),
                 CreatedOn = product.CreatedOn,
-                CategoryId = product.CategoryId.ToString()!,
+                CategoryId = Guid.Parse(product.CategoryId),
                 Categories = categories,
-                PhotoId =Guid.Parse( product.PhotoId),
-                Brands = brands
+                MainPhotoId =Guid.Parse(product.PhotoId),
+                MainPhoto = product.Image,
+                Brands = brands,
+                Images = photos,
+                LongDescription = product.LongDescription,
+                SelectedCategoryIds = selCategories.Select(c => Guid.Parse(c.Id)).ToList()
+                
                
 
             };
+            await Console.Out.WriteLineAsync();
             return View(productEditForm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(IFormFile file ,string id, ProductEditViewModel editProductModel)
+        public async Task<IActionResult> Edit(IEnumerable<IFormFile> files,IFormFile file,
+            string id,ProductEditViewModel editProductModel)
         {
             
             ModelState.Remove("file");
+           
+
 
             if (!ModelState.IsValid)
             {
                 var categories = await _categoryService.GetAllAsync();
                 var brands = await _brandService.GetAllAsync();
-                
+                var images = await _imageService.GetPhotoByProductId(Guid.Parse(id));
+                var selCategories = await _categoryService.GetAllByProductId(Guid.Parse(id));
                 var productEditForm = new ProductEditFormViewModel
                 {
                     Name = editProductModel.Name,
                     Description = editProductModel.Description,
                     Price = editProductModel.Price,
-                    PhotoId = editProductModel.ImageId,
+                    MainPhotoId = editProductModel.MainPhotoId,
                     StockQuantity = editProductModel.StockQuantity,
                     BrandId = editProductModel.BrandId,
                     CategoryId = editProductModel.CategoryId,
                     Categories = categories,
-                    Brands = brands
+                    Brands = brands,
+                    LongDescription = editProductModel.LongDescription,
+                    MainPhoto = editProductModel.MainPhoto,
+                    Images = images,
+                    SelectedCategoryIds = selCategories.Select(c => Guid.Parse(c.Id)).ToList()
                 };
+                await Console.Out.WriteLineAsync();
                 return View(productEditForm);
             }
-            await _productService.EditAsync(file,Guid.Parse(id), editProductModel);
+            await _productService.EditAsync(files,file,Guid.Parse(id), editProductModel);
             return RedirectToAction("All", "Product");
         }
     }

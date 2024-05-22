@@ -24,7 +24,8 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public required string Description { get; set; }
         [MaxLength(LongDescriptionMaxLength)]
         public string? LongDescription { get; set; }
-        public PackageType PackageType { get; set; }
+        public bool IsAvailable { get; set; }
+       
         [Required]
         public int Quantity { get; set; }
         [Required]
@@ -34,9 +35,9 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [ForeignKey(nameof(FrontPhotoId))]
         public Photo FrontPhoto { get; set; } = null!;
         [Required]
-        public required Guid CategoryId { get; set; }
-        [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; } = null!;
+        public required Guid MainCategoryId { get; set; }
+        [ForeignKey(nameof(MainCategoryId))]
+        public Category MainCategory { get; set; } = null!;
         public bool IsDeleted { get; set; }
         [Required]
         public DateTime CreatedOn { get; set; }
@@ -47,6 +48,9 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Brand Brand { get; set; } = null!;
          
         public ICollection<Photo> ProductPhotos { get; set; } = new HashSet<Photo>();
+        public ICollection<Category> ProductCategories { get; set; } = new HashSet<Category>();
+        public ICollection<Package> ProductPackages { get; set; } = new HashSet<Package>();
+       
 
 
 

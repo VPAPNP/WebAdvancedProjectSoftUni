@@ -4,6 +4,7 @@ using EShopWebApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShopWebApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240506163102_AddedPackagePropToProduct")]
+    partial class AddedPackagePropToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,7 +127,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", null, t =>
+                    b.ToTable("Brands", t =>
                         {
                             t.HasComment("Brands of products");
                         });
@@ -155,7 +158,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Categories", null, t =>
+                    b.ToTable("Categories", t =>
                         {
                             t.HasComment("This is a category table");
                         });
@@ -181,7 +184,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", null, t =>
+                    b.ToTable("Orders", t =>
                         {
                             t.HasComment("Order table");
                         });
@@ -208,7 +211,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", null, t =>
+                    b.ToTable("OrderItems", t =>
                         {
                             t.HasComment("OrderItem table");
                         });
@@ -238,7 +241,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Packages", (string)null);
+                    b.ToTable("Packages");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.PaymentInfo", b =>
@@ -263,7 +266,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("PaymentInfos", null, t =>
+                    b.ToTable("PaymentInfos", t =>
                         {
                             t.HasComment("PaymentInfo table");
                         });
@@ -296,7 +299,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Photos", null, t =>
+                    b.ToTable("Photos", t =>
                         {
                             t.HasComment("Photo table");
                         });
@@ -350,6 +353,9 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -368,9 +374,11 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("MainCategoryId");
 
+                    b.HasIndex("PackageId");
+
                     b.HasIndex("WishListId");
 
-                    b.ToTable("Products", null, t =>
+                    b.ToTable("Products", t =>
                         {
                             t.HasComment("Product table");
                         });
@@ -405,7 +413,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("ShippingInfos", null, t =>
+                    b.ToTable("ShippingInfos", t =>
                         {
                             t.HasComment("This is a ShippingInfo table");
                         });
@@ -443,7 +451,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("ShoppingCarts", null, t =>
+                    b.ToTable("ShoppingCarts", t =>
                         {
                             t.HasComment("ShoppingCart table");
                         });
@@ -480,7 +488,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingCartItems", null, t =>
+                    b.ToTable("ShoppingCartItems", t =>
                         {
                             t.HasComment("This is a shopping cart item table");
                         });
@@ -499,7 +507,7 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasKey("SessionId");
 
-                    b.ToTable("ShoppingCartSessions", (string)null);
+                    b.ToTable("ShoppingCartSessions");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.WishList", b =>
@@ -516,7 +524,7 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("WishLists", null, t =>
+                    b.ToTable("WishLists", t =>
                         {
                             t.HasComment("WishList table");
                         });
@@ -696,11 +704,9 @@ namespace EShopWebApp.Infrastructure.Migrations
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Package", b =>
                 {
-                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", null)
                         .WithMany("ProductPackages")
                         .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.PaymentInfo", b =>
@@ -744,6 +750,10 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Package", "Package")
+                        .WithMany()
+                        .HasForeignKey("PackageId");
+
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.WishList", null)
                         .WithMany("Products")
                         .HasForeignKey("WishListId");
@@ -753,6 +763,8 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.Navigation("FrontPhoto");
 
                     b.Navigation("MainCategory");
+
+                    b.Navigation("Package");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShippingInfo", b =>
