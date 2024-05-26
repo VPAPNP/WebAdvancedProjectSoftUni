@@ -1,186 +1,7 @@
 ﻿@model CartViewModel
-@* <section class="h-100 h-custom" style="background-color: #eee;">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body p-4">
-
-                        <div class="row">
-
-                            <div class="col-lg-7">
-                                <h5 class="mb-3">
-                                    <a asp-action="All" asp-controller="Product" class="text-body">
-                                        <i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping
-                                    </a>
-                                </h5>
-                                <hr>
-
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div>
-                                        <p class="mb-1">Shopping cart</p>
-                                        @{
-                                            int itemCount = 0;
-                                            foreach (var item in Model.ShoppingCartItems)
-                                            {
-                                                itemCount += item.Quantity;
-                                            }
-                                        }
-                                        <p class="mb-0">You have <span class="total-count"></span> items in your cart</p>
-                                    </div>
-                                    <div>
-                                        <p class="mb-0">
-                                            <span class="text-muted">Sort by:</span> <a href="#" class="text-body">price <i class="fas fa-angle-down mt-1"></i></a>
-                                                                                       
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                @foreach (var item in Model.ShoppingCartItems)
-                                {
-                                    <div class="card mb-3  item-@item.ProductId">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between" >
-                                                <div class="d-flex flex-row align-items-center" >
-                                                    <div onclick="redirectToDetails('@item.Product.Id')">
-                                                        <img src="data:image;base64,@System.Convert.ToBase64String(item.Product.Image)"
-                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5>@item.Product.Name</h5>
-                                                        <p class="small mb-0">@item.Product.Description</p>
-                                                    </div>
-                                                </div>
 
 
-                                                <div class="d-flex flex-row align-items-center cart-item" >
-                                                    <button  class="minus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id">-</button>
-                                                    <div style="width: 50px;">
-                                                        
-                                                        
-                                                        
-                                                            <h5 class="text-center fw-normal cart-item-count-@item.Product.Id mb-0"></h5>
-                                                        
-                                                        
-                                                    </div>
-                                                    <button  class="plus-item input-group-addon" data-name="@item.Product.Name" data-id="@item.Product.Id" data-price="@item.Product.Price">+</button>
-                                                   
-                                                    <div style="width: 80px;">
-                                                        <h5 class="mb-0 text-center">@item.Product.Price$</h5>
-                                                       
-                                                    </div>
-                                                   
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                    
-                                
-                                
 
-                            </div>
-                            <div class="col-lg-5">
-
-                                <div class="card bg-primary text-white rounded-3">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h5 class="mb-0">Card details</h5>
-                                        </div>
-
-                                        <p class="small mb-2">Card type</p>
-                                        <a href="#!" type="submit" class="text-white">
-                                            <i class="fab fa-cc-mastercard fa-2x me-2"></i>
-                                        </a>
-                                        <a href="#!" type="submit" class="text-white">
-                                            <i class="fab fa-cc-visa fa-2x me-2"></i>
-                                        </a>
-                                        <a href="#!" type="submit" class="text-white">
-                                            <i class="fab fa-cc-amex fa-2x me-2"></i>
-                                        </a>
-                                        <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-paypal fa-2x"></i></a>
-
-                                        <form class="mt-4">
-                                            <div class="form-outline form-white mb-4">
-                                                <input type="text" id="typeName" class="form-control form-control-lg" siez="17"
-                                                       placeholder="Cardholder's Name" />
-                                                <label class="form-label" for="typeName">Cardholder's Name</label>
-                                            </div>
-
-                                            <div class="form-outline form-white mb-4">
-                                                <input type="text" id="typeTextCardNumber" class="form-control form-control-lg" siez="17"
-                                                       placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" />
-                                                <label class="form-label" for="typeTextCardNumber">Card Number</label>
-                                            </div>
-
-                                            <div class="row mb-4">
-                                                <div class="col-md-6">
-                                                    <div class="form-outline form-white">
-                                                        <input type="text" id="typeExp" class="form-control form-control-lg"
-                                                               placeholder="MM/YYYY" size="7"  minlength="7" maxlength="7" />
-                                                        <label class="form-label" for="typeExp">Expiration</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-outline form-white">
-                                                        <input type="password" id="typeText" class="form-control form-control-lg"
-                                                               placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
-                                                        <label class="form-label" for="typeText">Cvv</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </form>
-
-                                        <hr class="my-4">
-                                        @{
-                                            decimal subtotal = 0;
-                                            foreach (var item in Model.ShoppingCartItems)
-                                            {
-                                                subtotal += item.Product.Price * item.Quantity;
-                                            }
-
-                                        }
-
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">Subtotal</p>
-                                            <p class="mb-2">$@subtotal</p>
-                                        </div>
-
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">Shipping</p>
-                                            <p class="mb-2">$20.00</p>
-                                        </div>
-                                        @{
-                                            decimal totalIclTaxes = subtotal * 1.2m;
-                                            decimal total =  20 + totalIclTaxes;
-                                        }
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <p class="mb-2">Total(Incl. taxes)</p>
-                                            <p class="mb-2">$@totalIclTaxes.ToString("0.00")</p>
-                                        </div>
-                                        
-                                        <button type="button" class="btn btn-info btn-block btn-lg">
-                                            <div class="d-flex justify-content-between">
-                                                <span>$@total.ToString("0.00")</span><span> </span>
-                                                <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                            </div>
-                                        </button>
-
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> *@
 <div class="breadcrumb-section breadcrumb-bg">
     <div class="container">
         <div class="row">
@@ -194,6 +15,11 @@
     </div>
 </div>
 <!-- end breadcrumb section -->
+<script type="text/javascript">
+    var cartItems = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ShoppingCartItems));
+   
+</script>
+
 <!-- cart -->
 <div class="cart-section mt-150 mb-150 ">
     <div class="container ">
@@ -225,7 +51,7 @@
                                     <td class="product-quantity cart-item">
                                         <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" class="quantity-input item-count">
                                     </td>
-                                    <td class="product-total">$<span class="cart-item-price-@item.Product.Id"></span></td>
+                                    <td class="product-total"><span class="cart-item-price-@item.Product.Id"></span></td>
                                    
                                 </tr>
                                
@@ -265,27 +91,25 @@
                             </tr>
                         </tbody>
                     </table>
+                    
                     <div class="cart-buttons">
                         <a class="boxed-btn clear-cart-clear">Clear Cart</a>
-                        <a href="checkout.html" class="boxed-btn black">Check Out</a>
+                        <a href="Cart/Checkout" class="boxed-btn black checkout">Check Out</a>
                     </div>
+                    <br />
+                    <div>
+                        <a href="@Url.Action("All", "Product")" class="boxed-btn">Continue Shopping</a>
+
+                    </div>
+                    @if (Model.ShoppingCartItems.Count() > 0 )
+                    {
+                        
+                       
+                       
+                    }
+                    <br />
+                   
                 </div>
-                <div>
-                    <h5 id="price"></h5>
-                    <h5 id="price-currency"></h5>
-                    <a id="getRates">Get Rates</a>
-                </div>
-               
-               <div>
-                   <a href="@Url.Action("All", "Product")" class="boxed-btn">Continue Shopping</a>
-
-               </div>
-
-
-
-
-                
-            
                 <div class="coupon-section">
                     <h3>Apply Coupon</h3>
                     <div class="coupon-form-wrap">
@@ -295,16 +119,25 @@
                         </form>
                     </div>
                 </div>
+               
+              
+                
+
+
+
+                
+            
+               
+
             </div>
         </div>
     </div>
 </div>
 <!-- end cart -->
-
-
+<section>
     
    
-    
+</section>
 
 
 <script>

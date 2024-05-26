@@ -1,6 +1,8 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.ViewModels.CartViewModels;
 using Microsoft.AspNetCore.Mvc;
+
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace EShopWebApp.Controllers
@@ -107,7 +109,65 @@ namespace EShopWebApp.Controllers
             }
             return RedirectToAction("Index", "Cart");
         }
+        public async Task<IActionResult> Checkout()
+        {
+            CartViewModel cartView = new CartViewModel();
+            if (!User.Identity!.IsAuthenticated)
+            {
+                string curSessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"]!;
+                if (string.IsNullOrEmpty(curSessionId))
+                {
+                    curSessionId = await _cartService.CreateShoppingCartSession();
 
+                }
+                cartView = await _cartService.GetGuestCartAsync(curSessionId);
+            }
+            else
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                cartView = await _cartService.GetCartAsync(userId!);
+            }
+            var products = cartView.ShoppingCartItems;
+
+            var domain = "https://localhost:7298";
+            var options = new SessionCreateOptions
+            {
+
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain + "/Cart/CheckoutSuccess",
+                CancelUrl = domain + "/Cart/CheckoutCancel",
+
+            };
+            if (User.Identity!.IsAuthenticated)
+            {
+                
+                options.CustomerEmail = User.FindFirstValue(ClaimTypes.Email);
+            }
+           
+            foreach (var product in products)
+            {
+                var productItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = product.Product.Name,
+                        },
+                        UnitAmount = (long)product.Product.Price*100,
+                    },
+                    Quantity = product.Quantity,
+                };
+                options.LineItems.Add(productItem);
+            }
+            var service = new SessionService();
+            Session session = service.Create(options);
+            Response.Headers.Append("Location", session.Url);
+
+            return new StatusCodeResult(303);
+		}
 
     }
    

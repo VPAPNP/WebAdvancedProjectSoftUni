@@ -7,6 +7,7 @@ using EShopWebApp.Infrastructure.Extensions;
 using EShopWebApp.Infrastructure.ModelBinders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +58,7 @@ using (var scope = app.Services.CreateScope())
 
 
 }
-
+StripeConfiguration.ApiKey = "sk_test_51PJxqG06TjIzi1CA5z0P6zBRIUVunCmpj2e8sHre5SdC99nV7X5wGlYkVucO9ETAF5QtP6FEEBFXKv0rUlojHN1j006PnezXHt";
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -1,7 +1,7 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.Services;
 using EShopWebApp.Core.Services.ServiceModels;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
+using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
@@ -150,18 +150,19 @@ namespace TestingEShopWebApp.UnitTests
 			// Arrange
 			var testId = productId1; // Use one of the product IDs from your test data
 			var mockFile = new Mock<IFormFile>();
+			var mockFiles = new List<IFormFile>();
 			var editProductModel = new ProductEditViewModel
 			{
 				Name = "Updated Product",
 				Description = "Updated Description",
 				Price = 15.0m,
 				StockQuantity = 10,
-				CategoryId = Guid.NewGuid().ToString(),
-				BrandId = Guid.NewGuid().ToString()
+				CategoryId = Guid.NewGuid(),
+				BrandId = Guid.NewGuid()
 			};
 
 			// Act
-			await _productService.EditAsync(mockFile.Object, testId, editProductModel);
+			await _productService.EditAsync(mockFiles, mockFile.Object, testId, editProductModel);
 
 			// Assert
 			var product = await _context.Products.FindAsync(testId);
@@ -170,8 +171,8 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.Description, Is.EqualTo(editProductModel.Description));
 			Assert.That(product.Price, Is.EqualTo(editProductModel.Price));
 			Assert.That(product.Quantity, Is.EqualTo(editProductModel.StockQuantity));
-			Assert.That(product.MainCategoryId, Is.EqualTo(Guid.Parse(editProductModel.CategoryId)));
-			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(editProductModel.BrandId)));
+			Assert.That(product.MainCategoryId, Is.EqualTo(editProductModel.CategoryId));
+			Assert.That(product.BrandId, Is.EqualTo(editProductModel.BrandId));
 		}
 		[Test]
 		public async Task GetAllFilteredAndPagedAsync_ReturnsFilteredAndPagedProducts()
