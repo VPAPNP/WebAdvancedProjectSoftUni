@@ -38,6 +38,10 @@ namespace EShopWebApp.Infrastructure.Data
 
         public DbSet<Package> Packages { get; set; }
 
+        public DbSet<ProductPackages> ProductsPackages { get; set; }
+
+        
+
 
 
         

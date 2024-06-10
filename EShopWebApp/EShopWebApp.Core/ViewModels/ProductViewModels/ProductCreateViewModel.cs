@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
+using EShopWebApp.Core.ViewModels.PackageViewModels;
 using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using static EShopWebApp.Core.DataConstants.ValidationConstants.Product;
 
@@ -30,6 +31,8 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         [Range(QuantityMinValue, QuantityMaxValue)]
         public int StockQuantity { get; set; }
         public string BrandId { get; set; } = null!;
+        public string PackageId { get; set; } = null!;
+        public PackageViewModel? Package { get; set; } = new PackageViewModel();
         [Required]
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }

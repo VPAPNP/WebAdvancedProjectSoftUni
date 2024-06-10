@@ -70,7 +70,24 @@
                     <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Create New Category
                     </button>
-                
+                <div class="form-group">
+                    <div class="mb-3">
+                        <label asp-for="PackageId"></label>
+                        <select asp-for="PackageId" class="form-select" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            @foreach (var package in Model.Packages)
+                            {
+                                <option value="@package.Id">@package.Name @package.Weight kg</option>
+                            }
+                        </select>
+                        <span asp-validation-for="PackageId" class="small text-danger"></span>
+
+                    </div>
+                </div>
+                <!-- Button trigger create package modal -->
+                <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModalpackage">
+                    Create New Package
+                </button>
                     <div class="form-group pt-3">
                         <div class="mb-3">
                             <label>Select More Categories</label>
@@ -101,7 +118,7 @@
                         <span asp-validation-for="BrandId" class="small text-danger"></span>
                     </div>
                 </div>
-           
+               
 
             
         </div>
@@ -146,7 +163,21 @@
             </div>
         </div>
     </div>
-    
+    <!-- Create Package Modal -->
+    <div class="modal fade" id="exampleModalpackage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Package</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="_CreatePackagePartial" model="@Model.Package" />
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -173,6 +204,8 @@
     quill.on('text-change', function () {
         document.querySelector('input[name="LongDescription"]').value = quill.root.innerHTML;
     });
+    
+    
 </script>
 
 

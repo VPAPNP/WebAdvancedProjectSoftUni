@@ -46,10 +46,10 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Guid BrandId { get; set; }
         [ForeignKey(nameof(BrandId))]
         public Brand Brand { get; set; } = null!;
-         
+       
         public ICollection<Photo> ProductPhotos { get; set; } = new HashSet<Photo>();
         public ICollection<Category> ProductCategories { get; set; } = new HashSet<Category>();
-        public ICollection<Package> ProductPackages { get; set; } = new HashSet<Package>();
+        public ICollection<ProductPackages> ProductsPackages { get; set; } = new HashSet<ProductPackages>();
        
 
 

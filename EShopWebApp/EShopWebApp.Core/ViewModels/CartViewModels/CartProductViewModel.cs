@@ -11,7 +11,7 @@ namespace EShopWebApp.Core.ViewModels.CartViewModels
         public byte[] Image { get; set; } = null!;
         public string CategoryName { get; set; } = string.Empty;
 
-        public PackageType PackageType { get; set; }
+        public decimal PackageWeight { get; set; }
 
         public int Quantity { get; set; }
     }

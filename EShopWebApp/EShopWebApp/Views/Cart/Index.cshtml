@@ -1,22 +1,16 @@
 ﻿@model CartViewModel
 
 
+@{
+    ViewData["Title"] = "Cart";
 
-<div class="breadcrumb-section breadcrumb-bg">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2 text-center">
-                <div class="breadcrumb-text">
-                    <h1>Cart</h1>
-                    <p>Fresh and Organic</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end breadcrumb section -->
+    
+}
+
+<partial name="_BreadcrumbPartial" view-data="ViewData" />
 <script type="text/javascript">
     var cartItems = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ShoppingCartItems));
+   
    
 </script>
 
@@ -38,18 +32,18 @@
                                 
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody >
                             @foreach (var item in Model.ShoppingCartItems)
                             {
                                 <tr class="item-@item.ProductId">
-                                    <td class="product-remove cart-item">
+                                    <td class="product-remove cart-item" >
                                         <a data-id="@item.Id" data-name="@item.Product.Name" class="delete-item"><i class="far fa-window-close"></i></a>
                                     </td>
                                     <td class="product-image"><img src="data:image;base64,@System.Convert.ToBase64String(item.Product.Image)" alt=""></td>
                                     <td class="product-name">@item.Product.Name</td>
                                     <td class="product-price">$@item.Product.Price</td>
                                     <td class="product-quantity cart-item">
-                                        <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" class="quantity-input item-count">
+                                        <input type="number" data-id="@item.ProductId" data-name="@item.Product.Name" value="@item.Quantity" min="1" id="quantity-input" class="item-count">
                                     </td>
                                     <td class="product-total"><span class="cart-item-price-@item.Product.Id"></span></td>
                                    
@@ -83,11 +77,11 @@
                             </tr>
                             <tr class="total-data">
                                 <td><strong>Shipping: </strong></td>
-                                <td>$0</td>
+                                <td>$<span id="shippingPrice" name="shippingPrice"></span></td>
                             </tr>
                             <tr class="total-data">
                                 <td><strong>Total: </strong></td>
-                                <td>$<span class="total-cart"></span> </td>
+                                <td>$<span id="totalPrice" class="total-cart"></span> </td>
                             </tr>
                         </tbody>
                     </table>
@@ -101,14 +95,58 @@
                         <a href="@Url.Action("All", "Product")" class="boxed-btn">Continue Shopping</a>
 
                     </div>
-                    @if (Model.ShoppingCartItems.Count() > 0 )
-                    {
-                        
-                       
-                       
-                    }
+                   
                     <br />
                    
+                </div>
+                <div class="container mt-5">
+                    <h2 class="text-center">Информация за доставка</h2>
+                    <form id="shipmentForm">
+                        <div class="form-group">
+                            <label for="paymentMethod">Payment Method:</label>
+                            <select class="form-control" id="paymentMethod" name="paymentMethod">
+                                <option value="card">Pay with Card</option>
+                                <option value="delivery">Pay on Delivery</option>
+                                <option value="pickup">Take from Place</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="shippingMethod">Shipping Method:</label>
+                            <select class="form-control" id="shippingMethod" name="shippingMethod">
+                                <option value="econt">Еконт</option>
+                                <option value="pickup">вземи от място</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverName">Name:</label>
+                            <input type="text" class="form-control" id="receiverName" name="receiverName">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverPhone">Phone:</label>
+                            <input type="text" class="form-control" id="receiverPhone" name="receiverPhone">
+                        </div>
+                        <div class="form-group" id="receiverCityGroup">
+                            <label for="receiverCity">City:</label>
+                            <input type="text" class="form-control" id="receiverCity" name="receiverCity">
+                        </div>
+                        <div class="form-group" id="receiverPostCodeGroup">
+                            <label for="receiverPostCode">Post Code:</label>
+                            <input type="text" class="form-control" id="receiverPostCode" name="receiverPostCode">
+                        </div>
+                        <div class="form-group" id="receiverStreetGroup">
+                            <label for="receiverStreet">Street:</label>
+                            <input type="text" class="form-control" id="receiverStreet" name="receiverStreet">
+                        </div>
+                        <div class="form-group" id="receiverNumGroup">
+                            <label for="receiverNum">Number:</label>
+                            <input type="text" class="form-control" id="receiverNum" name="receiverNum">
+                        </div>
+                        <div class="form-group" id="receiverOtherGroup">
+                            <label for="receiverOther">Other:</label>
+                            <input type="text" class="form-control" id="receiverOther" name="receiverOther">
+                        </div>
+                        
+                    </form>
                 </div>
                 <div class="coupon-section">
                     <h3>Apply Coupon</h3>
@@ -120,20 +158,23 @@
                     </div>
                 </div>
                
-              
-                
 
 
 
-                
-            
-               
+
+
+
+
+
 
             </div>
         </div>
     </div>
+    
+
 </div>
 <!-- end cart -->
+
 <section>
     
    

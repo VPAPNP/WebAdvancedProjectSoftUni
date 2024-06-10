@@ -129,6 +129,24 @@ namespace EShopWebApp.Controllers
             await _cartService.RemoveAllProductsFromCartAsync();
 
         }
-        
+        [HttpGet("getweight")]
+        public async Task<decimal> GetWeight()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           var cart = new CartViewModel();
+            if (User.Identity.IsAuthenticated)
+            {
+                 cart = await _cartService.GetCartAsync(userId!);
+            }
+            else
+            {
+                var sessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"]!;
+                cart = await _cartService.GetGuestCartAsync(sessionId);
+                
+            }
+            var weight = cart.ShoppingCartItems.Sum(x => x.Product.PackageWeight);
+
+            return weight;
+        }
     }
 }

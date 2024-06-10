@@ -12,21 +12,25 @@ namespace EShopWebApp.Areas.Admin.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly IPhotoService _imageService;
+        private readonly IPackageService _packageService;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, IBrandService brandService, IPhotoService imageService)
+        public ProductController(IProductService productService, ICategoryService categoryService, IBrandService brandService, IPhotoService imageService, IPackageService packageService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
             _imageService = imageService;
+            _packageService = packageService;
         }
         public async Task<IActionResult> Create(ProductCreateFormViewModel productCreateForm)
         {
             var categories = await _categoryService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
+            var packages = await _packageService.GetAllAsync();
             
             productCreateForm.Categories = categories;
             productCreateForm.Brands = brands;
+            productCreateForm.Packages = packages;
             
             if (!User.IsInRole("Admin"))
             {
@@ -55,12 +59,15 @@ namespace EShopWebApp.Areas.Admin.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-           
+           ModelState.Remove("Package.Name");
+            ModelState.Remove("Package.Description");
+
             
             if (!ModelState.IsValid)
             {
                 var categories = await _categoryService.GetAllAsync();
                 var brands = await _brandService.GetAllAsync();
+                var packages = await _packageService.GetAllAsync();
                 var productCreateForm = new ProductCreateFormViewModel
                 {
                     Name = productView.Name,
@@ -72,8 +79,8 @@ namespace EShopWebApp.Areas.Admin.Controllers
                     CategoryId = productView.CategoryId,
                     Categories = categories,
                     Brands = brands,
-                    LongDescription = productView.LongDescription
-                    
+                    LongDescription = productView.LongDescription,
+                    Packages = packages
 
                 };
                 return View(productCreateForm);
@@ -92,7 +99,25 @@ namespace EShopWebApp.Areas.Admin.Controllers
             {
                 
                 ModelState.AddModelError("Error Create Product", "An error occurred while processing your request.");
-                return View(productView); 
+                var categories = await _categoryService.GetAllAsync();
+                var brands = await _brandService.GetAllAsync();
+                var packages = await _packageService.GetAllAsync();
+                var productCreateForm = new ProductCreateFormViewModel
+                {
+                    Name = productView.Name,
+                    Description = productView.Description,
+                    Price = productView.Price,
+                    StockQuantity = productView.StockQuantity,
+                    BrandId = productView.BrandId,
+                    CreatedOn = productView.CreatedOn,
+                    CategoryId = productView.CategoryId,
+                    Categories = categories,
+                    Brands = brands,
+                    LongDescription = productView.LongDescription,
+                    Packages = packages
+
+                };
+                return View(productCreateForm); 
             }
         }
 
@@ -112,6 +137,7 @@ namespace EShopWebApp.Areas.Admin.Controllers
         {
             var product = await _productService.GetByIdAsync(Guid.Parse(id));
             var categories = await _categoryService.GetAllAsync();
+            var packages = await _packageService.GetAllAsync();
             var brands = await _brandService.GetAllAsync();
             var selCategories = await _categoryService.GetAllByProductId(Guid.Parse(id));
 
@@ -136,12 +162,12 @@ namespace EShopWebApp.Areas.Admin.Controllers
                 Brands = brands,
                 Images = photos,
                 LongDescription = product.LongDescription,
-                SelectedCategoryIds = selCategories.Select(c => Guid.Parse(c.Id)).ToList()
-                
+                SelectedCategoryIds = selCategories.Select(c => Guid.Parse(c.Id)).ToList(),
+                Packages = packages
                
 
             };
-            await Console.Out.WriteLineAsync();
+            
             return View(productEditForm);
         }
 
@@ -158,6 +184,7 @@ namespace EShopWebApp.Areas.Admin.Controllers
             {
                 var categories = await _categoryService.GetAllAsync();
                 var brands = await _brandService.GetAllAsync();
+                var packages = await _packageService.GetAllAsync();
                 var images = await _imageService.GetPhotoByProductId(Guid.Parse(id));
                 var selCategories = await _categoryService.GetAllByProductId(Guid.Parse(id));
                 var productEditForm = new ProductEditFormViewModel

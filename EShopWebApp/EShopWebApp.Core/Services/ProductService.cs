@@ -2,6 +2,7 @@
 using EShopWebApp.Core.Services.ServiceModels;
 using EShopWebApp.Core.ViewModels.BrandViewModels;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
+using EShopWebApp.Core.ViewModels.PackageViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
@@ -15,11 +16,13 @@ namespace EShopWebApp.Core.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IPhotoService _photoService;
+        private readonly IPackageService _packageService;
 
-        public ProductService(ApplicationDbContext context,IPhotoService photoService)
+        public ProductService(ApplicationDbContext context,IPhotoService photoService,IPackageService package)
         {
             _context = context;
             _photoService = photoService;
+            _packageService = package;
         }
 		public async Task<ICollection<ProductAllViewModel>> GetAllAsync()
 		{
@@ -95,8 +98,25 @@ namespace EShopWebApp.Core.Services
 
         public async Task  CreateAsync(IEnumerable<IFormFile> files, IFormFile file,ProductCreateViewModel productCreateViewModel)
         {
-            
+            if (string.IsNullOrEmpty(productCreateViewModel.CategoryId) || string.IsNullOrEmpty(productCreateViewModel.BrandId))
+            {
+                throw new ArgumentException("CategoryId and BrandId must not be null or empty.");
+            }
 
+            if (!Guid.TryParse(productCreateViewModel.CategoryId, out var mainCategoryId))
+            {
+                throw new ArgumentException("Invalid CategoryId.");
+            }
+
+            if (!Guid.TryParse(productCreateViewModel.BrandId, out var brandId))
+            {
+                throw new ArgumentException("Invalid BrandId.");
+            }
+
+            if (!Guid.TryParse(productCreateViewModel.PackageId, out var packageId))
+            {
+                throw new ArgumentException("Invalid PackageId.");
+            }
             var image = _photoService.CreateImage(file, file.FileName);
             var photo = await _context.Photos.AddAsync(new Photo
             {
@@ -122,13 +142,34 @@ namespace EShopWebApp.Core.Services
                 MainCategoryId = Guid.Parse(productCreateViewModel.CategoryId),
                 BrandId = Guid.Parse(productCreateViewModel.BrandId),
                 LongDescription = productCreateViewModel.LongDescription,
-                ProductCategories = productCategories 
+                ProductCategories = productCategories,
+               
+                
             };
 
             
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
+            var package = _context.Packages.FirstOrDefault(p => p.Id == Guid.Parse(productCreateViewModel.PackageId));
 
+            var newPackage = new PackageViewModel
+            {
+                Name = package!.Name,
+                Description = package.Description,
+                Weight = package.Weight,
+
+            };
+            await _packageService.CreateAsync(newPackage);
+            await _context.SaveChangesAsync();
+
+
+            var productPackage = new ProductPackages
+            {
+                ProductId = product.Id,
+                PackageId = package.Id
+            };
+            await _context.ProductsPackages.AddAsync(productPackage);
+           
             var frontPhoto = await _context.Photos.FirstOrDefaultAsync(p => p.Id == product.FrontPhotoId);
             frontPhoto!.ProductId = product.Id;
             var productPhotos = new List<Photo>();
@@ -139,7 +180,7 @@ namespace EShopWebApp.Core.Services
                 var imageGallery = _photoService.CreateImage(formFile, formFile.FileName);
                 var photoToUpload = new Photo 
                 {
-                    Name = imageGallery.Name,
+                    Name = productCreateViewModel.Name,
                     Picture = imageGallery.Picture,
                     ProductId = product.Id
                     
@@ -150,7 +191,8 @@ namespace EShopWebApp.Core.Services
                                 
             }
             await _context.Photos.AddRangeAsync(productPhotos);
-            await _context.SaveChangesAsync();
+           
+            
 
             foreach (var categoryId in productCreateViewModel.SelectedCategoryIds)
             {
@@ -158,7 +200,13 @@ namespace EShopWebApp.Core.Services
                product.ProductCategories.Add(category!);
                 
             }
+           
+            
             await _context.SaveChangesAsync();
+            
+           
+
+
         }
 
         public async Task DeleteAsync(Guid id)

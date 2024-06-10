@@ -129,7 +129,7 @@ namespace EShopWebApp.Controllers
             }
             var products = cartView.ShoppingCartItems;
 
-            var domain = "https://localhost:7298";
+            var domain = "https://eshopwebappproject.azurewebsites.net";
             var options = new SessionCreateOptions
             {
 

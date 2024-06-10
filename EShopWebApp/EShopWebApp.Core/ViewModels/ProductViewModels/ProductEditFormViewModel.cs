@@ -1,5 +1,6 @@
 ﻿using EShopWebApp.Core.ViewModels.BrandViewModels;
 using EShopWebApp.Core.ViewModels.CategoryViewModels;
+using EShopWebApp.Core.ViewModels.PackageViewModels;
 using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -48,5 +49,6 @@ namespace EShopWebApp.Core.ViewModels.ProductViewModels
         [Display(Name = "Categories")]
         public List<Guid> SelectedCategoryIds { get; set; } = new List<Guid>();
         public ICollection<PhotoViewModel> Images { get; set; } = new HashSet<PhotoViewModel>();
+        public ICollection<PackageViewModel> Packages { get; set; } = new HashSet<PackageViewModel>();
     }
 }

@@ -36,10 +36,7 @@ namespace EShopWebApp.Controllers
         {
 			return View();
 		}   
-        public IActionResult News()
-        {
-            return View();
-        }
+      
 
         
         public IActionResult Error(int statusCode)
