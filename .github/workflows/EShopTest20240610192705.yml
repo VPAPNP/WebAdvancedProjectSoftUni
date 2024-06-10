@@ -34,3 +34,4 @@ jobs:
         containerAppName: ${{ env.CONTAINER_APP_NAME }}
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
+        environmentVariables: "DefaultConnection=${{ secrets.CONNECTION_STRING }}"
