@@ -10,14 +10,18 @@ namespace EShopWebApp.Areas.Admin.Controllers
     {
         private readonly ICategoryService _categoryService;
         public CategoryController(ICategoryService categoryService) => _categoryService = categoryService;
-        public IActionResult Create()
+        public IActionResult Create(string returnUrl)
         {
+            
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CategoryCreateViewModel categoryView)
+        public async Task<IActionResult> Create(CategoryCreateViewModel categoryView,string returnUrl)
         {
+            
+            
             if (!ModelState.IsValid)
             {
                 return View(categoryView);
@@ -26,13 +30,18 @@ namespace EShopWebApp.Areas.Admin.Controllers
             if (exist)
             {
                 var category = await _categoryService.GetByNameAsync(categoryView.Name);
-                await _categoryService.UndoDeleteAsync(category.Id);
-                return RedirectToAction("All", "Category");
+                if (category.IsDeleted)
+                {
+                    await _categoryService.UndoDeleteAsync(category.Id);
+                }
+                
+                
+                return Redirect(returnUrl);
             }
 
             await _categoryService.CreateAsync(categoryView);
 
-            return RedirectToAction("All", "Category");
+            return Redirect(returnUrl);
         }
 
         public async Task<IActionResult> All()

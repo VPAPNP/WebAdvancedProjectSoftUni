@@ -148,7 +148,12 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasComment("This is a category name");
 
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Categories", t =>
                         {
@@ -207,6 +212,35 @@ namespace EShopWebApp.Infrastructure.Migrations
                         {
                             t.HasComment("OrderItem table");
                         });
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Package", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PackageType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Packages");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.PaymentInfo", b =>
@@ -279,9 +313,6 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -298,10 +329,20 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.Property<Guid>("FrontPhotoId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<string>("LongDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("MainCategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
@@ -325,9 +366,9 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("FrontPhotoId");
+
+                    b.HasIndex("MainCategoryId");
 
                     b.HasIndex("WishListId");
 
@@ -335,6 +376,21 @@ namespace EShopWebApp.Infrastructure.Migrations
                         {
                             t.HasComment("Product table");
                         });
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductPackages", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductId", "PackageId");
+
+                    b.HasIndex("PackageId");
+
+                    b.ToTable("ProductsPackages");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShippingInfo", b =>
@@ -618,6 +674,15 @@ namespace EShopWebApp.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Category", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductCategories")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Order", b =>
                 {
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.ApplicationUser", "Customer")
@@ -677,15 +742,15 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EShopWebApp.Infrastructure.Data.Models.Photo", "FrontPhoto")
                         .WithMany()
                         .HasForeignKey("FrontPhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Category", "MainCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("MainCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -695,9 +760,28 @@ namespace EShopWebApp.Infrastructure.Migrations
 
                     b.Navigation("Brand");
 
-                    b.Navigation("Category");
-
                     b.Navigation("FrontPhoto");
+
+                    b.Navigation("MainCategory");
+                });
+
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ProductPackages", b =>
+                {
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Package", "Package")
+                        .WithMany("ProductsPackages")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShopWebApp.Infrastructure.Data.Models.Product", "Product")
+                        .WithMany("ProductsPackages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Package");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShippingInfo", b =>
@@ -818,6 +902,11 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -829,9 +918,18 @@ namespace EShopWebApp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Package", b =>
+                {
+                    b.Navigation("ProductsPackages");
+                });
+
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.Product", b =>
                 {
+                    b.Navigation("ProductCategories");
+
                     b.Navigation("ProductPhotos");
+
+                    b.Navigation("ProductsPackages");
                 });
 
             modelBuilder.Entity("EShopWebApp.Infrastructure.Data.Models.ShoppingCart", b =>

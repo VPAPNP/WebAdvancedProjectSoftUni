@@ -72,7 +72,7 @@ namespace TestingEShopWebApp.UnitTests
 				Quantity = 10,
 				Price = 100,
 				FrontPhotoId = frontPhotoId,
-				CategoryId = Guid.NewGuid(),
+				MainCategoryId = Guid.NewGuid(),
 				BrandId = Guid.NewGuid(),
 				CreatedOn = DateTime.UtcNow
 			};

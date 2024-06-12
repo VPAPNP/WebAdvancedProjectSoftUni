@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EShopWebApp.Infrastructure.Data.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static EShopWebApp.Infrastructure.DataConstants.EntityValidationConstants.Product;
@@ -21,6 +22,10 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [Required]
         [MaxLength(DescriptionMaxLength)]
         public required string Description { get; set; }
+        [MaxLength(LongDescriptionMaxLength)]
+        public string? LongDescription { get; set; }
+        public bool IsAvailable { get; set; }
+       
         [Required]
         public int Quantity { get; set; }
         [Required]
@@ -30,9 +35,9 @@ namespace EShopWebApp.Infrastructure.Data.Models
         [ForeignKey(nameof(FrontPhotoId))]
         public Photo FrontPhoto { get; set; } = null!;
         [Required]
-        public required Guid CategoryId { get; set; }
-        [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; } = null!;
+        public required Guid MainCategoryId { get; set; }
+        [ForeignKey(nameof(MainCategoryId))]
+        public Category MainCategory { get; set; } = null!;
         public bool IsDeleted { get; set; }
         [Required]
         public DateTime CreatedOn { get; set; }
@@ -41,8 +46,11 @@ namespace EShopWebApp.Infrastructure.Data.Models
         public Guid BrandId { get; set; }
         [ForeignKey(nameof(BrandId))]
         public Brand Brand { get; set; } = null!;
-         
+       
         public ICollection<Photo> ProductPhotos { get; set; } = new HashSet<Photo>();
+        public ICollection<Category> ProductCategories { get; set; } = new HashSet<Category>();
+        public ICollection<ProductPackages> ProductsPackages { get; set; } = new HashSet<ProductPackages>();
+       
 
 
 

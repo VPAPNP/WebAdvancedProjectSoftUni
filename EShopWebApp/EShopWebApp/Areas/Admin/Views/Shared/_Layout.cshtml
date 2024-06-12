@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,8 +10,12 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/uploadImage.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EShopWebApp.styles.css" asp-append-version="true" />
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+   
+   
+   
    
 </head>
 <body>
@@ -66,18 +71,7 @@
                 </div>
             </div>
         </nav>
-        <aside>
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            <strong>Welcome!</strong> This is the admin area of the EShopWebApp. Here you can manage the products, categories and brands.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+       
         
     </header>
     
@@ -107,7 +101,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/uploadImage.js" asp-append-version="true"></script>
-    
+    <script src="~/js/cart.js?version=2.9"></script>
+   
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

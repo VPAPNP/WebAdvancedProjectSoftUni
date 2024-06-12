@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EShopWebApp.Infrastructure.Data.Models;
+﻿using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +10,12 @@ namespace EShopWebApp.Infrastructure.Data.Configurations
         {
             builder.Property("IsDeleted")
                 .HasDefaultValue(false);
+            
+
+            builder.HasMany(c => c.Products)
+                .WithOne(pc => pc.MainCategory)
+                .HasForeignKey(pc => pc.MainCategoryId);
+
         }
     }
 }

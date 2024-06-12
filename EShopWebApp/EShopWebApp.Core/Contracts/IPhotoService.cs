@@ -1,4 +1,4 @@
-﻿using EShopWebApp.Core.ViewModels.ImageViewModels;
+﻿using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -19,5 +19,6 @@ namespace EShopWebApp.Core.Contracts
         Task<ICollection<PhotoViewModel>> GetPhotoByProductId(Guid id);
 
         Task UploadImagesToProductAsync(Guid productId, IEnumerable<IFormFile> images);
+        Task<ICollection<PhotoViewModel>> GetAllPhotosByProductId(Guid productId);
     }
 }

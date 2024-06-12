@@ -1,7 +1,8 @@
 ﻿using EShopWebApp.Core.Contracts;
 using EShopWebApp.Core.Services;
 using EShopWebApp.Core.Services.ServiceModels;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
+using EShopWebApp.Core.ViewModels.PackageViewModels;
+using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels.Enums;
 using EShopWebApp.Infrastructure.Data;
@@ -16,6 +17,7 @@ namespace TestingEShopWebApp.UnitTests
 	{
 		private ApplicationDbContext _context;
 		private Mock<IPhotoService> _photoServiceMock;
+		private Mock<IPackageService> _packageServiceMock;
 		private ProductService _productService;
 		Guid productId1 ;
 		Guid productId2 ;
@@ -33,6 +35,7 @@ namespace TestingEShopWebApp.UnitTests
 			_context = new ApplicationDbContext(options);
 
 			_photoServiceMock = new Mock<IPhotoService>();
+			
 
 			// Setup _photoServiceMock to return a specific result when GetPhotoById is called
 			_photoServiceMock.Setup(service => service.GetPhotoById(It.IsAny<Guid>()))
@@ -41,9 +44,18 @@ namespace TestingEShopWebApp.UnitTests
 				.Returns(new PhotoViewModel { Name = "Test", Picture = new byte[0] });
 			_photoServiceMock.Setup(service => service.DownloadPhotoAsync(It.IsAny<Guid>()))
 				.Returns(Task.CompletedTask);
-			
+            _packageServiceMock = new Mock<IPackageService>();
+			_packageServiceMock.Setup(service => service.CreateAsync(It.IsAny<PackageViewModel>()))
+                .Returns(Task.CompletedTask);
+			_packageServiceMock.Setup(service => service.DeleteAsync(It.IsAny<Guid>()))
+				.Returns(Task.CompletedTask);
+		  
 
-			_productService = new ProductService(_context, _photoServiceMock.Object);
+
+
+
+
+            _productService = new ProductService(_context, _photoServiceMock.Object,_packageServiceMock.Object);
 
 			// Seed the in-memory database with test data
 
@@ -57,13 +69,15 @@ namespace TestingEShopWebApp.UnitTests
 			var brandId = Guid.NewGuid();
 			var category = new Category { Id = categoryId, Name = "Category 1" };
 			var brand = new Brand { Id = brandId, Name = "Brand 1" };
+			var package = new Package { Id = Guid.NewGuid(), Name = "Package 1", Description = "Package 1", Weight = 1.0m };
 			_context.Categories.Add(category);
 			_context.Brands.Add(brand);
+			_context.Packages.Add(package);
 			_context.Products.AddRange(new[]
 			{
-				new Product { Id = productId1, Name = "Product 1", Price = 10.0m, IsDeleted = false,CategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
-				new Product { Id = productId2, Name = "Product 2", Price = 20.0m, IsDeleted = false,CategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
-				new Product { Id = productId3, Name = "Product 3", Price = 30.0m, IsDeleted = true, CategoryId= categoryId, Description="New Description", BrandId = brandId, FrontPhoto = frontPhoto}
+				new Product { Id = productId1, Name = "Product 1", Price = 10.0m, IsDeleted = false,MainCategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
+				new Product { Id = productId2, Name = "Product 2", Price = 20.0m, IsDeleted = false,MainCategoryId= categoryId,Description="New Description",BrandId = brandId,FrontPhoto = frontPhoto },
+				new Product { Id = productId3, Name = "Product 3", Price = 30.0m, IsDeleted = true, MainCategoryId= categoryId, Description="New Description", BrandId = brandId, FrontPhoto = frontPhoto}
 			});
 			_context.SaveChanges();
 		}
@@ -102,6 +116,13 @@ namespace TestingEShopWebApp.UnitTests
 			var mockFile = new Mock<IFormFile>();
 			mockFile.Setup(file => file.FileName).Returns("test.jpg");
 			mockFile.Setup(file => file.Length).Returns(1);
+			var category = new Category { Id = Guid.NewGuid(), Name = "Category 2" };
+			_context.Categories.Add(category);
+			_context.SaveChanges();
+			var selectedCategories = new List<Guid> { category.Id, categoryId };
+			var package = new Package { Id = Guid.NewGuid(), Name = "Package 2", Description = "Package 2", Weight = 2.0m };
+			_context.Packages.Add(package);
+			_context.SaveChanges();
             var files = new List<IFormFile>
             {
                 new FormFile(new MemoryStream(), 0, 0, "file1", "file1.jpg"),
@@ -114,11 +135,16 @@ namespace TestingEShopWebApp.UnitTests
 				Price = 10.0m,
 				StockQuantity = 5,
 				CategoryId = Guid.NewGuid().ToString(),
-				BrandId = Guid.NewGuid().ToString()
+				BrandId = Guid.NewGuid().ToString(),
+				SelectedCategoryIds = selectedCategories,
+				PackageId = package.Id.ToString()
+				
+				
+
 			};
 
 			// Act
-			await _productService.CreateAsync(files,mockFile.Object, productCreateViewModel);
+			await _productService.CreateAsync(files, mockFile.Object, productCreateViewModel);
 
 			// Assert
 			Assert.That(_context.Products, Has.Exactly(4).Items);
@@ -127,7 +153,7 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.Description, Is.EqualTo(productCreateViewModel.Description));
 			Assert.That(product.Price, Is.EqualTo(productCreateViewModel.Price));
 			Assert.That(product.Quantity, Is.EqualTo(productCreateViewModel.StockQuantity));
-			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(productCreateViewModel.CategoryId)));
+			Assert.That(product.MainCategoryId, Is.EqualTo(Guid.Parse(productCreateViewModel.CategoryId)));
 			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(productCreateViewModel.BrandId)));
 		}
 		[Test]
@@ -150,18 +176,19 @@ namespace TestingEShopWebApp.UnitTests
 			// Arrange
 			var testId = productId1; // Use one of the product IDs from your test data
 			var mockFile = new Mock<IFormFile>();
+			var mockFiles = new List<IFormFile>();
 			var editProductModel = new ProductEditViewModel
 			{
 				Name = "Updated Product",
 				Description = "Updated Description",
 				Price = 15.0m,
 				StockQuantity = 10,
-				CategoryId = Guid.NewGuid().ToString(),
-				BrandId = Guid.NewGuid().ToString()
+				CategoryId = Guid.NewGuid(),
+				BrandId = Guid.NewGuid()
 			};
 
 			// Act
-			await _productService.EditAsync(mockFile.Object, testId, editProductModel);
+			await _productService.EditAsync(mockFiles, mockFile.Object, testId, editProductModel);
 
 			// Assert
 			var product = await _context.Products.FindAsync(testId);
@@ -170,8 +197,8 @@ namespace TestingEShopWebApp.UnitTests
 			Assert.That(product.Description, Is.EqualTo(editProductModel.Description));
 			Assert.That(product.Price, Is.EqualTo(editProductModel.Price));
 			Assert.That(product.Quantity, Is.EqualTo(editProductModel.StockQuantity));
-			Assert.That(product.CategoryId, Is.EqualTo(Guid.Parse(editProductModel.CategoryId)));
-			Assert.That(product.BrandId, Is.EqualTo(Guid.Parse(editProductModel.BrandId)));
+			Assert.That(product.MainCategoryId, Is.EqualTo(editProductModel.CategoryId));
+			Assert.That(product.BrandId, Is.EqualTo(editProductModel.BrandId));
 		}
 		[Test]
 		public async Task GetAllFilteredAndPagedAsync_ReturnsFilteredAndPagedProducts()

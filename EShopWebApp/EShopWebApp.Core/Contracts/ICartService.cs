@@ -8,7 +8,7 @@ namespace EShopWebApp.Core.Contracts
         Task<CartViewModel> AddProductToGuestCartAsync(Guid productId);
         Task<CartViewModel> AddProductToCartAsync(Guid productId, string userId);
        
-        Task RemoveAllProductsFromCartAsync(Guid userId);
+        Task RemoveAllProductsFromCartAsync();
         Task RemoveShoppingCartItemsAsync(string productId,string userId);
         
         Task<CartViewModel> GetCartAsync(string userId);
@@ -21,5 +21,11 @@ namespace EShopWebApp.Core.Contracts
 
         Task AddCartItemToUserCart(Guid productId, int quantity, string userId);
 
+        Task SetQuantityToCartItem(Guid productId, int quantity, string userId);
+
+        Task<ShoppingCartItemViewModel> GetCartItem(string id);
+
+
+        
 	}
 }

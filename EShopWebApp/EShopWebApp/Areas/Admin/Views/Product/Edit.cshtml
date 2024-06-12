@@ -7,12 +7,13 @@
 
 <h2 class="text-center">@ViewBag.Title</h2>
 
-<h4>Product</h4>
+<h4 class="text-center">Product</h4>
 <hr />
 
 <div class="row">
     <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="Edit">
-        <div class="form-group">
+      <div class="row">
+        <div class="form-group col-6">
             <div class="mb-3">
                 <label asp-for="Name"></label>
                 <input asp-for="Name" class="form-control" placeholder="Write your product here...">
@@ -29,6 +30,14 @@
                         <label asp-for="Description"></label>
                         <input asp-for="Description" class="form-control" placeholder="Write your quantity here...">
                         <span asp-validation-for="Description" class="small text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="mb-3">
+                        <label asp-for="LongDescription"></label>
+                        <div id="editor" style="height: 200px;"></div>
+                        <input type="hidden" asp-for="LongDescription" />
+                        <span asp-validation-for="LongDescription" class="small text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -52,6 +61,32 @@
                         <span asp-validation-for="CategoryId" class="small text-danger"></span>
                     </div>
                 </div>
+                    <!-- Button trigger create category modal -->
+                    <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Create New Category
+                    </button>
+
+                   
+
+
+                    <div class="form-group pt-3">
+                        <div class="mb-3">
+                            <label>Select More Categories</label>
+                            <div class="row">
+                                @foreach (var category in Model.Categories)
+                                {
+                                   
+                                    <div class="col-4">
+                                        <input type="checkbox" id="category_@category.Id" name="SelectedCategoryIds" value="@category.Id"
+                                        @(Model.SelectedCategoryIds != null && Model.SelectedCategoryIds.Contains(Guid.Parse(category.Id)) ? "checked" : "")>
+                                        <label for="category_@category.Id">@category.Name</label>
+                                    </div>
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedCategoryIds" class="small text-danger"></span>
+                        </div>
+                    </div>
+              
                 <div class="form-group">
                     <div class="mb-3">
                         <label asp-for="BrandId"></label>
@@ -65,24 +100,91 @@
                         <span asp-validation-for="BrandId" class="small text-danger"></span>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="mb-3">
-                            <label for="formFile" class="form-label">Select Photo</label>
-                            <input class="form-control" type="file" name="file" id="formFile">
+              
+          </div>
+        </div>
+            <div class="col-6">
+                <div class="form-group upload__box">
+                    <div class="mb-3 upload__btn-box">
+                        <label for="formFile" class="form-label upload__btn">
+                            Select Main Photo
+                            <input class="form-control upload__inputfile" type="file" name="file" id="formFile">
+                        </label>
+                    </div>
+                    <div class="upload__img-wrap">
+                        @{
+                            var imgUrl1 = "data:image/png;base64," + Convert.ToBase64String(@Model.MainPhoto);
+                        }
+                        <div class='upload__img-box'><div style='background-image: url("@imgUrl1")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>
+                        <span asp-validation-for="MainPhotoId" class="small text-danger"></span>
                     </div>
                 </div>
-               
+                <div class="upload__box">
+                    <div class="upload__btn-box">
+                        <label class="upload__btn">
+                            <p>Upload More Images</p>
+                            <input type="file" name="files" multiple="" data-max_length="20" class="upload__inputfile">
+                        </label>
+                    </div>
+                    <div class="upload__img-wrap">
+                        @foreach (var image in Model.Images)
+                        {
+
+                            //dispaly images as base64
+                            var imgUrl = "data:image/png;base64," + Convert.ToBase64String(image.Picture);
+
+                            <div class='upload__img-box'><div style='background-image: url("@imgUrl")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div data-id="@image.Id.ToString()" class='upload__img-close edit'></div></div></div>
+
+                            
+
+                        }
+
+                    </div>
+                </div>
+
             </div>
+
         </div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="MainPhotoId" />
+        <input type="hidden" asp-for="MainPhoto" />
         <input class="btn btn-primary mt-3" type="submit" value="Edit" />
 
     </form>
+    <!-- Create Category Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="_CreateCategoryPartial" model="@Model.Category" />
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>src = "~/js/uploadImage.js?version=2.8"</script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+    const quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+    // Populate the Quill editor with content from the model
+    quill.root.innerHTML = @Html.Raw(Json.Serialize(Model.LongDescription));
+    quill.on('text-change', function () {
+        document.querySelector('input[name="LongDescription"]').value = quill.root.innerHTML;
+    });
+</script>
 
 
 

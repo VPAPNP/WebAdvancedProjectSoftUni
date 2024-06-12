@@ -12,5 +12,9 @@ namespace EShopWebApp.Core.ViewModels.CategoryViewModels
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
         public string Name { get; set; } = null!;
+
+        public bool IsDeleted { get; set; }
+
+        public Guid? ProductId { get; set; }
     }
 }

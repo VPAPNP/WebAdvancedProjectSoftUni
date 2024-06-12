@@ -2,7 +2,6 @@
 using EShopWebApp.Core.ViewModels.CartViewModels;
 using EShopWebApp.Core.ViewModels.ProductViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
 
 
@@ -23,7 +22,7 @@ namespace EShopWebApp.Controllers
             _logger = logger;
         }
 
-        // GET: api/<CartApiController>
+       
         [HttpGet("getcart")]
         public async Task<IEnumerable<ProductAllViewModel>> Get()
         {
@@ -47,10 +46,25 @@ namespace EShopWebApp.Controllers
             
             return list ;
         }
+        //set quantity to cart item
+        [HttpPost("setquantity")]
+        public async Task SetQuantity([FromBody] SetQuantityViewModel model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (User.Identity!.IsAuthenticated)
+            {
+               
+                await _cartService.SetQuantityToCartItem(Guid.Parse(model.Id!), model.Quantity, userId!);
+            }
+            else
+            {
+                await _cartService.SetQuantityToCartItem(Guid.Parse(model.Id!), model.Quantity, userId!);
+            }
+        }
 
         
 
-        // POST api/<CartApiController>
+        
         [HttpPost("addtocart")]
         [ProducesResponseType<string>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -103,13 +117,36 @@ namespace EShopWebApp.Controllers
         [HttpDelete("removecartitem")]
         public async Task DeleteCartItem([FromBody] string id)
         {
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _cartService.RemoveShoppingCartItemsAsync(id,userId);
+            await _cartService.RemoveShoppingCartItemsAsync(id, userId);
 
             await Console.Out.WriteLineAsync();
+        }
+        [HttpDelete("removeallcartitems")]
+        public async Task DeleteAllCartItems()
+        {
+            await _cartService.RemoveAllProductsFromCartAsync();
 
         }
+        [HttpGet("getweight")]
+        public async Task<decimal> GetWeight()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           var cart = new CartViewModel();
+            if (User.Identity.IsAuthenticated)
+            {
+                 cart = await _cartService.GetCartAsync(userId!);
+            }
+            else
+            {
+                var sessionId = _httpContextAccessor.HttpContext!.Request.Cookies["ShoppingCartSessionId"]!;
+                cart = await _cartService.GetGuestCartAsync(sessionId);
+                
+            }
+            var weight = cart.ShoppingCartItems.Sum(x => x.Product.PackageWeight);
 
-
+            return weight;
+        }
     }
 }

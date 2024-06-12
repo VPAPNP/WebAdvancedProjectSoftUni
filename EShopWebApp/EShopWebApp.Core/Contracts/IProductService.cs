@@ -13,7 +13,7 @@ namespace EShopWebApp.Core.Contracts
         Task CreateAsync(IEnumerable<IFormFile>files, IFormFile file,ProductCreateViewModel productCreateViewModel);
         Task DeleteAsync(Guid id);
 
-        Task EditAsync(IFormFile file,Guid id,ProductEditViewModel productEditViewModel);
+        Task EditAsync(IEnumerable<IFormFile> files, IFormFile file,Guid id,ProductEditViewModel productEditViewModel);
 
         Task<AllProductsFilteredAndPagedServiceModel> GetAllFilteredAndPagedAsync(AllProductsQueryModel productsQueryModel);
 

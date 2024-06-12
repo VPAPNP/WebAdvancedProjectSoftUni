@@ -1,0 +1,36 @@
+﻿@model CategoryCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+
+<h4>Category</h4>
+<hr />
+
+<div class="row">
+    <form method="post" asp-action="Create" asp-controller="Category">
+        <div class="form-group">
+            <div class="mb-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" placeholder="Write your category name here...">
+                <span asp-validation-for="Name" class="small text-danger"></span>
+            </div>
+        </div>
+        <input class="btn btn-primary mt-3" type="submit" value="Create" />
+        <input type="hidden" id="returnUrl" name="returnUrl" />
+       
+
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<script>
+    // Capture the current URL and set it as the value of the hidden input
+    document.getElementById('returnUrl').value = window.location.href;
+</script>
+

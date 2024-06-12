@@ -1,7 +1,34 @@
 jQuery(document).ready(function () {
+   
+   
+    
     ImgUpload();
+
+    
 });
 
+
+function fetchImageDataByGuid(imageGuid) {
+    // Make an HTTP GET request to the API endpoint
+    return fetch(`/api/PhotoApiController/getproductphotos?id=${imageGuid}`)
+        .then(response => {
+            // Check if the response is successful
+            if (!response.ok) {
+                throw new Error('Failed to fetch image data');
+            }
+            // Parse the response JSON
+            return response.json();
+        })
+        .then(data => {
+            // Assuming the API returns image data and IDs as an object with 'data' and 'id' properties
+            // You may need to adjust this part based on the actual response format
+            return { id: data.id, imageData: data.data };
+        })
+        .catch(error => {
+            console.error('Error fetching image data:', error);
+            throw error; // Rethrow the error for handling in the calling code
+        });
+}
 function ImgUpload() {
     var imgWrap = "";
     var imgArray = [];
@@ -45,9 +72,16 @@ function ImgUpload() {
                 }
             });
         });
+        
+        
+
+        
+        
     });
+   
 
     $('body').on('click', ".upload__img-close", function (e) {
+       var id = $(this).data("id");
         var file = $(this).parent().data("file");
         for (var i = 0; i < imgArray.length; i++) {
             if (imgArray[i].name === file) {
@@ -56,5 +90,29 @@ function ImgUpload() {
             }
         }
         $(this).parent().parent().remove();
+    });
+    $('body').on('click', ".edit", function (e)
+    {
+        var id = $(this).data("id");
+        const url = '/api/photoapi/deletephoto';
+
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(id)
+        };
+        fetch('/api/photoapi/deletephoto', options)
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+                console.log(id);
+            })
+            .catch(error => {
+                // Handle any errors that occur during the fetch request
+                console.error('Error:', error);
+            });
+       
     });
 }

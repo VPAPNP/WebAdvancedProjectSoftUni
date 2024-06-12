@@ -9,6 +9,8 @@ namespace EShopWebApp.Core.Contracts
 
         Task<CategoryViewModel> GetByIdAsync(Guid id);
 
+        Task <ICollection<CategoryViewModel>> GetAllByProductId(Guid id);
+
         Task<CategoryViewModel> GetByNameAsync(string name);
 
         Task CreateAsync(CategoryCreateViewModel categoryCreateViewModel);

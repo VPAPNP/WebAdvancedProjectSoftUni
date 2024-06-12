@@ -49,7 +49,7 @@ var shoppingCart = (function () {
                         const item = data[i];
                         const id = item.id;
                         const name = item.name;
-                        const price = item.price;
+                        const price = parseNumber(item.price);
                         const count = item.stockQuantity;
                         shoppingCart.addItemToCart(id, name, price, count);
                     }
@@ -65,7 +65,12 @@ var shoppingCart = (function () {
         }
 
     }
-   
+    function parseNumber(value) {
+        if (typeof value === 'string') {
+            value = value.replace(',', '.');
+        }
+        return parseFloat(value);
+    }
     
     // Save cart
     function saveCart() {
@@ -87,7 +92,8 @@ var shoppingCart = (function () {
     var obj = {};
 
     // Add to cart
-    obj.addItemToCart = function (id,name, price, count) {
+    obj.addItemToCart = function (id, name, price, count) {
+        price = parseNumber(price);
         for (var item in cart) {
             if (cart[item].name === name) {
                 if (count == 1 || count === undefined) {
@@ -108,7 +114,12 @@ var shoppingCart = (function () {
     obj.setCountForItem = function (name, count) {
         for (var i in cart) {
             if (cart[i].name === name) {
+
                 cart[i].count = count;
+                saveCart();
+
+                
+
                 break;
             }
         }
@@ -151,6 +162,7 @@ var shoppingCart = (function () {
         var totalCount = 0;
         for (var item in cart) {
             totalCount += cart[item].count;
+           
         }
         
         
@@ -182,6 +194,8 @@ var shoppingCart = (function () {
         }
         return cartCopy;
     }
+
+    
 
     // cart : Array
     // Item : Object/Class
@@ -284,11 +298,47 @@ $('.buy-it-now').on('click', (async function (event) {
 
 }));    
 
+$('.clear-cart-clear').on('click', (async function () {
 
+    const options = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+    };
+    await fetch('/api/cartapi/removeallcartitems', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
+    for (const item in cart) {
+
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+
+    }
+    shoppingCart.clearCart();
+    displayCart();
+}));
     
 
 // Clear items
-$('.clear-cart').on('click',(async function () {
+$('.clear-cart').on('click', (async function () {
+
+  
+   
     shoppingCart.clearCart();
     displayCart();
 }));
@@ -304,7 +354,7 @@ function displayCart() {
         output += "<tr>"
             + "<td>" + cartArray[i].name + "</td>"
             + "<td>(" + cartArray[i].price + ")</td>"
-            + "<td><div class='input-group'><button class='minus-item input-group-addon btn btn-primary' data-name='" + cartArray[i].name + "'>-</button>"
+            + "<td><div class='input-group cart-count-item'><button class='minus-item input-group-addon btn btn-primary' data-name='" + cartArray[i].name + "'>-</button>"
             + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
             + "<button class='plus-item btn btn-primary input-group-addon' data-name='" + cartArray[i].name + "'>+</button></div></td>"
             + "<td><button class='delete-item btn btn-danger' data-name='" + cartArray[i].name + "'>X</button></td>"
@@ -312,10 +362,12 @@ function displayCart() {
             + "<td>" + cartArray[i].total + "</td>"
             + "</tr>";
         $('.cart-item-count-' + cartArray[i].id + '').html(cartArray[i].count);
+        $('.cart-item-price-' + cartArray[i].id + '').html(cartArray[i].total);
     }
     $('.show-cart').html(output);
     $('.total-cart').html(shoppingCart.totalCart());
     $('.total-count').html(shoppingCart.totalCount());
+    $('.total-cart').html(shoppingCart.totalCart());
 }
 
 // Delete item button
@@ -446,11 +498,51 @@ $('.show-cart').on('click', '.plus-item', async function (event) {
 })
 
 // Item count input
-$('.show-cart').on('change', '.item-count', function (event) {
+$('.cart-item').on('change', '.item-count', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).data('id');
     var name = $(this).data('name');
     var count = Number($(this).val());
+    
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id, quantity: count })         
+        
+        
+    };
+    fetch('/api/cartapi/setquantity', options)
+        .then(response => response)
+        .then(data => {
+            // Handle the response data
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            console.error('Error:', error);
+        });
     shoppingCart.setCountForItem(name, count);
+    for (const item in cart) {
+        if (cart[item].count === 0 && cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
     displayCart();
+
+    // Hide the element if the count is 0
+    
+
+    
 });
 //Remove item from cart on order page
 $('.cart-item').on('click', '.minus-item', async function (event) {
@@ -488,10 +580,51 @@ $('.cart-item').on('click', '.minus-item', async function (event) {
             }
         }
     }
+    
 
    
     
     shoppingCart.removeItemFromCart(name);
+    displayCart();
+})
+//DELETE ITEM FROM CART
+$('.cart-item').on("click", ".delete-item", function (event) {
+    var name = $(this).data('name')
+    for (var item in cart) {
+        if (cart[item].name === name) {
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart[item].id)
+            };
+            fetch('/api/cartapi/removecartitem', options)
+                .then(response => response)
+                .then(data => {
+                    // Handle the response data
+                    console.log('deleted');
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch request
+                    console.error('Error:', error);
+                });
+        }
+    }
+    // Hide the element if the count is 0
+    for (const item in cart) {
+        if (cart[item].name === name) {
+            // Construct the ID of the element to hide
+            const elementId = 'item-' + cart[item].id;
+
+            // Hide the element
+            const element = document.querySelector('.' + elementId);
+            if (element) {
+                element.classList.add("visually-hidden");
+            }
+        }
+    }
+    shoppingCart.removeItemFromCartAll(name);
     displayCart();
 })
 $('.cart-item').on('click', '.plus-item', async function (event) {
@@ -556,7 +689,7 @@ $('.load-cart-items-login').on('click', (async function (event) {
         });
 
 
-    shoppingCart.addItemToCart(id, name, price, 1);
+    shoppingCart.addItemToCart(id,name,price, 1);
     displayCart();
 
 

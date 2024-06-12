@@ -1,0 +1,33 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+<partial name="_BreadcrumbPartial" view-data="ViewData" />
+
+<h5 class="text-center">Manage your account</h5>
+
+<div>
+    <h7 >Change your account settings</h7>
+    <hr />
+    <div class="row p-5">
+        
+        <div class="col-md-4">
+            
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

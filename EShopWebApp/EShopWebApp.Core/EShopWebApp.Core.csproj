@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Stripe.net" Version="44.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EShopWebApp.Infrastructure\EShopWebApp.Infrastructure.csproj" />
   </ItemGroup>
 

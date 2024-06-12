@@ -1,5 +1,5 @@
 ﻿using EShopWebApp.Core.Contracts;
-using EShopWebApp.Core.ViewModels.ImageViewModels;
+using EShopWebApp.Core.ViewModels.PhotoViewModels;
 using EShopWebApp.Infrastructure.Data;
 using EShopWebApp.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
@@ -46,7 +46,12 @@ namespace EShopWebApp.Core.Services
 
         public async Task<PhotoViewModel> GetPhotoById(Guid Id)
         {
-            var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == Id);
+            var photo = await db.Photos.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.Id == Id);
+
+            if (photo == null)
+            {
+                return null;
+            }
 
             var photoViewModel = new PhotoViewModel()
             {
@@ -61,7 +66,7 @@ namespace EShopWebApp.Core.Services
 
         public async Task<PhotoViewModel> GetPhotoByName(string name)
         {
-            var photo = await db.Photos.FirstOrDefaultAsync(p => p.Name == name);
+            var photo = await db.Photos.Where(p=>p.IsDeleted == false).FirstOrDefaultAsync(p => p.Name == name);
 
             var photoViewModel = new PhotoViewModel()
             {
@@ -75,10 +80,13 @@ namespace EShopWebApp.Core.Services
         public async Task DeletePhotoAsync(Guid id)
         {
             var photo = await db.Photos.FirstOrDefaultAsync(p => p.Id == id);
-            foreach (var item in db.Photos)
+
+            if (photo != null) 
             {
-                item.IsDeleted = true;
+                photo.IsDeleted = true;
             }
+                
+            
             await db.SaveChangesAsync();
         }
 
@@ -101,7 +109,7 @@ namespace EShopWebApp.Core.Services
 
         public async Task<ICollection<PhotoViewModel>> GetPhotoByProductId(Guid id)
         {
-            var photos = await db.Photos.Where(p => p.ProductId == id).ToListAsync();
+            var photos = await db.Photos.Where(p => p.ProductId == id && p.IsDeleted == false).ToListAsync();
 
             var photosViewModel = new List<PhotoViewModel>();
 
@@ -109,6 +117,7 @@ namespace EShopWebApp.Core.Services
             {
                 var photoViewModel = new PhotoViewModel()
                 {
+                    Id = photo.Id.ToString(),
                     Name = photo.Name,
                     Picture = photo.Picture
                 };
@@ -117,6 +126,29 @@ namespace EShopWebApp.Core.Services
 
             return photosViewModel;
             
+        }
+
+        public async Task<ICollection<PhotoViewModel>> GetAllPhotosByProductId(Guid productId)
+        {
+            var photos = await db.Photos.Where(p => p.ProductId == productId).ToListAsync();
+
+            var photosViewModel = new List<PhotoViewModel>();
+
+            foreach (var photo in photos)
+            {
+                var photoViewModel = new PhotoViewModel()
+                {
+                    Id = photo.Id.ToString(),
+                    Name = photo.Name,
+                    Picture = photo.Picture
+                };
+                photosViewModel.Add(photoViewModel);
+            }
+
+            return photosViewModel;
+
+
+           
         }
     }
 }

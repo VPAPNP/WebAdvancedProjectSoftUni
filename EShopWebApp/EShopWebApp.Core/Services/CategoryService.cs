@@ -51,7 +51,9 @@ namespace EShopWebApp.Core.Services
             var categoryViewModel = new CategoryViewModel()
             {
                 Id = category!.Id.ToString(),
-                Name = category.Name
+                Name = category.Name,
+                IsDeleted = category.IsDeleted
+
             };
             return categoryViewModel;
         }
@@ -60,7 +62,8 @@ namespace EShopWebApp.Core.Services
         {
             var category = new Category()
             {
-                Name = categoryCreateViewModel.Name
+                Name = categoryCreateViewModel.Name,
+                ProductId = categoryCreateViewModel.ProductId
             };
             await _dbContext.Categories.AddAsync(category);
             await _dbContext.SaveChangesAsync();
@@ -100,6 +103,17 @@ namespace EShopWebApp.Core.Services
                 await _dbContext.SaveChangesAsync();
             }
 
+        }
+
+        public async Task<ICollection<CategoryViewModel>> GetAllByProductId(Guid id)
+        {
+            var categories = await _dbContext.Categories.Where(c=>c.ProductId == id).Select(c => new CategoryViewModel()
+            {
+                Id = c.Id.ToString(),
+                Name = c.Name
+            }).ToListAsync();
+
+            return categories;
         }
     }
 }

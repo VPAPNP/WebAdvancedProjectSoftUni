@@ -14,6 +14,11 @@ button.delete-item.btn.btn-danger:hover {
     }
        
 }
+@media (max-width: 200px) {
+    .cart-count-item{
+        display: flex;
+    }
+}
 .zoom {
     transition: transform .4s ; /* Animation */
     

@@ -16,10 +16,11 @@
                 <label asp-for="Name"></label>
                 <input asp-for="Name" class="form-control" placeholder="Write your category name here...">
                 <span asp-validation-for="Name" class="small text-danger"></span>
+                <input type="hidden" asp-for="ProductId" />
             </div>
         </div>
         <input class="btn btn-primary mt-3" type="submit" value="Create" />
-
+        
     </form>
 </div>
 @section Scripts {
