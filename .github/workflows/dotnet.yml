@@ -25,8 +25,10 @@ jobs:
     - name: List directory contents
       run: ls -la
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore EShopWebApp/EShopWebApp.csproj
+
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build EShopWebApp/EShopWebApp.csproj --configuration Release
+
+    - name: Run tests
+      run: dotnet test EShopWebApp/EShopWebApp.csproj --configuration Release
