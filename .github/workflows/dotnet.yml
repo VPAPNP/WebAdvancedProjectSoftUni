@@ -31,4 +31,4 @@ jobs:
       run: dotnet build EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release
 
     - name: Run tests
-      run: dotnet test EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release
+      run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release
