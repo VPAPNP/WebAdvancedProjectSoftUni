@@ -1,0 +1,34 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Print current directory
+      run: pwd
+    - name: List directory contents
+      run: ls -la
+    - name: Restore dependencies
+      run: dotnet restore EShopWebApp/EShopWebApp/EShopWebApp.csproj
+
+    - name: Build
+      run: dotnet build EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release
+
+    - name: Run tests
+      run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release
