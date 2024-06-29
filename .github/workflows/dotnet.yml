@@ -45,6 +45,11 @@ jobs:
        uses: actions/setup-dotnet@v4
        with:
         dotnet-version: 8.0.x
+     - name: Download build artifacts
+       uses: actions/download-artifact@v3
+       with:
+        name: build-artifacts
+
 
      - name: 'Login via Az CLI'
        uses: azure/login@v1
@@ -54,8 +59,8 @@ jobs:
      - name: 'Deploy to Azure Web App'
        uses: azure/webapps-deploy@v2
        with:
-        app-name: 'EShopWebAppProject'  # Replace with your Azure Web App name
-        slot-name: 'production'  # Use the appropriate slot if not using the default
-        package: 'EShopWebApp/EShopWebApp/bin/Release/net8.0/publish'  # Ensure this path is correct
+        app-name: 'EShopWebAppProject'  
+        slot-name: 'production' 
+        package: 'EShopWebApp/EShopWebApp/bin/Release/net8.0/publish'
     
    
