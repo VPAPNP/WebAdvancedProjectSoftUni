@@ -31,6 +31,14 @@ jobs:
       run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release
     - name: Publish
       run: dotnet publish EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release --output EShopWebApp/EShopWebApp/bin/Release/net8.0/publish
+    - name: List published files
+      run: ls -R EShopWebApp/EShopWebApp/bin/Release/net8.0/publish
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: EShopWebApp/EShopWebApp/bin/Release/net8.0/publish
   
   Deploy-to-Azure:
      
