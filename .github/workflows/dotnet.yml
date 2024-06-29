@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: Pipeline
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  Build-and-Unit-Tests:
 
     runs-on: ubuntu-latest
 
@@ -20,10 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Print current directory
-      run: pwd
-    - name: List directory contents
-      run: ls -la
+   
     - name: Restore dependencies
       run: dotnet restore EShopWebApp/EShopWebApp/EShopWebApp.csproj
 
@@ -32,3 +29,33 @@ jobs:
 
     - name: Run tests
       run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release
+    - name: Publish
+      run: dotnet publish EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release --output EShopWebApp/EShopWebApp/bin/Release/net8.0/publish
+  
+  Deploy-to-Azure:
+     
+     needs: Build-and-Unit-Tests
+     runs-on: ubuntu-latest
+
+     steps:
+     - name: Checkout code
+       uses: actions/checkout@v4
+
+     - name: Setup .NET
+       uses: actions/setup-dotnet@v4
+       with:
+        dotnet-version: 8.0.x
+
+     - name: 'Login via Az CLI'
+       uses: azure/login@v1
+       with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+     - name: 'Deploy to Azure Web App'
+       uses: azure/webapps-deploy@v2
+       with:
+        app-name: 'EShopWebAppProject'  # Replace with your Azure Web App name
+        slot-name: 'production'  # Use the appropriate slot if not using the default
+        package: 'EShopWebApp/EShopWebApp/bin/Release/net8.0/publish'  # Ensure this path is correct
+    
+   
