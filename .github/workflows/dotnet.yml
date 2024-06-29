@@ -57,6 +57,7 @@ jobs:
        uses: actions/download-artifact@v3
        with:
         name: build-artifacts
+        path: download-dir
 
 
      - name: 'Login via Az CLI'
