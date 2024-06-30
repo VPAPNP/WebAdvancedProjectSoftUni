@@ -21,7 +21,7 @@ jobs:
         with:
           dotnet-version: '8.x'
       - name: Restore dependencies
-        run: dotnet restore ./EShopWebApp/EShopWebApp.csproj
+        run: dotnet restore ./EShopWebApp/EShopWebApp/EShopWebApp.csproj
       - name: Build with dotnet
         run: dotnet build --configuration Release ./EShopWebApp/EShopWebApp
       - name: Run unit tests
