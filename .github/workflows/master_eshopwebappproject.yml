@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests
      
-        run: dotnet test EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release  
+        run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release  
 
       - name: dotnet publish
         run: dotnet publish ./EShopWebApp/EShopWebApp
