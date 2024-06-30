@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-unit-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,9 +20,17 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+      - name: Restore dependencies
+        
+        run: dotnet restore EShopWebApp/EShopWebApp/EShopWebApp.csproj
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release ./EShopWebApp/EShopWebApp
+      - name: Build
+      
+        run: dotnet build EShopWebApp/EShopWebApp/EShopWebApp.csproj --configuration Release
+
+      - name: Run tests
+     
+        run: dotnet test EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release  
 
       - name: dotnet publish
         run: dotnet publish ./EShopWebApp/EShopWebApp
@@ -34,7 +42,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-unit-test
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
