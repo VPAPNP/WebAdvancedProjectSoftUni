@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
