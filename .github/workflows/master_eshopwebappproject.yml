@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release ./EShopWebApp/EShopWebApp
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ./EShopWebApp/EShopWebApp
+        run: dotnet publish ./EShopWebApp/EShopWebApp
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
