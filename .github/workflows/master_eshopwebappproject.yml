@@ -24,7 +24,7 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release ./EShopWebApp/EShopWebApp
       - name: Run unit tests
-        run: dotnet test ./EShopWebApp/TestingEShopWebApp.UnitTests --configuration Release --no-build --logger "trx;LogFileName=testresults.trx"  
+        run: dotnet test ./EShopWebApp/TestingEShopWebApp.UnitTests/TestingEShopWebApp.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=testresults.trx"  
 
       - name: dotnet publish
         run: dotnet publish ./EShopWebApp/EShopWebApp
