@@ -11,15 +11,12 @@ using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
-var clientId = builder.Configuration["GoogleKeys:ClientId"];
-var clientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
-Console.WriteLine($"Google Client ID: {clientId}");
-Console.WriteLine($"Google Client Secret: {clientSecret}");
+
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
-    googleOptions.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"]!;
+    googleOptions.ClientId = builder.Configuration["GOOGLE_CLIENT_ID"]!;
+    googleOptions.ClientSecret = builder.Configuration["GOOGLE_CLIENT_SECRET"]!;
 });
 // Add services to the container.
 
